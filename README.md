@@ -1,1 +1,1 @@
-# BilbleStudyJourney
+# BibleStudyJourney
