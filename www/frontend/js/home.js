@@ -22,6 +22,64 @@ const chapterSelect = document.getElementById('chapter-select');
 const verseSelect = document.getElementById('verse-select');
 const closeButtons = document.querySelectorAll('.close-button');
 
+// Função para carregar o estado inicial
+async function loadInitialState() {
+  try {
+    const savedState = await localforage.getItem('bibleAppState');
+    console.log("Estado salvo encontrado e carregado: ", savedState); // Log Para depuração
+
+    if (savedState) {
+      // Carrega o último estado salvo
+      versaoAtual = savedState.version || "nvi";
+      livroAtual = savedState.book || "gn"; // Gênesis como padrão
+      capituloAtual = savedState.chapter || 1;
+      versoAtual = savedState.verse || 1;
+    } else {
+      // Estado padrão para o primeiro uso
+      versaoAtual = "nvi";
+      livroAtual = "gn"; // Gênesis
+      capituloAtual = 1;
+      versoAtual = 1;
+    }
+
+    // Atualiza o seletor de capítulo com o estado inicial
+    chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}:${versoAtual}`;
+    await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+  } catch (error) {
+    console.error("Erro ao carregar o estado inicial:", error);
+  }
+}
+
+// Função para salvar o estado atual no localForage
+async function saveCurrentState() {
+  try {
+    const state = {
+      version: versaoAtual,
+      book: livroAtual,
+      chapter: capituloAtual,
+      verse: versoAtual,
+    };
+    await localforage.setItem('bibleAppState', state);
+    console.log("Estado salvo:", state); // Log Para depuração
+  } catch (error) {
+    console.error("Erro ao salvar o estado:", error);
+  }
+}
+
+// Função para capitalizar o nome do livro (opcional, para exibição)
+function capitalizeBookName(book) {
+  const bookNames = {
+    gn: "Gênesis",
+    ex: "Êxodo",
+    lv: "Levítico",
+    nm: "Números",
+    dt: "Deuteronômio",
+    // Adicione outros livros aqui, se necessário
+  };
+  return bookNames[book] || book;
+}
+
+
 // Buscar livros pela API
 async function fetchBooks() {
   try {
@@ -29,9 +87,7 @@ async function fetchBooks() {
       headers: { Authorization: `Bearer ${API_TOKEN}` },
     });
     const books = await response.json();
-    bookSelect.innerHTML = books.map(
-      (book) => `<option value="${book.abbrev.pt}">${book.name}</option>`
-    ).join('');
+    console.log("Livros carregados:", books); // Apenas para depuração
   } catch (error) {
     console.error("Erro ao buscar livros:", error);
   }
@@ -45,9 +101,27 @@ async function fetchChapters(book) {
     });
     const data = await response.json();
     const chapters = Array.from({ length: data.chapters }, (_, i) => i + 1);
-    chapterSelect.innerHTML = chapters.map(
-      (chapter) => `<option value="${chapter}">${chapter}</option>`
-    ).join('');
+
+    // Renderiza os capítulos na matriz
+    const chapterGrid = document.getElementById('chapter-grid');
+    chapterGrid.innerHTML = chapters
+      .map(
+        (chapter) =>
+          `<button class="chapter-item" data-chapter="${chapter}">${chapter}</button>`
+      )
+      .join('');
+
+    // Adiciona eventos de clique para cada capítulo
+    document.querySelectorAll('.chapter-item').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        capituloAtual = event.target.dataset.chapter; // Obtém o capítulo selecionado
+        await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+        await fetchVerses(versaoAtual, livroAtual, capituloAtual);
+        closeDialog(chapterDialog); // Fecha o diálogo de capítulos
+        openDialog(verseDialog); // Abre o diálogo de versículos
+        saveCurrentState(); // Salva o estado atual
+      });
+    });
   } catch (error) {
     console.error("Erro ao buscar capítulos:", error);
   }
@@ -60,6 +134,7 @@ async function fetchBibleContent(version, book, chapter) {
       headers: { Authorization: `Bearer ${API_TOKEN}` },
     });
     const data = await response.json();
+    console.log("Conteúdo da Bíblia:", data); // Log Para depuração
     renderBibleContent(data.verses);
   } catch (error) {
     console.error("Erro ao buscar conteúdo da Bíblia:", error);
@@ -76,24 +151,48 @@ async function fetchVerses(version, book, chapter) {
     // Verifica se o número de versículos está disponível
     if (data.chapter && data.chapter.verses) {
       const verses = Array.from({ length: data.chapter.verses }, (_, i) => i + 1); // Gera os números dos versículos
-      verseSelect.innerHTML = verses.map(
-        (verse) => `<option value="${verse}">${verse}</option>`
-      ).join('');
+
+      // Renderiza os versículos na matriz
+      const verseGrid = document.getElementById('verse-grid');
+      verseGrid.innerHTML = verses
+        .map(
+          (verse) =>
+            `<button class="verse-item" data-verse="${verse}">${verse}</button>`
+        )
+        .join('');
+
+      // Adiciona eventos de clique para cada versículo
+      document.querySelectorAll('.verse-item').forEach((button) => {
+        button.addEventListener('click', (event) => {
+          versoAtual = event.target.dataset.verse; // Obtém o versículo selecionado
+          scrollToVerse(versoAtual); // Rola para o versículo correspondente
+          closeDialog(verseDialog); // Fecha o diálogo de versículos
+          saveCurrentState(); // Salva o estado atual
+        });
+      });
     } else {
       console.error("Formato inesperado da resposta da API:", data);
-      verseSelect.innerHTML = '<option value="">Nenhum versículo encontrado</option>';
+      const verseGrid = document.getElementById('verse-grid');
+      verseGrid.innerHTML = '<p>Nenhum versículo encontrado</p>';
     }
   } catch (error) {
     console.error("Erro ao buscar versículos:", error);
-    verseSelect.innerHTML = '<option value="">Erro ao carregar versículos</option>';
+    const verseGrid = document.getElementById('verse-grid');
+    verseGrid.innerHTML = '<p>Erro ao carregar versículos</p>';
   }
 }
 
-// Renderizar conteúdo da Bíblia (capítulo inteiro)
 function renderBibleContent(verses) {
-  bibleContentEl.innerHTML = verses.map(
-    (verse) => `<p id="verse-${verse.number}"><strong>${verse.number}</strong> ${verse.text}</p>`
-  ).join('');
+  // Limpa o conteúdo anterior
+  bibleContentEl.innerHTML = '';
+
+  // Adiciona cada versículo ao conteúdo
+  verses.forEach((verse) => {
+    const verseElement = document.createElement('p');
+    verseElement.id = `verse-${verse.number}`;
+    verseElement.textContent = `${verse.number}. ${verse.text}`;
+    bibleContentEl.appendChild(verseElement);
+  });
 }
 
 // Rolar para o versículo específico
@@ -127,53 +226,45 @@ function closeAllDialogs() {
 // Configurar ouvintes de eventos
 function setupEventListeners() {
   // seletor de versão click
-  versionSelector.addEventListener('click', () => {
-    openDialog(versionDialog);
-  });
+  if (versionSelector) {
+    versionSelector.addEventListener('click', () => {
+      openDialog(versionDialog);
+    });
+  }
 
   // Seletor de livro click
-  chapterSelector.addEventListener('click', () => {
-    fetchBooks();
-    openDialog(bookDialog);
-  });
+  if (chapterSelector) {
+    chapterSelector.addEventListener('click', () => {
+      openDialog(bookDialog);
+    });
+  }
 
-  // Seletor de capítulo click
-  bookSelect.addEventListener('change', () => {
-    livroAtual = bookSelect.value;
-    fetchChapters(livroAtual);
-    closeDialog(bookDialog);
-    openDialog(chapterDialog);
-  });
-
-  // Mudança no seletor de capítulo
-  chapterSelect.addEventListener('change', () => {
-    capituloAtual = chapterSelect.value;
-    fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
-    fetchVerses(versaoAtual, livroAtual, capituloAtual);
-    closeDialog(chapterDialog);
-    openDialog(verseDialog);
-  });
-
-  // Mudança no seletor de versículo
-  verseSelect.addEventListener('change', () => {
-    versoAtual = verseSelect.value;
-
-    scrollToVerse(versoAtual);
-
-    chapterSelector.textContent = `${livroAtual} ${capituloAtual}:${versoAtual}`;
-    closeDialog(verseDialog);
-
-  });
+  // Adicione um evento para os botões de livros
+  const bookItems = document.querySelectorAll('.book-item');
+  if (bookItems.length > 0) {
+    bookItems.forEach((button) => {
+      button.addEventListener('click', (event) => {
+        livroAtual = event.target.dataset.book; // Obtém o valor do atributo data-book
+        fetchChapters(livroAtual); // Busca os capítulos do livro selecionado
+        closeDialog(bookDialog); // Fecha o diálogo de livros
+        openDialog(chapterDialog); // Abre o diálogo de capítulos
+      });
+    });
+  }
 
   // Fechar botões
-  closeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      closeAllDialogs();
+  if (closeButtons.length > 0) {
+    closeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        closeAllDialogs();
+      });
     });
-  });
+  }
 
   // Close when clicking on overlay
-  overlay.addEventListener('click', closeAllDialogs);
+  if (overlay) {
+    overlay.addEventListener('click', closeAllDialogs);
+  }
 
   // Close when pressing Escape key
   document.addEventListener('keydown', (e) => {
@@ -183,8 +274,12 @@ function setupEventListeners() {
   });
 }
 
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+/* Salvar o estado atual quando a página for recarregada ou fechada I
+isso garante que o estado seja salvo antes de sair da página */
+window.addEventListener('beforeunload', saveCurrentState);
+
+// Inicializa o app quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
-  fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+  await loadInitialState(); // Carrega o estado inicial
 });

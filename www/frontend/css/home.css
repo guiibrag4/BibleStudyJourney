@@ -1,189 +1,356 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: white;
-    min-height: 100vh;
-  }
-  
-  #bible-reader {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  .bible-header {
-    width: 100%;
-    height: 57px;
-    background-color: #575F57;
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding: 0 9px;
-  }
-  
-  .logo {
-    width: 34px;
-    height: 34px;
-  }
-  
-  .selectors {
-    display: flex;
-    gap: 14px;
-  }
-  
-  .version-selector {
-    text-align: center;
-    color: #8E8A8A;
-    font-size: 15px;
-    height: 40px;
-    width: 75px;
-    background-color: #D9D9D9;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .chapter-selector {
-    text-align: center;
-    color: #8E8A8A;
-    font-size: 15px;
-    height: 40px;
-    width: 150px;
-    background-color: #D9D9D9;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-left: auto;
-  }
-  
-  .search-button, .menu-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .search-button img {
-    width: 34px;
-    height: 34px;
-  }
-  
-  .menu-button img {
-    width: 47px;
-    height: 47px;
-  }
-  
-  .bible-content {
-    padding: 45px 9px;
-  }
-  
-  .bible-content p {
-    font-size: 15px;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    color: black;
-  }
-  
-  .dialog {
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  
-  .dialog.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: white;
+  min-height: 100vh;
+  overflow-x: hidden; /* Evita scroll lateral */
+}
+
+#bible-reader {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden; /* Evita scroll lateral */
+}
+
+.bible-header {
+  width: 100%;
+  height: 57px;
+  background-color: #575F57;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 9px;
+  position: fixed; /* Fixa o cabeçalho no topo */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Transição suave */
+  opacity: 1;
+  visibility: visible;
+}
+
+.logo {
+  width: 34px;
+  height: 34px;
+}
+
+.selectors {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap; /* Permite quebra de linha em telas menores */
+}
+
+.version-selector, .chapter-selector {
+  text-align: center;
+  color: #8E8A8A;
+  font-size: 15px;
+  height: 40px;
+  background-color: #D9D9D9;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0; /* Impede que os botões encolham */
+}
+
+.version-selector {
+  width: 75px;
+}
+
+.chapter-selector {
+  width: 150px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-wrap: wrap; /* Permite quebra de linha em telas menores */
+}
+
+.search-button, .menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.search-button img {
+  width: 34px;
+  height: 34px;
+}
+
+.menu-button img {
+  width: 47px;
+  height: 47px;
+}
+
+.bible-content {
+  padding: 67px 9px;
+  word-wrap: break-word; /* Quebra palavras longas */
+  overflow-x: hidden; /* Evita scroll lateral */
+}
+
+.bible-content p {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 7px;
+  color: black;
+}
+
+.dialog {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.dialog.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dialog-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 425px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  position: relative;
+}
+
+/* Ajusta o cabeçalho do diálogo */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px; /* Reduz o espaçamento inferior */
+  padding-bottom: 5px; /* Adiciona um pequeno espaçamento interno */
+  border-bottom: 1px solid #ddd; /* Linha sutil para separar o título do conteúdo */
+}
+
+.dialog-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Ajusta o corpo do diálogo */
+.dialog-body {
+  overflow-y: auto; /* Adiciona barra de rolagem vertical */
+  padding: 10px; /* Espaçamento interno */
+  margin-top: 0; /* Remove qualquer margem superior */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espaçamento uniforme entre os elementos */
+}
+/* Remove a barra de rolagem horizontal, se necessário */
+.dialog-body::-webkit-scrollbar {
+  width: 8px; /* Largura da barra de rolagem */
+}
+
+.dialog-body::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Cor da barra de rolagem */
+  border-radius: 4px; /* Bordas arredondadas */
+}
+
+.dialog-body::-webkit-scrollbar-thumb:hover {
+  background-color: #aaa; /* Cor ao passar o mouse */
+}
+
+.dialog-body::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Cor do fundo da barra */
+}
+
+/* Garante que o conteúdo fique imediatamente abaixo do cabeçalho */
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Alinha o conteúdo ao topo */
+  height: 750px; /* Altura fixa para todos os diálogos */
+  padding: 10px; /* Espaçamento interno */
+}
+
+select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (min-width: 640px) {
   .dialog-content {
-    background: white;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 425px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1001;
-    position: relative;
-  }
-  
-  .dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .dialog-header h2 {
-    font-size: 18px;
-    font-weight: 600;
-  }
-  
-  .close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;
-  }
-  
-  .dialog-body {
-    padding: 8px 0;
-  }
-  
-  select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    margin-top: 8px;
-  }
-  
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  
-  .overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  @media (min-width: 640px) {
-    .dialog-content {
       padding: 24px;
-    }
   }
-  
+}
+
+@media (max-width: 480px) {
+  .bible-header {
+      flex-wrap: wrap; /* Permite quebra de linha em telas menores */
+      gap: 8px;
+  }
+
+  .selectors {
+      gap: 8px;
+  }
+
+  .actions {
+      gap: 4px;
+  }
+
+  .search-button img, .menu-button img {
+      width: 30px;
+      height: 30px;
+  }
+
+  .version-selector, .chapter-selector {
+      font-size: 13px;
+      height: 35px;
+  }
+
+  .version-selector {
+      width: 65px;
+  }
+
+  .chapter-selector {
+      width: 120px;
+  }
+}
+
+.bible-header {
+  width: 100%;
+  height: 57px;
+  background-color: #575F57;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 0 9px;
+  position: fixed; /* Fixa o cabeçalho no topo */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+
+.bible-header.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* Impede interação quando oculto */
+}
+
+/* livros estilizados */
+
+.book-category {
+  margin-bottom: 20px;
+}
+
+.book-category h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.book-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Botões uniformes */
+.book-item, .chapter-item, .verse-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0; /* Cor cinza claro */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px; /* Tamanho de fonte uniforme */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.book-item:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.book-item:active {
+  background-color: #d0d0d0;
+}
+
+/* capitulos estilizados */
+
+.chapter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colunas */
+  gap: 10px; /* Espaçamento entre os botões */
+  padding: 0px;
+}
+
+/* Versículo estilização */
+
+.verse-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 colunas */
+  gap: 8px; /* Espaçamento entre os botões */
+  padding: 0px;
+}
+
+.book-item:hover, .chapter-item:hover, .verse-item:hover {
+  background-color: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.book-item:active, .chapter-item:active, .verse-item:active {
+  background-color: #d0d0d0;
+}
+
