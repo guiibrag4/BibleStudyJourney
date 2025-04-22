@@ -1,76 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bible Reader</title>
-    <link rel="stylesheet" href="../css/home.css" />
-  </head>
+<html lang="pt-BR">
 
-  <body>
-    <div id="bible-reader">
-      <header class="bible-header">
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d249ad0821dafc69dfedd4b49a7e3311957dc409" alt="Bible Reader Logo" class="logo" />
-        <div class="selectors">
-          <div class="version-selector" id="version-selector">Nvi</div>
-          <div class="chapter-selector" id="chapter-selector">Eclesiastes 5</div>
-        </div>
-        <div class="actions">
-          <button aria-label="Search" class="search-button">
-            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d0d867ae4a57d0bcf2703ab7b0acff86913d4f70" alt="Search" />
-          </button>
-          <button aria-label="Menu" class="menu-button">
-            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2d3d02fa8501c2fc82b7cbb8c907ccd474fed4c" alt="Menu" />
-          </button>
-        </div>
-      </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bible Reader</title>
+  <link rel="stylesheet" href="../css/home.css" />
+</head>
 
-      <article class="bible-content" id="bible-content"></article>
+<body>
+  <div id="bible-reader">
+    <header class="bible-header">
+      <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d249ad0821dafc69dfedd4b49a7e3311957dc409"
+        alt="Bible Reader Logo" class="logo" />
+      <div class="selectors">
+        <div class="version-selector" id="version-selector">Acf</div>
+        <div class="chapter-selector" id="chapter-selector">Gênesis 1</div>
+      </div>
+      <div class="actions">
+        <button aria-label="Search" class="search-button">
+          <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d0d867ae4a57d0bcf2703ab7b0acff86913d4f70"
+            alt="Search" />
+        </button>
+        <button aria-label="Menu" class="menu-button">
+          <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2d3d02fa8501c2fc82b7cbb8c907ccd474fed4c"
+            alt="Menu" />
+        </button>
+      </div>
+    </header>
+
+    <article class="bible-content" id="bible-content"></article>
+  </div>
+
+  <!-- Version Dialog -->
+  <div id="version-dialog" class="dialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Select Bible Version</h2>
+        <button class="close-button">×</button>
+      </div>
+      <div class="dialog-body">
+        <select id="version-select">
+          <option value="Nvi">Acf</option>
+          <option value="Kjv">Apee</option>
+          <option value="Nlt">Bbe</option>
+        </select>
+      </div>
     </div>
+  </div>
 
-    <!-- Version Dialog -->
-    <div id="version-dialog" class="dialog">
-      <div class="dialog-content">
-        <div class="dialog-header">
-          <h2>Select Bible Version</h2>
-          <button class="close-button">×</button>
+  <!-- Book Dialog -->
+  <div id="book-dialog" class="dialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Livro</h2>
+        <button class="close-button">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="book-category">
+          <h3>Pentateuco</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="gn">Gênesis</button>
+            <button class="book-item" data-book="ex">Êxodo</button>
+            <button class="book-item" data-book="lv">Levítico</button>
+            <button class="book-item" data-book="nm">Números</button>
+            <button class="book-item" data-book="dt">Deuteronômio</button>
+          </div>
         </div>
-        <div class="dialog-body">
-          <select id="version-select">
-            <option value="Nvi">NVI</option>
-            <option value="Kjv">KJV</option>
-            <option value="Nlt">NLT</option>
-            <option value="Esv">ESV</option>
-            <option value="Niv">NIV</option>
-          </select>
+        <div class="book-category">
+          <h3>Históricos</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="js">Josué</button>
+            <button class="book-item" data-book="jz">Juízes</button>
+            <button class="book-item" data-book="rt">Rute</button>
+            <button class="book-item" data-book="1sm">1 Samuel</button>
+            <button class="book-item" data-book="2sm">2 Samuel</button>
+            <button class="book-item" data-book="1rs">1 Reis</button>
+            <button class="book-item" data-book="2rs">2 Reis</button>
+            <button class="book-item" data-book="1cr">1 Crônicas</button>
+            <button class="book-item" data-book="2cr">2 Crônicas</button>
+            <button class="book-item" data-book="ed">Esdras</button>
+            <button class="book-item" data-book="ne">Neemias</button>
+            <button class="book-item" data-book="et">Ester</button>
+          </div>
+        </div>
+        <div class="book-category">
+          <h3>Poéticos</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="jó">Jó</button>
+            <button class="book-item" data-book="sl">Salmos</button>
+            <button class="book-item" data-book="pv">Provérbios</button>
+            <button class="book-item" data-book="ec">Eclesiastes</button>
+            <button class="book-item" data-book="ct">Cantares</button>
+          </div>
+        </div>
+        
+        <div class="book-category">
+          <h3>Profetas Maiores</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="is">Isaías</button>
+            <button class="book-item" data-book="jr">Jeremias</button>
+            <button class="book-item" data-book="lm">Lamentações</button>
+            <button class="book-item" data-book="ez">Ezequiel</button>
+            <button class="book-item" data-book="dn">Daniel</button>
+          </div>
+        </div>
+        <div class="book-category">
+          <h3>Profetas Menores</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="os">Oséias</button>
+            <button class="book-item" data-book="jl">Joel</button>
+            <button class="book-item" data-book="am">Amós</button>
+            <button class="book-item" data-book="ob">Obadias</button>
+            <button class="book-item" data-book="jn">Jonas</button>
+            <button class="book-item" data-book="mq">Miqueias</button>
+            <button class="book-item" data-book="na">Naum</button>
+            <button class="book-item" data-book="hc">Habacuque</button>
+            <button class="book-item" data-book="sf">Sofonias</button>
+            <button class="book-item" data-book="ag">Ageu</button>
+            <button class="book-item" data-book="zc">Zacarias</button>
+            <button class="book-item" data-book="ml">Malaquias</button>
+          </div>
+        </div>
+        
+        <div class="book-category">
+          <h3>Evangelhos</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="mt">Mateus</button>
+            <button class="book-item" data-book="mc">Marcos</button>
+            <button class="book-item" data-book="lc">Lucas</button>
+            <button class="book-item" data-book="jo">João</button>
+          </div>
+        </div>
+        
+        <div class="book-category">
+          <h3>Histórico do NT</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="at">Atos</button>
+          </div>
+        </div>
+        
+        <div class="book-category">
+          <h3>Cartas de Paulo</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="rm">Romanos</button>
+            <button class="book-item" data-book="1co">1 Coríntios</button>
+            <button class="book-item" data-book="2co">2 Coríntios</button>
+            <button class="book-item" data-book="gl">Gálatas</button>
+            <button class="book-item" data-book="ef">Efésios</button>
+            <button class="book-item" data-book="fp">Filipenses</button>
+            <button class="book-item" data-book="cl">Colossenses</button>
+            <button class="book-item" data-book="1ts">1 Tessalonicenses</button>
+            <button class="book-item" data-book="2ts">2 Tessalonicenses</button>
+            <button class="book-item" data-book="1tm">1 Timóteo</button>
+            <button class="book-item" data-book="2tm">2 Timóteo</button>
+            <button class="book-item" data-book="tt">Tito</button>
+            <button class="book-item" data-book="fm">Filemom</button>
+          </div>
+        </div>
+        
+        <div class="book-category">
+          <h3>Cartas Gerais</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="hb">Hebreus</button>
+            <button class="book-item" data-book="tg">Tiago</button>
+            <button class="book-item" data-book="1pe">1 Pedro</button>
+            <button class="book-item" data-book="2pe">2 Pedro</button>
+            <button class="book-item" data-book="1jo">1 João</button>
+            <button class="book-item" data-book="2jo">2 João</button>
+            <button class="book-item" data-book="3jo">3 João</button>
+            <button class="book-item" data-book="jd">Judas</button>
+          </div>
+        </div>
+        
+        <div class="book-category">
+          <h3>Profético</h3>
+          <div class="book-list">
+            <button class="book-item" data-book="ap">Apocalipse</button>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Chapter Dialog -->
-    <div id="chapter-dialog" class="dialog">
-      <div class="dialog-content">
-        <div class="dialog-header">
-          <h2>Select Chapter</h2>
-          <button class="close-button">×</button>
-        </div>
-        <div class="dialog-body">
-          <select id="chapter-select">
-            <option value="Genesis 1">Genesis 1</option>
-            <option value="Exodus 20">Exodus 20</option>
-            <option value="Psalms 23">Psalms 23</option>
-            <option value="Proverbs 31">Proverbs 31</option>
-            <option value="Eclesiastes 5">Eclesiastes 5</option>
-            <option value="Matthew 5">Matthew 5</option>
-            <option value="John 3">John 3</option>
-            <option value="Romans 8">Romans 8</option>
-          </select>
-        </div>
-      </div>
+  <!-- Chapter Dialog -->
+<div id="chapter-dialog" class="dialog">
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h2>Capítulo</h2>
+      <button class="close-button">×</button>
     </div>
+    <div class="dialog-body">
+      <div id="chapter-grid" class="chapter-grid"></div>
+    </div>
+  </div>
+</div>
 
-    <div id="overlay" class="overlay"></div>
+  <!-- Verse Dialog -->
+<div id="verse-dialog" class="dialog">
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h2>Versículo</h2>
+      <button class="close-button">×</button>
+    </div>
+    <div class="dialog-body">
+      <div id="verse-grid" class="verse-grid"></div>
+    </div>
+  </div>
+</div>
 
-    <script src="../js/home.js"></script>
-  </body>
+  <div id="overlay" class="overlay"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <script src="../js/home.js" defer></script>
+</body>
+
 </html>
