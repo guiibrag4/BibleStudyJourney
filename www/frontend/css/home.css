@@ -31,8 +31,8 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Transição suave */
-  opacity: 1;
+  /* transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 1; */
   visibility: visible;
 }
 
@@ -66,7 +66,7 @@ body {
 }
 
 .chapter-selector {
-  width: 150px;
+  width: 200px;
 }
 
 .actions {
@@ -310,15 +310,23 @@ select {
     gap: 8px; /* Reduz o espaçamento entre os elementos */
   }
 
-  .selectors {
-    flex-grow: 1; /* Faz com que os seletores ocupem mais espaço proporcionalmente */
+  /* .selectors {
+    flex-grow: 1;
     gap: 15px;
     margin-left: 10px;
+  } */
+
+  .selectors {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1; /* Permite que os seletores ocupem o espaço disponível */
+    min-width: 0; /* Garante que os seletores não forcem o layout */
   }
 
   .actions {
-    flex-grow: 0; /* Impede que os botões cresçam além do necessário */
-    gap: 10px; /* Reduz o espaçamento entre os botões */
+    display: flex;
+    flex-grow: 0;
+    gap: 10px;
   }
 
   .save-page img {
@@ -331,9 +339,25 @@ select {
     height: 39px;
   }
 
+  .save-page, .font-size-button {
+    flex-shrink: 0; /* Impede que os botões encolham */
+    min-width: 34px; /* Largura mínima para os botões */
+  }
+
   .version-selector, .chapter-selector {
     font-size: 19px;
     height: 33px; 
+    flex-shrink: 1; /* Permite que os botões encolham em telas menores */
+    max-width: 100%; /* Garante que os botões não excedam a largura da tela */
+  }
+
+  .chapter-selector {
+    width: 150px; /* Largura reduzida para dispositivos móveis */
+  }
+
+  .chapter-selector.tessalonicenses {
+    width: 190px; /* Largura maior para caber o nome completo */
+    flex-shrink: 0; /* Impede que o botão encolha */
   }
 }
 
@@ -343,5 +367,55 @@ select {
   align-items: center;
   gap: 10px; /* Espaçamento entre os elementos */
   padding: 0 15px; /* Ajuste no espaçamento interno */
+  flex-wrap: nowrap; /* Impede quebra de linha */
+  overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
 }
+
+/* Telas muitooo pequenas */
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 386px) {
+  .bible-header {
+    flex-wrap: nowrap; /* Impede quebra de linha */
+    gap: 5px; /* Reduz o espaçamento entre os elementos */
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+  }
+
+  .selectors {
+    display: flex;
+    flex-grow: 1; /* Permite que os seletores ocupem o espaço disponível */
+    min-width: 0; /* Garante que os seletores não forcem o layout */
+  }
+
+  .version-selector, .chapter-selector {
+    font-size: 14px; /* Reduz o tamanho da fonte */
+    height: 30px; /* Reduz a altura */
+    flex-shrink: 1; /* Permite que os botões encolham */
+    max-width: 100%; /* Garante que os botões respeitem o espaço disponível */
+    overflow: hidden; /* Esconde o texto que ultrapassa o limite */
+    text-overflow: ellipsis; /* Adiciona reticências ao texto que ultrapassa */
+    white-space: nowrap; /* Impede quebra de linha no texto */
+  }
+
+  .chapter-selector.tessalonicenses {
+    width: auto; /* Ajusta a largura automaticamente */
+    flex-shrink: 1; /* Permite que o botão encolha */
+  }
+
+  .actions {
+    display: flex;
+    gap: 5px; /* Reduz o espaçamento entre os botões */
+    flex-shrink: 0; /* Impede que os botões encolham */
+  }
+
+  .save-page img, .font-size-button img {
+    width: 30px; /* Reduz o tamanho dos ícones */
+    height: 30px;
+  }
+}
+
+
+
+
+
 

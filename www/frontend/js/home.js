@@ -1,7 +1,7 @@
 const API_URL = "https://www.abibliadigital.com.br/api";
 const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHIiOiJXZWQgQXByIDE2IDIwMjUgMTQ6MjU6MjkgR01UKzAwMDAuNjdmZmIwZWI1ZDA2ZjYwMDI4MzczZjlmIiwiaWF0IjoxNzQ0ODEzNTI5fQ.4SyoatsJ2L0lWPalu_2PsOA6-Somv-gDdDHSHR2OyfA";
 
-// Current state
+// Versão atual, livro, capítulo e versículo
 let versaoAtual = "nvi";
 let livroAtual = "";
 let capituloAtual = 1;
@@ -44,6 +44,7 @@ async function loadInitialState() {
 
     // Atualiza o seletor de capítulo com o estado inicial
     chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}:${versoAtual}`;
+    updateChapterSelectorStyle(); // Atualiza o estilo do seletor de capítulo
     await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
   } catch (error) {
     console.error("Erro ao carregar o estado inicial:", error);
@@ -69,11 +70,14 @@ async function saveCurrentState() {
 // Função para capitalizar o nome do livro (opcional, para exibição)
 function capitalizeBookName(book) {
   const bookNames = {
+    // Pentateuco
     gn: "Gênesis",
     ex: "Êxodo",
     lv: "Levítico",
     nm: "Números",
     dt: "Deuteronômio",
+
+    // Livros históricos
     js: "Josué",
     jz: "Juízes",
     rt: "Rute",
@@ -83,36 +87,47 @@ function capitalizeBookName(book) {
     "2rs": "2 Reis",
     "1cr": "1 Crônicas",
     "2cr": "2 Crônicas",
-    ez: "Esdras",
+    ed: "Esdras",
     ne: "Neemias",
-    est: "Ester",
+    et: "Ester",
+
+    // Livros poéticos
     jó: "Jó",
     sl: "Salmos",
     pv: "Provérbios",
     ec: "Eclesiastes",
     ct: "Cantares",
+
     is: "Isaías",
     jr: "Jeremias",
     lm: "Lamentações",
-    ezq: "Ezequiel",
+    ez: "Ezequiel",
     dn: "Daniel",
+
+    // Profetas menores
     os: "Oséias",
-    jo: "Joel",
+    jl: "Joel",
     am: "Amós",
-    abd: "Obadias",
-    jon: "Jonas",
-    mic: "Miquéias",
+    ob: "Obadias",
+    jn: "Jonas",
+    mq: "Miquéias",
     na: "Naum",
     hb: "Habacuque",
     sf: "Sofonias",
     ag: "Ageu",
-    za: "Zacarias",
+    zc: "Zacarias",
     ml: "Malaquias",
+
+    // Evangelhos
     mt: "Mateus",
     mc: "Marcos",
     lc: "Lucas",
     jo: "João",
+
+    // Histórico do Nt   
     at: "Atos",
+
+    //Cartas de Paulo
     rm: "Romanos",
     "1co": "1 Coríntios",
     "2co": "2 Coríntios",
@@ -120,12 +135,14 @@ function capitalizeBookName(book) {
     ef: "Efésios",
     fp: "Filipenses",
     cl: "Colossenses",
-    ts1: "1 Tessalonicenses",
-    ts2: "2 Tessalonicenses",
-    tm1: "1 Timóteo",
-    tm2: "2 Timóteo",
+    "1ts": "1 Tessalonicenses",
+    "2ts": "2 Tessalonicenses",
+    "1tm": "1 Timóteo",
+    "2tm": "2 Timóteo",
     tt: "Tito",
     fl: "Filemom",
+
+    // Outras cartas
     hb: "Hebreus",
     tg: "Tiago",
     "1pe": "1 Pedro",
@@ -134,10 +151,26 @@ function capitalizeBookName(book) {
     "2jo": "2 João",
     "3jo": "3 João",
     jd: "Judas",
+
+    // Escatológico/revelação
     ap: "Apocalipse",
   };
   return bookNames[book] || book;
 }
+
+// Só para aumentar o tamanho da caixa de capítulo para esse livro específico
+function updateChapterSelectorStyle() {
+  if (livroAtual === "1ts" || livroAtual === "2ts") {
+    chapterSelector.classList.add("tessalonicenses"); // Adiciona a classe especial
+  } else {
+    chapterSelector.classList.remove("tessalonicenses"); // Remove a classe especial
+  }
+}
+
+// Chame essa função sempre que o livro for atualizado
+chapterSelector.addEventListener('click', () => {
+  updateChapterSelectorStyle();
+});
 
 
 // Buscar livros pela API
