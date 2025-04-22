@@ -77,12 +77,12 @@ function capitalizeBookName(book) {
     js: "Josué",
     jz: "Juízes",
     rt: "Rute",
-    sm1: "1 Samuel",
-    sm2: "2 Samuel",
-    rs1: "1 Reis",
-    rs2: "2 Reis",
-    cr1: "1 Crônicas",
-    cr2: "2 Crônicas",
+    "1sm": "1 Samuel",
+    "2sm": "2 Samuel",
+    "1rs": "1 Reis",
+    "2rs": "2 Reis",
+    "1cr": "1 Crônicas",
+    "2cr": "2 Crônicas",
     ez: "Esdras",
     ne: "Neemias",
     est: "Ester",
@@ -114,8 +114,8 @@ function capitalizeBookName(book) {
     jo: "João",
     at: "Atos",
     rm: "Romanos",
-    co1: "1 Coríntios",
-    co2: "2 Coríntios",
+    "1co": "1 Coríntios",
+    "2co": "2 Coríntios",
     gl: "Gálatas",
     ef: "Efésios",
     fp: "Filipenses",
@@ -128,14 +128,13 @@ function capitalizeBookName(book) {
     fl: "Filemom",
     hb: "Hebreus",
     tg: "Tiago",
-    pe1: "1 Pedro",
-    pe2: "2 Pedro",
-    jo1: "1 João",
-    jo2: "2 João",
-    jo3: "3 João",
+    "1pe": "1 Pedro",
+    "2pe": "2 Pedro",
+    "1jo": "1 João",
+    "2jo": "2 João",
+    "3jo": "3 João",
     jd: "Judas",
     ap: "Apocalipse",
-    // Adicione outros livros aqui, se necessário
   };
   return bookNames[book] || book;
 }
@@ -252,7 +251,7 @@ function renderBibleContent(verses) {
     const verseElement = document.createElement('p');
     verseElement.id = `verse-${verse.number}`;
     // verseElement.textContent = `${verse.number}. ${verse.text}`;
-    verseElement.innerHTML = `<strong>${verse.number}</strong> ${verse.text}`;
+    verseElement.innerHTML = `<span style="color: blue;">${verse.number}</span> ${verse.text}`;
     bibleContentEl.appendChild(verseElement);
   });
 }
