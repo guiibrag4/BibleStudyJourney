@@ -1,9 +1,9 @@
 const API_URL = "https://www.abibliadigital.com.br/api";
 const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHIiOiJXZWQgQXByIDE2IDIwMjUgMTQ6MjU6MjkgR01UKzAwMDAuNjdmZmIwZWI1ZDA2ZjYwMDI4MzczZjlmIiwiaWF0IjoxNzQ0ODEzNTI5fQ.4SyoatsJ2L0lWPalu_2PsOA6-Somv-gDdDHSHR2OyfA";
 
-// Current state
+// Versão atual, livro, capítulo e versículo
 let versaoAtual = "nvi";
-let livroAtual = "";
+let livroAtual = "Gênesis"; // Gênesis como padrão
 let capituloAtual = 1;
 let versoAtual = 1;
 
@@ -43,7 +43,8 @@ async function loadInitialState() {
     }
 
     // Atualiza o seletor de capítulo com o estado inicial
-    chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}:${versoAtual}`;
+    chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
+    updateChapterSelectorStyle(); // Atualiza o estilo do seletor de capítulo
     await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
   } catch (error) {
     console.error("Erro ao carregar o estado inicial:", error);
@@ -69,15 +70,182 @@ async function saveCurrentState() {
 // Função para capitalizar o nome do livro (opcional, para exibição)
 function capitalizeBookName(book) {
   const bookNames = {
+    // Pentateuco
     gn: "Gênesis",
     ex: "Êxodo",
     lv: "Levítico",
     nm: "Números",
     dt: "Deuteronômio",
-    // Adicione outros livros aqui, se necessário
+
+    // Livros históricos
+    js: "Josué",
+    jz: "Juízes",
+    rt: "Rute",
+    "1sm": "1 Samuel",
+    "2sm": "2 Samuel",
+    "1rs": "1 Reis",
+    "2rs": "2 Reis",
+    "1cr": "1 Crônicas",
+    "2cr": "2 Crônicas",
+    ed: "Esdras",
+    ne: "Neemias",
+    et: "Ester",
+
+    // Livros poéticos
+    jó: "Jó",
+    sl: "Salmos",
+    pv: "Provérbios",
+    ec: "Eclesiastes",
+    ct: "Cantares",
+
+    is: "Isaías",
+    jr: "Jeremias",
+    lm: "Lamentações",
+    ez: "Ezequiel",
+    dn: "Daniel",
+
+    // Profetas menores
+    os: "Oséias",
+    jl: "Joel",
+    am: "Amós",
+    ob: "Obadias",
+    jn: "Jonas",
+    mq: "Miquéias",
+    na: "Naum",
+    hb: "Habacuque",
+    sf: "Sofonias",
+    ag: "Ageu",
+    zc: "Zacarias",
+    ml: "Malaquias",
+
+    // Evangelhos
+    mt: "Mateus",
+    mc: "Marcos",
+    lc: "Lucas",
+    jo: "João",
+
+    // Histórico do Nt   
+    at: "Atos",
+
+    //Cartas de Paulo
+    rm: "Romanos",
+    "1co": "1 Coríntios",
+    "2co": "2 Coríntios",
+    gl: "Gálatas",
+    ef: "Efésios",
+    fp: "Filipenses",
+    cl: "Colossenses",
+    "1ts": "1 Tessalonicenses",
+    "2ts": "2 Tessalonicenses",
+    "1tm": "1 Timóteo",
+    "2tm": "2 Timóteo",
+    tt: "Tito",
+    fl: "Filemom",
+
+    // Outras cartas
+    hb: "Hebreus",
+    tg: "Tiago",
+    "1pe": "1 Pedro",
+    "2pe": "2 Pedro",
+    "1jo": "1 João",
+    "2jo": "2 João",
+    "3jo": "3 João",
+    jd: "Judas",
+
+    // Escatológico/revelação
+    ap: "Apocalipse",
   };
   return bookNames[book] || book;
 }
+
+// Atualiza o texto do chapter-selector
+function updateChapterSelector() {
+  chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
+}
+
+// Atualiza o texto do version-selector
+function updateVersionSelector() {
+  versionSelector.textContent = versaoAtual.toUpperCase();
+}
+
+// Adiciona evento para atualizar a versão ao selecionar uma nova
+if (versionSelect) {
+  versionSelect.addEventListener('change', async (event) => {
+    versaoAtual = event.target.value.toLowerCase(); // Atualiza a versão atual
+    updateVersionSelector(); // Atualiza o texto do version-selector
+    await fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Recarrega o conteúdo da Bíblia
+    saveCurrentState(); // Salva o estado atual
+  });
+}
+
+// Adiciona evento para atualizar o livro ao selecionar um novo
+const bookItems = document.querySelectorAll('.book-item');
+if (bookItems.length > 0) {
+  bookItems.forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      livroAtual = event.target.dataset.book; // Atualiza o livro atual
+      capituloAtual = 1; // Reseta para o primeiro capítulo
+      updateChapterSelector(); // Atualiza o texto do chapter-selector
+      await fetchChapters(livroAtual); // Carrega os capítulos do novo livro
+      await fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Recarrega o conteúdo da Bíblia
+      saveCurrentState(); // Salva o estado atual
+    });
+  });
+}
+
+// Adiciona evento para atualizar o capítulo ao selecionar um novo
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('chapter-item')) {
+    capituloAtual = event.target.dataset.chapter; // Atualiza o capítulo atual
+    updateChapterSelector(); // Atualiza o texto do chapter-selector
+    fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Recarrega o conteúdo da Bíblia
+    saveCurrentState(); // Salva o estado atual
+    closeDialog(chapterDialog); // Fecha o diálogo de capítulos
+  }
+});
+
+// Só para aumentar o tamanho da caixa de capítulo para esse livro específico
+function updateChapterSelectorStyle() {
+  if (livroAtual === "1ts" || livroAtual === "2ts") {
+    chapterSelector.classList.add("tessalonicenses"); // Adiciona a classe especial
+  } else {
+    chapterSelector.classList.remove("tessalonicenses"); // Remove a classe especial
+  }
+}
+
+// Função para destacar o versículo selecionado
+function highlightVerse(verseNumber) {
+  const verseElement = document.getElementById(`verse-${verseNumber}`);
+  if (verseElement) {
+    verseElement.classList.add('highlight'); // Adiciona a classe de destaque
+
+    // Adiciona a classe fade-out após um curto atraso
+    setTimeout(() => {
+      verseElement.classList.add('fade-out');
+    }, 1000); // Espera 500ms antes de iniciar o desaparecimento
+
+    // Remove ambas as classes após a transição
+    setTimeout(() => {
+      verseElement.classList.remove('highlight', 'fade-out');
+    }, 1600); // Tempo total da transição (500ms + 800ms)
+  }
+}
+
+// Adiciona eventos de clique para os versículos
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('verse-item')) {
+    versoAtual = event.target.dataset.verse; // Obtém o versículo selecionado
+    scrollToVerse(versoAtual); // Rola para o versículo correspondente
+    highlightVerse(versoAtual); // Destaca o versículo selecionado
+    closeDialog(verseDialog); // Fecha o diálogo de versículos
+    saveCurrentState(); // Salva o estado atual
+  }
+});
+
+// Chame essa função sempre que o livro for atualizado
+chapterSelector.addEventListener('click', () => {
+  updateChapterSelectorStyle();
+});
 
 
 // Buscar livros pela API
@@ -190,7 +358,8 @@ function renderBibleContent(verses) {
   verses.forEach((verse) => {
     const verseElement = document.createElement('p');
     verseElement.id = `verse-${verse.number}`;
-    verseElement.textContent = `${verse.number}. ${verse.text}`;
+    // verseElement.textContent = `${verse.number}. ${verse.text}`;
+    verseElement.innerHTML = `<span style="color: blue;">${verse.number}</span> ${verse.text}`;
     bibleContentEl.appendChild(verseElement);
   });
 }

@@ -31,8 +31,8 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
-  transition: opacity 0.3s ease, visibility 0.3s ease; /* Transição suave */
-  opacity: 1;
+  /* transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 1; */
   visibility: visible;
 }
 
@@ -43,8 +43,8 @@ body {
 
 .selectors {
   display: flex;
-  gap: 14px;
-  flex-wrap: wrap; /* Permite quebra de linha em telas menores */
+  gap: 10px; /* Espaçamento entre os botões */
+  flex-grow: 1; /* Permite que os seletores ocupem mais espaço */
 }
 
 .version-selector, .chapter-selector {
@@ -66,29 +66,27 @@ body {
 }
 
 .chapter-selector {
-  width: 150px;
+  width: 200px;
 }
 
 .actions {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: auto;
-  flex-wrap: wrap; /* Permite quebra de linha em telas menores */
+  gap: 10px; /* Espaçamento entre os botões */
+  flex-shrink: 0; /* Impede que os botões encolham */
 }
 
-.search-button, .menu-button {
+.save-page, .font-size-button {
   background: none;
   border: none;
   cursor: pointer;
 }
 
-.search-button img {
+.save-page img {
   width: 34px;
   height: 34px;
 }
 
-.menu-button img {
+.font-size-button img {
   width: 47px;
   height: 47px;
 }
@@ -100,7 +98,7 @@ body {
 }
 
 .bible-content p {
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.5;
   margin-bottom: 7px;
   color: black;
@@ -224,61 +222,6 @@ select {
   pointer-events: auto;
 }
 
-@media (min-width: 640px) {
-  .dialog-content {
-      padding: 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  .bible-header {
-      flex-wrap: wrap; /* Permite quebra de linha em telas menores */
-      gap: 8px;
-  }
-
-  .selectors {
-      gap: 8px;
-  }
-
-  .actions {
-      gap: 4px;
-  }
-
-  .search-button img, .menu-button img {
-      width: 30px;
-      height: 30px;
-  }
-
-  .version-selector, .chapter-selector {
-      font-size: 13px;
-      height: 35px;
-  }
-
-  .version-selector {
-      width: 65px;
-  }
-
-  .chapter-selector {
-      width: 120px;
-  }
-}
-
-.bible-header {
-  width: 100%;
-  height: 57px;
-  background-color: #575F57;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 0 9px;
-  position: fixed; /* Fixa o cabeçalho no topo */
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-}
-
-
 .bible-header.hidden {
   opacity: 0;
   visibility: hidden;
@@ -353,4 +296,137 @@ select {
 .book-item:active, .chapter-item:active, .verse-item:active {
   background-color: #d0d0d0;
 }
+
+/* Classe para destacar o versículo */
+.highlight {
+  background-color: rgba(193, 255, 164, 0.889);
+  transition: background-color 0.5s ease, opacity 0.5s; /* Transição suave */
+  opacity: 1; /* Opacidade total */
+}
+
+.highlight.fade-out {
+  background-color: transparent; /* Torna o fundo transparente */
+}
+
+@media (min-width: 640px) {
+  .dialog-content {
+      padding: 24px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .bible-header {
+    flex-wrap: wrap; /* Permite quebra de linha para evitar sobreposição */
+    gap: 8px; /* Reduz o espaçamento entre os elementos */
+  }
+
+  /* .selectors {
+    flex-grow: 1;
+    gap: 15px;
+    margin-left: 10px;
+  } */
+
+  .selectors {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1; /* Permite que os seletores ocupem o espaço disponível */
+    min-width: 0; /* Garante que os seletores não forcem o layout */
+  }
+
+  .actions {
+    display: flex;
+    flex-grow: 0;
+    gap: 10px;
+  }
+
+  .save-page img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .font-size-button img {
+    width: 39px;
+    height: 39px;
+  }
+
+  .save-page, .font-size-button {
+    flex-shrink: 0; /* Impede que os botões encolham */
+    min-width: 34px; /* Largura mínima para os botões */
+  }
+
+  .version-selector, .chapter-selector {
+    font-size: 19px;
+    height: 33px; 
+    flex-shrink: 1; /* Permite que os botões encolham em telas menores */
+    max-width: 100%; /* Garante que os botões não excedam a largura da tela */
+  }
+
+  .chapter-selector {
+    width: 150px; /* Largura reduzida para dispositivos móveis */
+  }
+
+  .chapter-selector.tessalonicenses {
+    width: 190px; /* Largura maior para caber o nome completo */
+    flex-shrink: 0; /* Impede que o botão encolha */
+  }
+}
+
+.bible-header {
+  display: flex;
+  justify-content: space-between; /* Distribui os elementos uniformemente */
+  align-items: center;
+  gap: 10px; /* Espaçamento entre os elementos */
+  padding: 0 15px; /* Ajuste no espaçamento interno */
+  flex-wrap: nowrap; /* Impede quebra de linha */
+  overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+}
+
+/* Telas muitooo pequenas */
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 386px) {
+  .bible-header {
+    flex-wrap: nowrap; /* Impede quebra de linha */
+    gap: 5px; /* Reduz o espaçamento entre os elementos */
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites */
+  }
+
+  .selectors {
+    display: flex;
+    flex-grow: 1; /* Permite que os seletores ocupem o espaço disponível */
+    min-width: 0; /* Garante que os seletores não forcem o layout */
+  }
+
+  .version-selector, .chapter-selector {
+    font-size: 14px; /* Reduz o tamanho da fonte */
+    height: 30px; /* Reduz a altura */
+    flex-shrink: 1; /* Permite que os botões encolham */
+    max-width: 100%; /* Garante que os botões respeitem o espaço disponível */
+    overflow: hidden; /* Esconde o texto que ultrapassa o limite */
+    text-overflow: ellipsis; /* Adiciona reticências ao texto que ultrapassa */
+    white-space: nowrap; /* Impede quebra de linha no texto */
+  }
+
+  .chapter-selector.tessalonicenses {
+    width: auto; /* Ajusta a largura automaticamente */
+    flex-shrink: 1; /* Permite que o botão encolha */
+  }
+
+  .actions {
+    display: flex;
+    gap: 5px; /* Reduz o espaçamento entre os botões */
+    flex-shrink: 0; /* Impede que os botões encolham */
+  }
+
+  .save-page img, .font-size-button img {
+    width: 30px; /* Reduz o tamanho dos ícones */
+    height: 30px;
+  }
+}
+
+
+
+
+
 
