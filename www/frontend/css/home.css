@@ -297,6 +297,17 @@ select {
   background-color: #d0d0d0;
 }
 
+/* Classe para destacar o versículo */
+.highlight {
+  background-color: rgba(193, 255, 164, 0.889);
+  transition: background-color 0.5s ease, opacity 0.5s; /* Transição suave */
+  opacity: 1; /* Opacidade total */
+}
+
+.highlight.fade-out {
+  background-color: transparent; /* Torna o fundo transparente */
+}
+
 @media (min-width: 640px) {
   .dialog-content {
       padding: 24px;

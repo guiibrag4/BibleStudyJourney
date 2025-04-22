@@ -3,7 +3,7 @@ const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHIiOiJXZWQgQXByIDE2
 
 // Versão atual, livro, capítulo e versículo
 let versaoAtual = "nvi";
-let livroAtual = "";
+let livroAtual = "Gênesis"; // Gênesis como padrão
 let capituloAtual = 1;
 let versoAtual = 1;
 
@@ -43,7 +43,7 @@ async function loadInitialState() {
     }
 
     // Atualiza o seletor de capítulo com o estado inicial
-    chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}:${versoAtual}`;
+    chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
     updateChapterSelectorStyle(); // Atualiza o estilo do seletor de capítulo
     await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
   } catch (error) {
@@ -158,6 +158,52 @@ function capitalizeBookName(book) {
   return bookNames[book] || book;
 }
 
+// Atualiza o texto do chapter-selector
+function updateChapterSelector() {
+  chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
+}
+
+// Atualiza o texto do version-selector
+function updateVersionSelector() {
+  versionSelector.textContent = versaoAtual.toUpperCase();
+}
+
+// Adiciona evento para atualizar a versão ao selecionar uma nova
+if (versionSelect) {
+  versionSelect.addEventListener('change', async (event) => {
+    versaoAtual = event.target.value.toLowerCase(); // Atualiza a versão atual
+    updateVersionSelector(); // Atualiza o texto do version-selector
+    await fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Recarrega o conteúdo da Bíblia
+    saveCurrentState(); // Salva o estado atual
+  });
+}
+
+// Adiciona evento para atualizar o livro ao selecionar um novo
+const bookItems = document.querySelectorAll('.book-item');
+if (bookItems.length > 0) {
+  bookItems.forEach((button) => {
+    button.addEventListener('click', async (event) => {
+      livroAtual = event.target.dataset.book; // Atualiza o livro atual
+      capituloAtual = 1; // Reseta para o primeiro capítulo
+      updateChapterSelector(); // Atualiza o texto do chapter-selector
+      await fetchChapters(livroAtual); // Carrega os capítulos do novo livro
+      await fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Recarrega o conteúdo da Bíblia
+      saveCurrentState(); // Salva o estado atual
+    });
+  });
+}
+
+// Adiciona evento para atualizar o capítulo ao selecionar um novo
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('chapter-item')) {
+    capituloAtual = event.target.dataset.chapter; // Atualiza o capítulo atual
+    updateChapterSelector(); // Atualiza o texto do chapter-selector
+    fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Recarrega o conteúdo da Bíblia
+    saveCurrentState(); // Salva o estado atual
+    closeDialog(chapterDialog); // Fecha o diálogo de capítulos
+  }
+});
+
 // Só para aumentar o tamanho da caixa de capítulo para esse livro específico
 function updateChapterSelectorStyle() {
   if (livroAtual === "1ts" || livroAtual === "2ts") {
@@ -166,6 +212,35 @@ function updateChapterSelectorStyle() {
     chapterSelector.classList.remove("tessalonicenses"); // Remove a classe especial
   }
 }
+
+// Função para destacar o versículo selecionado
+function highlightVerse(verseNumber) {
+  const verseElement = document.getElementById(`verse-${verseNumber}`);
+  if (verseElement) {
+    verseElement.classList.add('highlight'); // Adiciona a classe de destaque
+
+    // Adiciona a classe fade-out após um curto atraso
+    setTimeout(() => {
+      verseElement.classList.add('fade-out');
+    }, 1000); // Espera 500ms antes de iniciar o desaparecimento
+
+    // Remove ambas as classes após a transição
+    setTimeout(() => {
+      verseElement.classList.remove('highlight', 'fade-out');
+    }, 1600); // Tempo total da transição (500ms + 800ms)
+  }
+}
+
+// Adiciona eventos de clique para os versículos
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('verse-item')) {
+    versoAtual = event.target.dataset.verse; // Obtém o versículo selecionado
+    scrollToVerse(versoAtual); // Rola para o versículo correspondente
+    highlightVerse(versoAtual); // Destaca o versículo selecionado
+    closeDialog(verseDialog); // Fecha o diálogo de versículos
+    saveCurrentState(); // Salva o estado atual
+  }
+});
 
 // Chame essa função sempre que o livro for atualizado
 chapterSelector.addEventListener('click', () => {
