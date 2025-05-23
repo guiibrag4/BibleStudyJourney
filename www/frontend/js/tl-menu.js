@@ -3,6 +3,7 @@ const menuLateral = document.getElementById('menuLateral');
 const menuOverlay = document.getElementById('menuOverlay');
 const closeMenuBtn = document.getElementById('closeMenuBtn');
 const teologiaItem = document.querySelector('.item-teologia');
+const inicioItem = document.querySelector('.item-inicio');
 
 function abrirMenu() {
   menuLateral.classList.add('aberta');
@@ -21,5 +22,11 @@ menuOverlay.addEventListener('click', fecharMenu);
 if (teologiaItem) {
   teologiaItem.addEventListener('click', () => {
     window.location.href = 'tl1-teologia.html';
+  });
+}
+
+if (inicioItem) {
+  inicioItem.addEventListener('click', () => {
+    window.location.href = 'home.html';
   });
 }
