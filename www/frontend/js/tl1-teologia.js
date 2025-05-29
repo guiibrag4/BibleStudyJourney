@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
   topicItems.forEach(function(item) {
     item.addEventListener('click', function() {
       this.classList.toggle('expanded');
-      const chevron = this.querySelector('.chevron-container img');
-      chevron.style.transform = this.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
       const topicName = this.getAttribute('data-topic');
       console.log(`Topic ${topicName} is now ${this.classList.contains('expanded') ? 'expanded' : 'collapsed'}`);
+      
+      
     });
     
     item.setAttribute('tabindex', '0');
@@ -25,4 +25,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
-
