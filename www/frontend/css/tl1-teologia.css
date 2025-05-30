@@ -76,7 +76,7 @@ body {
   height: 1px;
   background-color: #464646;
   box-shadow: 1px 0px 4px 0px rgba(196, 167, 0, 0.25);
-  margin: 0 auto;
+  margin: -5px auto;
 }
 
 .subtitle {
@@ -84,6 +84,7 @@ body {
   font-size: 15px;
   text-align: center;
   margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 /* Topics List Styles */
@@ -162,21 +163,117 @@ body {
   transform: rotate(180deg);
 }
 
+/* Linha divisória moderna entre vídeos */
+.videos-list .video-item:not(:last-child) {
+  border-bottom: 1.5px solid #e0e0e0;
+  margin-bottom: 0px;
+  padding-bottom: 10px;
+}
+
+.videos-list .video-item:first-child {
+  border-top: 1.5px solid #e0e0e0;
+  padding-top: 10px;
+}
+
 /* Responsive adjustments */
-@media (max-width: 480px) {
-  .divider {
-    width: 90%;
+@media (max-width: 900px) {
+  .main-content {
+    padding: 24px 8px;
   }
-  
+  .divider {
+    width: 98%;
+  }
   .header-title {
     font-size: 20px;
-    margin-left: 16px;
-    text-align: center;
+  }
+  .video-title {
+    font-size: 20px;
+  }
+  .video-thumb {
+    width: 110px;
+    height: 70px;
+  }
+  .topic-header {
+    padding: 0 8px;
   }
 }
 
+/* Responsividade para celulares */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px 2px;
+    gap: 6px;
+  }
+  .divider {
+    width: 80%;
+  }
+  .header-title {
+    font-size: 20px;
+    margin-left: 0;
+    text-align: center;
+  }
 
-/* Expansão suave do conteúdo */
+  .bible-icon {
+    margin-top: -5px;
+  }
+
+  .topic-item {
+    width: calc(100% - 40px);
+    padding: 0px 20px;
+    margin: 0 20px 0 20px;
+    min-height: 36px;
+  }
+
+  .session-title {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .topic-title {
+    font-size: 15px;
+    margin-left: 20px;
+    margin-top: 5px;
+  }
+  .topic-header {
+    min-height: 44px;
+    gap: 4px;
+    padding: 7px 10px 0 0 ;
+  }
+  
+  .icon-container, .topic-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 0px;
+  }
+  .chevron-container img {
+    width: 18px;
+    height: 18px;
+    padding: 0 0 0 5px;
+  }
+  .videos-list {
+    padding: 0 4px 6px 20px;
+    gap: 6px;
+  }
+  .video-item {
+    padding: 4px 4px;
+  }
+  .videos-list .video-thumb {
+    width: 75px;
+    height: 45px;
+    margin-right: 6px;
+  }
+  .videos-list .video-title {
+    font-size: 16px;
+  }
+
+  .topic-item.expanded .videos-list {
+    max-height: 300px !important;
+    margin-top: 5px;
+    overflow-y: auto;
+  }
+}
+
 .videos-list {
   width: 100%;
   overflow: hidden;
@@ -185,13 +282,12 @@ body {
   flex-direction: column;
   gap: 12px;
   margin-top: 0;
-  padding: 0 15px 10px 15px;
+  padding: 0 15px 10px 0px;
   transition: max-height 0.3s cubic-bezier(.4,0,.2,1), margin-top 0.3s;
   opacity: 0;
   pointer-events: none;
 }
 
-/* Mostra quando o tópico está expandido */
 .topic-item.expanded .videos-list {
   max-height: 500px;
   margin-top: 12px;
