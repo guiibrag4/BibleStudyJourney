@@ -33,7 +33,7 @@ body {
 
 .header-title {
   color: white;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   flex: 1;
   text-align: center;
@@ -72,7 +72,7 @@ body {
 }
 
 .divider {
-  width: 333px;
+  width: 60%;
   height: 1px;
   background-color: #464646;
   box-shadow: 1px 0px 4px 0px rgba(196, 167, 0, 0.25);
@@ -81,7 +81,7 @@ body {
 
 .subtitle {
   color: black;
-  font-size: 15px;
+  font-size: 18px;
   text-align: center;
   margin-top: 10px;
   margin-bottom: 20px;
@@ -107,7 +107,7 @@ body {
   position: relative;
   transition: box-shadow 0.3s;
   margin-bottom: 8px;
-  padding: 0;
+  padding: 0px 20px;
   min-height: 59px;
 }
 
@@ -116,7 +116,7 @@ body {
   align-items: center;
   justify-content: space-between;
   min-height: 59px;
-  padding: 0 15px;
+  padding: 0 0;
   gap: 10px;
   width: 100%;
 }
@@ -177,7 +177,7 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
-  .main-content {
+  /* .main-content {
     padding: 24px 8px;
   }
   .divider {
@@ -190,11 +190,84 @@ body {
     font-size: 20px;
   }
   .video-thumb {
-    width: 110px;
-    height: 70px;
+    width: 70px;
+    height: 35px;
   }
   .topic-header {
     padding: 0 8px;
+  } */
+
+    .main-content {
+    padding: 12px 2px;
+    gap: 6px;
+  }
+  .divider {
+    width: 80%;
+  }
+  .header-title {
+    font-size: 20px;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .bible-icon {
+    margin-top: -5px;
+  }
+
+  .topic-item {
+    width: calc(100% - 40px);
+    padding: 0px 20px;
+    margin: 0 20px 0 20px;
+    min-height: 36px;
+  }
+
+  .session-title {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .topic-title {
+    font-size: 15px;
+    margin-left: 20px;
+    margin-top: 5px;
+  }
+  .topic-header {
+    min-height: 44px;
+    gap: 4px;
+    padding: 7px 10px 0 0 ;
+  }
+  
+  .icon-container, .topic-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 0px;
+  }
+  .chevron-container img {
+    width: 22px;
+    height: 22px;
+    padding: 0 0 0 0;
+  }
+  .videos-list {
+    padding: 0 4px 6px 20px;
+    gap: 6px;
+  }
+  .video-item {
+    padding: 4px 4px;
+  }
+  .videos-list .video-thumb {
+    width: 75px;
+    height: 45px;
+    margin-right: 6px;
+  }
+  .videos-list .video-title {
+    font-size: 16px;
+  }
+
+  .topic-item.expanded .videos-list {
+    max-height: 300px !important;
+    margin-top: 5px;
+    overflow-y: auto;
   }
 }
 
@@ -247,9 +320,9 @@ body {
     margin-right: 0px;
   }
   .chevron-container img {
-    width: 18px;
-    height: 18px;
-    padding: 0 0 0 5px;
+    width: 22px;
+    height: 22px;
+    padding: 0 0 0 0;
   }
   .videos-list {
     padding: 0 4px 6px 20px;
@@ -325,7 +398,7 @@ body {
 
 .video-title {
   flex: 1;
-  font-size: 30px;
+  font-size: 20px;
   color: #222;
 }
 
