@@ -101,6 +101,7 @@ body {
   flex-direction: column;
   width: 100%;
   background-color: white;
+  padding: 0 15px;
   border-radius: 5px;
   border: 2px solid #383838;
   cursor: pointer;
@@ -149,9 +150,6 @@ body {
 }
 
 .chevron-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-left: auto;
 }
 
