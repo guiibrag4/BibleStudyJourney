@@ -177,26 +177,6 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 900px) {
-  /* .main-content {
-    padding: 24px 8px;
-  }
-  .divider {
-    width: 98%;
-  }
-  .header-title {
-    font-size: 20px;
-  }
-  .video-title {
-    font-size: 20px;
-  }
-  .video-thumb {
-    width: 70px;
-    height: 35px;
-  }
-  .topic-header {
-    padding: 0 8px;
-  } */
-
     .main-content {
     padding: 12px 2px;
     gap: 6px;
@@ -332,12 +312,12 @@ body {
     padding: 4px 4px;
   }
   .videos-list .video-thumb {
-    width: 75px;
-    height: 45px;
+    width: 100px;
+    height: 65px;
     margin-right: 6px;
   }
   .videos-list .video-title {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .topic-item.expanded .videos-list {
@@ -404,4 +384,34 @@ body {
 
 .video-checkbox {
   margin-left: 10px;
+}
+
+/* Mensagem de em breve */
+
+.coming-soon-container {
+  display: flex;
+  flex-direction: column; /* Empilha o texto principal e o subtexto */
+  align-items: center; /* Centraliza horizontalmente */
+  justify-content: center; /* Centraliza verticalmente */
+  text-align: center; /* Garante que o texto dentro esteja centralizado */
+  padding: 20px 15px; /* Espaçamento interno */
+  margin-top: 10px; /* Espaço acima da mensagem, se houver outros itens */
+  background-color: #f0f0f0; /* Um fundo suave para destacar */
+  border-radius: 8px; /* Bordas arredondadas */
+  border: 1px dashed #ccc; /* Uma borda tracejada sutil */
+  width: 100%; /* Ocupa a largura disponível dentro do videos-list */
+  box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+}
+
+.coming-soon-text {
+  font-size: 22px; /* Tamanho de fonte maior para o texto principal */
+  font-weight: 600; /* Negrito */
+  color: #333; /* Cor escura para boa legibilidade */
+  margin-bottom: 8px; /* Espaço entre o texto principal e o subtexto */
+}
+
+.coming-soon-subtext {
+  font-size: 14px; /* Tamanho de fonte menor para o subtexto */
+  color: #555; /* Cor um pouco mais clara */
+  line-height: 1.5; /* Melhor espaçamento entre linhas para o subtexto */
 }
