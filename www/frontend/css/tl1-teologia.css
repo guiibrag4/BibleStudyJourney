@@ -33,7 +33,7 @@ body {
 
 .header-title {
   color: white;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 600;
   flex: 1;
   text-align: center;
@@ -72,18 +72,19 @@ body {
 }
 
 .divider {
-  width: 333px;
+  width: 60%;
   height: 1px;
   background-color: #464646;
   box-shadow: 1px 0px 4px 0px rgba(196, 167, 0, 0.25);
-  margin: 0 auto;
+  margin: -5px auto;
 }
 
 .subtitle {
   color: black;
-  font-size: 15px;
+  font-size: 18px;
   text-align: center;
   margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 /* Topics List Styles */
@@ -94,24 +95,40 @@ body {
   margin-top: 20px;
 }
 
+
 .topic-item {
-  width: 100%;
-  height: 59px;
-  background-color: white;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  background-color: white;
   padding: 0 15px;
   border-radius: 5px;
   border: 2px solid #383838;
   cursor: pointer;
   position: relative;
+  transition: box-shadow 0.3s;
+  margin-bottom: 8px;
+  padding: 0px 20px;
+  min-height: 59px;
+}
+
+.topic-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 59px;
+  padding: 0 0;
+  gap: 10px;
+  width: 100%;
 }
 
 .icon-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  width: 41px;
+  height: 41px;
+  margin-right: 10px;
 }
 
 .topic-icon {
@@ -120,9 +137,11 @@ body {
 }
 
 .topic-title {
+  flex: 1;
   color: black;
   font-size: 20px;
-  margin-left: 26px;
+  text-align: left;
+  margin-left: 10px;
   font-weight: normal;
 }
 
@@ -134,23 +153,263 @@ body {
   margin-left: auto;
 }
 
-.chevron-container svg {
+.chevron-container img {
   transition: transform 0.3s;
 }
 
-.topic-item.expanded .chevron-container svg {
+.topic-item.expanded .chevron-container img {
   transform: rotate(180deg);
 }
 
+/* Linha divisória moderna entre vídeos */
+.videos-list .video-item:not(:last-child) {
+  border-bottom: 1.5px solid #e0e0e0;
+  margin-bottom: 0px;
+  padding-bottom: 10px;
+}
+
+.videos-list .video-item:first-child {
+  border-top: 1.5px solid #e0e0e0;
+  padding-top: 10px;
+}
+
 /* Responsive adjustments */
-@media (max-width: 480px) {
-  .divider {
-    width: 90%;
+@media (max-width: 900px) {
+    .main-content {
+    padding: 12px 2px;
+    gap: 6px;
   }
-  
+  .divider {
+    width: 80%;
+  }
   .header-title {
     font-size: 20px;
-    margin-left: 16px;
+    margin-left: 0;
     text-align: center;
   }
+
+  .bible-icon {
+    margin-top: -5px;
+  }
+
+  .topic-item {
+    width: calc(100% - 40px);
+    padding: 0px 20px;
+    margin: 0 20px 0 20px;
+    min-height: 36px;
+  }
+
+  .session-title {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .topic-title {
+    font-size: 15px;
+    margin-left: 20px;
+    margin-top: 5px;
+  }
+  .topic-header {
+    min-height: 44px;
+    gap: 4px;
+    padding: 7px 10px 0 0 ;
+  }
+  
+  .icon-container, .topic-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 0px;
+  }
+  .chevron-container img {
+    width: 22px;
+    height: 22px;
+    padding: 0 0 0 0;
+  }
+  .videos-list {
+    padding: 0 4px 6px 20px;
+    gap: 6px;
+  }
+  .video-item {
+    padding: 4px 4px;
+  }
+  .videos-list .video-thumb {
+    width: 75px;
+    height: 45px;
+    margin-right: 6px;
+  }
+  .videos-list .video-title {
+    font-size: 16px;
+  }
+
+  .topic-item.expanded .videos-list {
+    max-height: 300px !important;
+    margin-top: 5px;
+    overflow-y: auto;
+  }
+}
+
+/* Responsividade para celulares */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px 2px;
+    gap: 6px;
+  }
+  .divider {
+    width: 80%;
+  }
+  .header-title {
+    font-size: 20px;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .bible-icon {
+    margin-top: -5px;
+  }
+
+  .topic-item {
+    width: calc(100% - 40px);
+    padding: 0px 20px;
+    margin: 0 20px 0 20px;
+    min-height: 36px;
+  }
+
+  .session-title {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 16px;
+  }
+  .topic-title {
+    font-size: 15px;
+    margin-left: 20px;
+    margin-top: 5px;
+  }
+  .topic-header {
+    min-height: 44px;
+    gap: 4px;
+    padding: 7px 10px 0 0 ;
+  }
+  
+  .icon-container, .topic-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 0px;
+  }
+  .chevron-container img {
+    width: 22px;
+    height: 22px;
+    padding: 0 0 0 0;
+  }
+  .videos-list {
+    padding: 0 4px 6px 20px;
+    gap: 6px;
+  }
+  .video-item {
+    padding: 4px 4px;
+  }
+  .videos-list .video-thumb {
+    width: 100px;
+    height: 65px;
+    margin-right: 6px;
+  }
+  .videos-list .video-title {
+    font-size: 14px;
+  }
+
+  .topic-item.expanded .videos-list {
+    max-height: 300px !important;
+    margin-top: 5px;
+    overflow-y: auto;
+  }
+}
+
+.videos-list {
+  width: 100%;
+  overflow: hidden;
+  max-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 0;
+  padding: 0 15px 10px 0px;
+  transition: max-height 0.3s cubic-bezier(.4,0,.2,1), margin-top 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.topic-item.expanded .videos-list {
+  max-height: 500px;
+  margin-top: 12px;
+  overflow-y: auto;
+  opacity: 1;
+  pointer-events: auto ;
+}
+
+/* Permite que o topic-item se expanda suavemente */
+.topic-item {
+  transition: all 0.3s ease-in-out;
+}
+
+.topic-item.expanded {
+  height: auto; /* Ajusta para permitir expansão dinâmica */
+}
+
+.video-item {
+  display: flex;
+  align-items: center;
+  background: #f8f8f8;
+  border-radius: 6px;
+  padding: 6px 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
+}
+
+.video-thumb {
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 12px;
+}
+
+.video-title {
+  flex: 1;
+  font-size: 20px;
+  color: #222;
+}
+
+.video-checkbox {
+  margin-left: 10px;
+}
+
+/* Mensagem de em breve */
+
+.coming-soon-container {
+  display: flex;
+  flex-direction: column; /* Empilha o texto principal e o subtexto */
+  align-items: center; /* Centraliza horizontalmente */
+  justify-content: center; /* Centraliza verticalmente */
+  text-align: center; /* Garante que o texto dentro esteja centralizado */
+  padding: 20px 15px; /* Espaçamento interno */
+  margin-top: 10px; /* Espaço acima da mensagem, se houver outros itens */
+  background-color: #f0f0f0; /* Um fundo suave para destacar */
+  border-radius: 8px; /* Bordas arredondadas */
+  border: 1px dashed #ccc; /* Uma borda tracejada sutil */
+  width: 100%; /* Ocupa a largura disponível dentro do videos-list */
+  box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+}
+
+.coming-soon-text {
+  font-size: 22px; /* Tamanho de fonte maior para o texto principal */
+  font-weight: 600; /* Negrito */
+  color: #333; /* Cor escura para boa legibilidade */
+  margin-bottom: 8px; /* Espaço entre o texto principal e o subtexto */
+}
+
+.coming-soon-subtext {
+  font-size: 14px; /* Tamanho de fonte menor para o subtexto */
+  color: #555; /* Cor um pouco mais clara */
+  line-height: 1.5; /* Melhor espaçamento entre linhas para o subtexto */
 }
