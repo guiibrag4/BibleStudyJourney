@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
         header.click();
       }
     });
-
     // Adicionar event listeners para os vídeos DENTRO de cada topic-item
     const videoItems = item.querySelectorAll('.video-item');
     videoItems.forEach(videoEl => { // Renomeei para videoEl para clareza
