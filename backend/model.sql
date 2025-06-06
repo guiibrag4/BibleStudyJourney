@@ -9,9 +9,9 @@ CREATE TABLE usuario (
     ultimo_login TIMESTAMP WITH TIME ZONE
 )
 
-CREATE TABLE app_biblia.PaginasSalvas (
+CREATE TABLE app_biblia.paginasalva (
     id_pagina_salva SERIAL PRIMARY KEY,
-    id_usuario INTEGER REFERENCES app_biblia.Usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER REFERENCES app_biblia.Usuario(id_usuario) NOT NULL,
     livro_abreviacao VARCHAR(5) NOT NULL,
     capitulo INTEGER NOT NULL,
     versao_biblia VARCHAR(10) NOT NULL,
@@ -19,9 +19,9 @@ CREATE TABLE app_biblia.PaginasSalvas (
     UNIQUE (id_usuario, livro_abreviacao, capitulo, versao_biblia)
 );
 
-CREATE TABLE app_biblia.Grifos (
+CREATE TABLE app_biblia.grifado (
     id_grifo SERIAL PRIMARY KEY,
-    id_usuario INTEGER REFERENCES app_biblia.Usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER REFERENCES app_biblia.Usuario(id_usuario) NOT NULL,
     livro_abreviacao VARCHAR(5) NOT NULL,
     capitulo INTEGER NOT NULL,
     versiculo_numero INTEGER NOT NULL,
@@ -32,9 +32,9 @@ CREATE TABLE app_biblia.Grifos (
     UNIQUE (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia, cor_grifo) -- Considera a cor para permitir grifos diferentes no mesmo versículo
 );
 
-CREATE TABLE app_biblia.Anotacoes (
+CREATE TABLE app_biblia.anotacoes (
     id_anotacao SERIAL PRIMARY KEY,
-    id_usuario INTEGER REFERENCES app_biblia.Usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER REFERENCES app_biblia.Usuario(id_usuario) NOT NULL,
     livro_abreviacao VARCHAR(5) NOT NULL,
     capitulo INTEGER NOT NULL,
     versiculo_numero INTEGER NOT NULL,
