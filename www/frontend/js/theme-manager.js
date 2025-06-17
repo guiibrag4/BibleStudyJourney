@@ -30,5 +30,8 @@ const themeManager = {
     }
 };
 
+// Anexa ao objeto window para ser acessível globalmente
+window.themeManager = themeManager;
+
 // Inicializa o tema assim que o script for carregado
-themeManager.init();
+window.themeManager.init();
