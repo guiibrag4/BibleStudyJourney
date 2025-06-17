@@ -43,14 +43,6 @@ async function handleLogin(event) {
         } else {
             alert(data.error); // Exibir mensagem de erro do backend
         }
-
-        // Dentro do if (response.ok) no seu login.js
-        if (response.ok) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('isPremium', 'true');
-
-            window.location.href = '/frontend/html/home.html';
-        }
     } catch (err) {
         console.error('Erro ao fazer login:', err);
         alert('Erro ao conectar ao servidor. Tente novamente mais tarde.');
