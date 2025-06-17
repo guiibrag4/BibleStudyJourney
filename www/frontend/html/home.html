@@ -7,6 +7,8 @@
   <title>Bible Reader</title>
   <link rel="stylesheet" href="../css/home.css" />
   <link rel="stylesheet" href="../css/tl-menu.css" />
+  <link rel="stylesheet" href="../css/themes.css" />
+
 </head>
 
 <body>
@@ -247,10 +249,27 @@
   </div>
 </div>
 
+ <div id="theme-modal" class="dialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Escolha um Tema</h2>
+        <button id="close-theme-modal" class="close-button">×</button>
+      </div>
+      <div class="dialog-body" id="theme-options">
+        <button class="theme-option-btn" data-theme="light-mode">Claro</button>
+        <button class="theme-option-btn" data-theme="dark-mode">Escuro</button>
+        <button class="theme-option-btn" data-theme="sepia-mode">Sépia</button>
+      </div>
+    </div>
+  </div>
+
   <div id="overlay" class="overlay"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+
   <script src="../js/home.js" defer></script>
+  <script src="../js/theme-manager.js" defer></script> <script src="../js/home.js" defer></script>
   <script src="../js/tl-menu.js" defer></script>
 </body>
 
