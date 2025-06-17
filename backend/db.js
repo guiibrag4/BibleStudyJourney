@@ -1,16 +1,26 @@
 const { Pool } = require('pg');
-const dotenv = require('dotenv');
-dotenv.config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
-require('dotenv').config({ path: __dirname + '/.env' });
+const connectionString = process.env.SUPABASE_DATABASE_URL;
+
+// Verifica se a connectionString foi carregada antes de criar o Pool
+if (!connectionString) {
+  console.error("❌ Erro Fatal: A variável SUPABASE_DATABASE_URL não foi encontrada no arquivo .env");
+  process.exit(1); // Encerra a aplicação se o banco não pode ser conectado
+}
 
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASS,
-  port: parseInt(process.env.DB_PORT),
+  connectionString: connectionString,
 });
+
+// const pool = new Pool({
+//   user: process.env.DB_USER,
+//   host: process.env.DB_HOST,
+//   database: process.env.DB_NAME,
+//   password: process.env.DB_PASS,
+//   port: parseInt(process.env.DB_PORT),
+// });
 
 pool.connect()
   .then(() => console.log("📡 Conectado ao PostgreSQL!"))
