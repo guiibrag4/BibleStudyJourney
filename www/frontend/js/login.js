@@ -3,7 +3,7 @@ document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
     // Cordova está pronto e pode-se usar recursos do dispositivo
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
-    
+
     // Iniciar ações após o Cordova estar pronto
     initApp();
 }
@@ -43,6 +43,14 @@ async function handleLogin(event) {
         } else {
             alert(data.error); // Exibir mensagem de erro do backend
         }
+
+        // Dentro do if (response.ok) no seu login.js
+        if (response.ok) {
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('isPremium', 'true');
+
+            window.location.href = '/frontend/html/home.html';
+        }
     } catch (err) {
         console.error('Erro ao fazer login:', err);
         alert('Erro ao conectar ao servidor. Tente novamente mais tarde.');
@@ -50,7 +58,7 @@ async function handleLogin(event) {
 }
 
 function handleGoogleLogin() {
-    console.log('Google login clicked');  
+    console.log('Google login clicked');
     // Aqui você pode implementar a lógica de login com Google
     // Por exemplo:
     // googleAuth.signIn();
@@ -60,7 +68,7 @@ function handleGoogleLogin() {
 // podemos simular o evento 'deviceready'
 if (window.cordova === undefined) {
     console.log('Running in browser, simulating deviceready event');
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         onDeviceReady();
     });
 }
