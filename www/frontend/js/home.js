@@ -452,3 +452,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   await loadInitialState(); // Carrega o estado inicial
 });
+
+// ... todo o código existente de home.js ...
+
+// ---- LÓGICA DE SELEÇÃO DE TEMA ----
+document.addEventListener('DOMContentLoaded', () => {
+    const themeOptions = document.getElementById('theme-options');
+    if (themeOptions) {
+        themeOptions.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.classList.contains('theme-option-btn')) {
+                const selectedTheme = target.dataset.theme;
+
+                // Usa o themeManager para aplicar e salvar
+                if (window.themeManager) {
+                    window.themeManager.applyTheme(selectedTheme);
+                    window.themeManager.saveTheme(selectedTheme);
+                }
+
+                // Fecha o modal
+                const themeModal = document.getElementById('theme-modal');
+                const menuOverlay = document.getElementById('menuOverlay');
+                if (themeModal) themeModal.classList.remove('open');
+                if (menuOverlay) menuOverlay.classList.remove('ativa');
+            }
+        });
+    }
+});

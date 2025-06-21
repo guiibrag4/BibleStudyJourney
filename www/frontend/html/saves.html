@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salvos - Bible Study Journey</title>
+    <link rel="stylesheet" href="../css/tl2-teologia.css">
+    <link rel="stylesheet" href="../css/saves.css">
+    <link rel="stylesheet" href="../css/themes.css">
+</head>
+
+<body>
+    <header class="video-page-header saves-header">
+        <button class="back-button" onclick="window.history.back()">
+            <img src="../img/setinhaVoltando.svg" alt="Ícone voltar" class="back-icon" /> Voltar
+        </button>
+    </header>
+
+    <nav class="saves-menu" role="tablist">
+        <button class="menu-btn active" data-tab="versiculos" role="tab" aria-selected="true">Versículos</button>
+        <button class="menu-btn" data-tab="capitulos" role="tab" aria-selected="false">Capítulos</button>
+        <button class="menu-btn" data-tab="notas" role="tab" aria-selected="false">Notas</button>
+    </nav>
+
+    <main class="saves-content">
+        <!-- Versículos -->
+        <!-- Apenas o trecho dos versículos, ajuste os outros conforme necessário -->
+        <section class="saves-tab versiculos-tab active" role="tabpanel">
+            <div class="versiculo-card" tabindex="0">
+                <div class="versiculo-info">Você destacou <b>João 3.16</b></div>
+                <div class="versiculo-text">
+                    "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito..."
+                </div>
+                <button class="delete-btn" title="Excluir versículo">🗑️</button>
+            </div>
+            <div class="versiculo-card" tabindex="0">
+                <div class="versiculo-info">Você destacou <b>Salmo 23.1</b></div>
+                <div class="versiculo-text">
+                    "O Senhor é meu pastor, nada me faltará..."
+                </div>
+                <button class="delete-btn" title="Excluir versículo">🗑️</button>
+            </div>
+            <!-- Mais cards... -->
+        </section>
+
+        <!-- Capítulos -->
+        <section class="saves-tab capitulos-tab" role="tabpanel">
+            <div class="capitulo-card">
+                <span class="capitulo-info">Gênesis 1</span>
+                <button class="delete-btn" title="Excluir capítulo">🗑️</button>
+            </div>
+            <div class="capitulo-card">
+                <span class="capitulo-info">Mateus 5</span>
+                <button class="delete-btn" title="Excluir capítulo">🗑️</button>
+            </div>
+            <!-- Mais cards... -->
+        </section>
+
+        <!-- Notas -->
+        <section class="saves-tab notas-tab" role="tabpanel">
+            <div class="nota-card">
+                <div class="nota-info">Você fez uma anotação em <b>Romanos 8.28</b></div>
+                <div class="nota-text">Todas as coisas cooperam para o bem daqueles que amam a Deus...</div>
+                <button class="delete-btn" title="Excluir anotação">🗑️</button>
+            </div>
+            <div class="nota-card">
+                <div class="nota-info">Você fez uma anotação em <b>Salmo 91.1</b></div>
+                <div class="nota-text">Aquele que habita no esconderijo do Altíssimo...</div>
+                <button class="delete-btn" title="Excluir anotação">🗑️</button>
+            </div>
+            <!-- Mais cards... -->
+        </section>
+    </main>
+
+   <!-- Modal para exibir conteúdo completo -->
+<div id="fullscreen-modal" class="fullscreen-modal" style="display:none;">
+    <header class="video-page-header saves-header">
+        <button class="back-button" id="close-modal-btn">
+            <img src="../img/setinhaVoltando.svg" alt="Ícone voltar" class="back-icon" /> Voltar
+        </button>
+    </header>
+    <div class="modal-content">
+        <div id="modal-info" class="modal-info"></div>
+        <div id="modal-text" class="modal-text"></div>
+    </div>
+</div>
+
+<script>
+    // Troca de abas
+    document.querySelectorAll('.menu-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.menu-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            this.classList.add('active');
+            this.setAttribute('aria-selected', 'true');
+            document.querySelectorAll('.saves-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector('.' + this.dataset.tab + '-tab').classList.add('active');
+        });
+    });
+
+    // Modal fullscreen para versículo e nota
+    function openModal(info, text) {
+        document.getElementById('modal-info').innerHTML = info;
+        document.getElementById('modal-text').innerHTML = text;
+        document.getElementById('fullscreen-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('fullscreen-modal').style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    document.getElementById('close-modal-btn').onclick = closeModal;
+
+    // Versículo: abrir modal ao clicar
+    document.querySelectorAll('.versiculo-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            if (e.target.classList.contains('delete-btn')) return;
+            const info = this.querySelector('.versiculo-info').outerHTML;
+            const text = this.querySelector('.versiculo-text').outerHTML;
+            openModal(info, text);
+        });
+        card.addEventListener('keydown', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.target.classList.contains('delete-btn')) {
+                const info = this.querySelector('.versiculo-info').outerHTML;
+                const text = this.querySelector('.versiculo-text').outerHTML;
+                openModal(info, text);
+            }
+        });
+    });
+
+    // Notas: abrir modal ao clicar
+    document.querySelectorAll('.nota-card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            if (e.target.classList.contains('delete-btn')) return;
+            const info = this.querySelector('.nota-info').outerHTML;
+            const text = this.querySelector('.nota-text').outerHTML;
+            openModal(info, text);
+        });
+        card.addEventListener('keydown', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && !e.target.classList.contains('delete-btn')) {
+                const info = this.querySelector('.nota-info').outerHTML;
+                const text = this.querySelector('.nota-text').outerHTML;
+                openModal(info, text);
+            }
+        });
+    });
+</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <script src="../js/theme-manager.js" defer></script>
+
+    <!-- Modal para exibir conteúdo completo -->
+</body>
+
+</html>

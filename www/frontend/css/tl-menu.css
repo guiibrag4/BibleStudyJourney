@@ -71,6 +71,7 @@ body {
   gap: 5px;
   font-size: 30px;
   margin-bottom: -10px;
+  margin-right: 20px;
 }
 
 .menu-topo .logo-center {
@@ -91,6 +92,7 @@ body {
   display: block;
   margin-top: 0px;
   letter-spacing: 1px;
+  margin-right: 22px;
 }
 
 /* Deixa o restante do menu em negrito forte */

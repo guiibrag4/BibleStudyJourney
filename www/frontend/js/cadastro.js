@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
             successContainer.style.display = 'flex';
             
             setTimeout(() => {
-              window.location.href = '/login.html';
+              window.location.href = '/index.html';
             }, 3000);
 
           } else {
