@@ -24,15 +24,15 @@ body.dark-mode {
 }
 
 body.sepia-mode {
-  --cor-fundo-principal: #f4e8d5;
-  --cor-fundo-secundario: #f9f2e7;
+  --cor-fundo-principal: #f3ecd7;
+  --cor-fundo-secundario: #f5e9d6;
   --cor-texto-principal: #5b4636;
   --cor-texto-secundario: #8a6d53;
-  --cor-header: #5a4a3a;
+  --cor-header: #283A50; /* Mantém azul original */
   --cor-texto-header: #f4e8d5;
   --cor-borda: #dcd0b9;
   --cor-destaque: #8a6d53;
-  --cor-fundo-card: #faf5ed;
+  --cor-fundo-card: #f6efe3;
 }
 
 /* Aplica as variáveis aos elementos da UI */
@@ -90,4 +90,30 @@ body {
 .theme-option-btn:hover {
     transform: scale(1.03);
     border-color: var(--cor-destaque);
+}
+
+/* Ícones do menu lateral brancos no modo escuro */
+body.dark-mode .menu-itens img {
+    filter: brightness(0) invert(0.75);
+}
+
+/* Containers de vídeos escuros no modo dark */
+body.dark-mode .videos-list,
+body.dark-mode .video-item {
+    background-color: var(--cor-fundo-secundario) !important;
+    color: var(--cor-texto-principal) !important;
+}
+
+/* Menu lateral: texto e ícones menos agressivos no dark */
+body.dark-mode .menu-itens li,
+body.dark-mode .menu-itens li * {
+  color: #e0e0e0 !important;
+}
+
+/* Garante contraste para títulos e textos dos vídeos */
+body.dark-mode .video-title,
+body.dark-mode .video-item span,
+body.dark-mode .videos-list .coming-soon-text,
+body.dark-mode .videos-list .coming-soon-subtext {
+  color: #e0e0e0 !important;
 }
