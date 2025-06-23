@@ -1,6 +1,6 @@
 const API_CONFIG = {
     development: "http://localhost:3000", // URL do seu backend local
-    production: "https://biblestudyjourney.onrender.com" // Substitua pela URL do seu servidor Render
+    production: "https://" // Substitua pela URL do seu servidor Render
 };
 
 // Detecta se o aplicativo está rodando em um ambiente Capacitor
