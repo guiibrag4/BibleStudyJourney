@@ -12,6 +12,7 @@ if (!connectionString) {
 
 const pool = new Pool({
   connectionString: connectionString,
+  ssl: { rejectUnauthorized: false } // importante para o Render
 });
 
 // const pool = new Pool({

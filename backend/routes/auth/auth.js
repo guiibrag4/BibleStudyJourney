@@ -1,10 +1,11 @@
 const express = require('express');
-const bcrypt = require ('bcrypt');
+const bcrypt = require ('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../../db.js');
 require('dotenv').config();
 
 const router = express.Router();
+
 
 router.post('/register', async (req, res) => {
     const { nome, email, senha, data_nasc } = req.body;

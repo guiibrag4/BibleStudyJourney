@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>Bible Study Journey</title>
+  <link rel="stylesheet" href="../css/cadastro.css">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+</head>
+
+<body>
+  <div class="container">
+    <main class="main-content">
+      <div class="registration-container" id="registrationContainer">
+        <header>
+          <div class="logo">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets/f2af87abc2014fbb8990ea3e3e25f106/1264b6c5c7bf52c6c0a2ef665b6af1f633a4255e"
+              alt="Bible Study Journey Logo" />
+            <h1 class="logo-text">Bible Study Journey</h1>
+          </div>
+        </header>
+
+
+        <div class="welcome-text">
+          <p class="welcome-line1">Bem vindo!!</p>
+          <p class="welcome-line2">Vamos fazer seu cadastro?!</p>
+        </div>
+
+        <div id="errorContainer" class="error-container" style="display: none;">
+          <div id="errorMessage" class="error-message"></div>
+        </div>
+
+        <form id="registrationForm" class="registration-form">
+          <div class="input-container">
+            <input type="text" id="name" placeholder="Nome" required>
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/15d85ac3ef8d435a489419ae9acb65e51267a68f"
+              alt="User icon" class="input-icon">
+            <p class="error-text" id="nameError"></p>
+          </div>
+
+          <div class="input-container">
+            <input type="email" id="email" placeholder="Email" required>
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c031b82401f4c99cc39d52875a61e528a3f4b198"
+              alt="Email icon" class="input-icon">
+            <p class="error-text" id="emailError"></p>
+          </div>
+
+          <div class="input-container">
+            <input type="password" id="password" placeholder="Senha" required>
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e386cf68331574f0f1f82c881c56a1de0d270647"
+              alt="Password icon" class="input-icon">
+            <p class="error-text" id="passwordError"></p>
+          </div>
+
+          <div class="input-container">
+            <input type="date" id="birthDate" placeholder="Data de nascimento" required>
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/af030b27971d621837f97a88fd20d6b6d3a5a94e"
+              alt="Calendar icon" class="input-icon">
+            <p class="error-text" id="birthDateError"></p>
+          </div>
+
+          <button type="submit" id="submitButton" class="submit-button">Cadastrar</button>
+        </form>
+      </div>
+
+      <!-- Success message (hidden by default) -->
+      <div id="successContainer" class="success-container" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="success-icon" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <h2 class="success-title">Cadastro Realizado!</h2>
+        <p class="success-message">
+          Seu cadastro foi realizado com sucesso. Bem-vindo à Bible Study Journey! <br> <br>
+          Você será redirecionado para a tela de login em breve.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/102979f7724e2dab22fce8bd43c219f3313a30ee"
+          alt="Copyright icon" class="copyright-icon">
+        <span>Todos os direitos reservados</span>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Cordova script -->
+  <script type="text/javascript">
+    document.addEventListener('deviceready', onDeviceReady, false);
+
+    function onDeviceReady() {
+      // Hide status bar on iOS
+      if (window.StatusBar) {
+        StatusBar.overlaysWebView(true);
+        StatusBar.styleLightContent();
+      }
+
+      // Prevent keyboard from pushing elements up on iOS
+      if (window.Keyboard) {
+        window.Keyboard.hideFormAccessoryBar(true);
+        window.Keyboard.disableScroll(true);
+      }
+
+      // Handle back button
+      document.addEventListener('backbutton', handleBackButton, false);
+
+      console.log('Cordova is ready and plugins have been loaded');
+    }
+
+    function handleBackButton() {
+      // Confirm exit from app
+      if (confirm("Deseja sair do aplicativo?")) {
+        navigator.app.exitApp();
+      }
+    }
+  </script>
+  <script src="../js/cadastro.js"></script>
+</body>
+
+</html>
