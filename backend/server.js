@@ -15,7 +15,7 @@ const allowedOrigins = [
     "https://localhost",
     "https://localhost:8100",
     "http://192.168.1.100:8100", // Exemplo de IP local, ajuste conforme necessário
-    "https://" // Substitua pela URL do seu servidor Render
+    "https://https://biblestudyjourney-v2.onrender.com" // Substitua pela URL do seu servidor Render
 ];
 
 // Configuração CORS simplificada para desenvolvimento

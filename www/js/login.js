@@ -1,6 +1,6 @@
 const API_CONFIG = {
     development: "http://localhost:3000", // URL do seu backend local
-    production: "https://" // Substitua pela URL do seu servidor Render
+    production: "https://biblestudyjourney-v2.onrender.com" // Substitua pela URL do seu servidor Render
 };
 
 // Detecta se o aplicativo está rodando em um ambiente Capacitor
@@ -43,27 +43,49 @@ async function handleLogin(event) {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
+    console.log("Tentando fazer login com:", { email, API_URL });
+
     try {
         // Usar a API_URL definida para todas as requisições
         const response = await fetch(`${API_URL}/auth/login`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
             body: JSON.stringify({ email, senha: password })
         });
 
-        const data = await response.json();
+        console.log("Resposta recebida:", response.status, response.statusText);
 
-        if (response.ok) {
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Dados recebidos:", data);
+
+        if (response.ok && data.token) {
             alert("Login bem-sucedido!");
             localStorage.setItem("token", data.token);
             // Ajuste o caminho se necessário
             window.location.href = "html/home.html";
         } else {
-            alert(data.error);
+            alert(data.error || "Erro desconhecido no login");
         }
     } catch (err) {
-        console.error("Erro ao fazer login:", err);
-        alert("Erro ao conectar ao servidor. Tente novamente mais tarde.");
+        console.error("Erro detalhado ao fazer login:", err);
+        
+        // Mensagem de erro mais específica
+        let errorMessage = "Erro ao conectar ao servidor.";
+        
+        if (err.name === "TypeError" && err.message.includes("Failed to fetch")) {
+            errorMessage = "Erro de conexão: Verifique sua internet ou tente novamente.";
+        } else if (err.message.includes("HTTP")) {
+            errorMessage = `Erro do servidor: ${err.message}`;
+        }
+        
+        alert(`${errorMessage}\n\nDetalhes técnicos: ${err.message}`);
     }
 }
 
