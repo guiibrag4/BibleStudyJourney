@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BibleStudyJourney</string>
+    <string name="title_activity_main">BibleStudyJourney</string>
+    <string name="package_name">com.biblestudyjourney.app</string>
+    <string name="custom_url_scheme">com.biblestudyjourney.app</string>
+</resources>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <!-- A política de segurança de conteúdo (CSP) será gerenciada pelo Capacitor ou configurada no servidor web. -->
+  <!-- Removido: <meta http-equiv="Content-Security-Policy" content="..."> -->
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>Bible Study Journey</title>
+  <link rel="stylesheet" href="css/login.css">
+  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+</head>
+
+<body>
+  <div class="container">
+    <main class="main-content">
+      <header>
+        <div class="logo">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/f2af87abc2014fbb8990ea3e3e25f106/1264b6c5c7bf52c6c0a2ef665b6af1f633a4255e"
+            alt="Bible Study Journey Logo" />
+          <h1 class="logo-text">Bible Study Journey</h1>
+        </div>
+      </header>
+
+      <section class="login-section">
+        <form id="login-form">
+
+          <div class="account-title">Tem uma conta?</div>
+          <div class="account-title2">Logar</div>
+
+          <div class="input-container">
+            <div class="icon-input email-input">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets/f2af87abc2014fbb8990ea3e3e25f106/14599bb69e33503d0ab4d4490d31ce222e1746d4"
+                alt="Email icon" />
+              <input type="email" id="email" placeholder="Email" required>
+            </div>
+          </div>
+
+          <div class="input-container">
+            <div class="icon-input">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets/f2af87abc2014fbb8990ea3e3e25f106/6e7fbc11b42421bb93eb390fdae14e5850828bb6"
+                alt="Password icon" />
+              <input type="password" id="password" placeholder="Senha" required>
+            </div>
+          </div>
+
+          <button type="submit" class="login-button">Entrar</button>
+
+          <div class="signup-text">
+            Faça seu cadastro <span id="signup-link" class="underline">aqui</span>
+          </div>
+
+          <div class="or-text">ou</div>
+        </form>
+
+        <button id="google-login" class="social-login-button">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/f2af87abc2014fbb8990ea3e3e25f106/e83f33ae519bcf724d015d97e260c37710f9de07"
+            alt="Google icon" />
+          <span>faça login com sua conta</span>
+        </button>
+      </section>
+
+      <footer>
+        <div class="footer-content">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets/f2af87abc2014fbb8990ea3e3e25f106/80e4dae633a357decdf835863f5fb75715be9d3b"
+            alt="Copyright icon" />
+          <div>Todos os direitos reservados</div>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Capacitor JS (DEVE SER CARREGADO ANTES DOS SEUS SCRIPTS) -->
+  <script src="capacitor.js"></script>
+  <!-- Seus scripts -->
+  <script type="text/javascript" src="js/login.js"></script>
+</body>
+
+</html>
+
