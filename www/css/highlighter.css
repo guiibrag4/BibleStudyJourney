@@ -1,0 +1,438 @@
+/* Estilos para funcionalidades de grifos e notas */
+
+/* Paleta de cores */
+.color-palette {
+    position: fixed;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    min-width: 280px;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.palette-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.palette-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.palette-close:hover {
+    background: #f0f0f0;
+}
+
+.color-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.color-option {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.color-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.palette-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.action-button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.note-button {
+    background: #4caf50;
+    color: white;
+}
+
+.note-button:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+}
+
+.remove-button {
+    background: #f44336;
+    color: white;
+}
+
+.remove-button:hover {
+    background: #da190b;
+    transform: translateY(-1px);
+}
+
+/* Modal de notas */
+.note-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.note-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.note-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.note-modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.note-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.note-modal-close:hover {
+    background: #e9ecef;
+}
+
+.note-modal-body {
+    padding: 24px;
+}
+
+.verse-info {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #4a90e2;
+    text-align: center;
+}
+
+#note-text {
+    width: 100%;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+#note-text:focus {
+    outline: none;
+    border-color: #4a90e2;
+}
+
+.note-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.note-save-btn,
+.note-cancel-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.note-save-btn {
+    background: #4caf50;
+    color: white;
+}
+
+.note-save-btn:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+}
+
+.note-cancel-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.note-cancel-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Indicador de nota */
+.note-indicator {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 16px;
+    background: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+/* Estilos para versículos */
+#bible-content p {
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    padding: 8px;
+    border-radius: 6px;
+    margin: 4px 0;
+}
+
+#bible-content p:hover {
+    background: rgba(74, 144, 226, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Classes de grifo */
+#bible-content p.highlight-yellow {
+    background: linear-gradient(135deg, #fff9c4 0%, rgba(255, 249, 196, 0.3) 100%);
+    border-left: 4px solid #ffc107;
+}
+
+#bible-content p.highlight-green {
+    background: linear-gradient(135deg, #c8e6c9 0%, rgba(200, 230, 201, 0.3) 100%);
+    border-left: 4px solid #4caf50;
+}
+
+#bible-content p.highlight-blue {
+    background: linear-gradient(135deg, #bbdefb 0%, rgba(187, 222, 251, 0.3) 100%);
+    border-left: 4px solid #2196f3;
+}
+
+#bible-content p.highlight-red {
+    background: linear-gradient(135deg, #ffcdd2 0%, rgba(255, 205, 210, 0.3) 100%);
+    border-left: 4px solid #f44336;
+}
+
+#bible-content p.highlight-purple {
+    background: linear-gradient(135deg, #e1bee7 0%, rgba(225, 190, 231, 0.3) 100%);
+    border-left: 4px solid #9c27b0;
+}
+
+#bible-content p.highlight-orange {
+    background: linear-gradient(135deg, #ffe0b2 0%, rgba(255, 224, 178, 0.3) 100%);
+    border-left: 4px solid #ff9800;
+}
+
+#bible-content p.highlight-pink {
+    background: linear-gradient(135deg, #f8bbd9 0%, rgba(248, 187, 217, 0.3) 100%);
+    border-left: 4px solid #e91e63;
+}
+
+#bible-content p.highlight-cyan {
+    background: linear-gradient(135deg, #b2ebf2 0%, rgba(178, 235, 242, 0.3) 100%);
+    border-left: 4px solid #00bcd4;
+}
+
+/* Notificações */
+.highlight-notification,
+.page-save-notification {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .color-palette {
+        min-width: 260px;
+        padding: 12px;
+    }
+    
+    .color-options {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+    
+    .color-option {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .note-modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .note-modal-body {
+        padding: 16px;
+    }
+    
+    .note-modal-footer {
+        flex-direction: column;
+        padding: 16px;
+    }
+    
+    .note-save-btn,
+    .note-cancel-btn {
+        flex: none;
+    }
+}
+
+/* Temas */
+.dark-mode .color-palette {
+    background: #2d3436;
+    border-color: #495057;
+    color: #e9ecef;
+}
+
+.dark-mode .palette-close:hover {
+    background: #495057;
+}
+
+.dark-mode .note-modal-content {
+    background: #2d3436;
+    color: #e9ecef;
+}
+
+.dark-mode .note-modal-header,
+.dark-mode .note-modal-footer {
+    background: #343a40;
+    border-color: #495057;
+}
+
+.dark-mode .verse-info {
+    background: #343a40;
+    color: #74b9ff;
+}
+
+.dark-mode #note-text {
+    background: #343a40;
+    border-color: #495057;
+    color: #e9ecef;
+}
+
+.dark-mode #note-text:focus {
+    border-color: #74b9ff;
+}
+
+.dark-mode .note-indicator {
+    background: #2d3436;
+}
+
+.sepia-mode .color-palette {
+    background: #f9f6f0;
+    border-color: #d4c5a9;
+    color: #5d4e37;
+}
+
+.sepia-mode .note-modal-content {
+    background: #f9f6f0;
+    color: #5d4e37;
+}
+
+.sepia-mode .note-modal-header,
+.sepia-mode .note-modal-footer {
+    background: #ede6d3;
+    border-color: #d4c5a9;
+}
+
+.sepia-mode .verse-info {
+    background: #ede6d3;
+    color: #8b7355;
+}
+
+.sepia-mode #note-text {
+    background: #ede6d3;
+    border-color: #d4c5a9;
+    color: #5d4e37;
+}
+
+.sepia-mode #note-text:focus {
+    border-color: #8b7355;
+}
+

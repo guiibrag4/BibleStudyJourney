@@ -4,6 +4,7 @@ const menuOverlay = document.getElementById('menuOverlay');
 const closeMenuBtn = document.getElementById('closeMenuBtn');
 const teologiaItem = document.querySelector('.item-teologia');
 const inicioItem = document.querySelector('.item-inicio');
+const bookmarkItem = document.querySelector('.item-bookmark');
 
 //Premium Mode
 const premiumItem = document.querySelector('.item-premium');
@@ -53,6 +54,13 @@ if (teologiaItem) {
 if (inicioItem) {
   inicioItem.addEventListener('click', () => {
     window.location.href = 'home.html';
+  });
+}
+
+// Navegação para a página de salvos
+if (bookmarkItem) {
+  bookmarkItem.addEventListener('click', () => {
+    window.location.href = 'saves.html';
   });
 }
 
