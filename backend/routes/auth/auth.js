@@ -63,7 +63,6 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Erro ao autenticar usuário'});
     }
 });
-// Middleware para verificar o token JWT
 
 
 module.exports = router;

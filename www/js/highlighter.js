@@ -2,14 +2,14 @@
 class BibleHighlighter {
     constructor() {
         this.colors = {
-            yellow: { name: "Amarelo", light: "#fff9c4", dark: "#ffc107" },
-            green: { name: "Verde", light: "#c8e6c9", dark: "#4caf50" },
-            blue: { name: "Azul", light: "#bbdefb", dark: "#2196f3" },
-            red: { name: "Vermelho", light: "#ffcdd2", dark: "#f44336" },
-            purple: { name: "Roxo", light: "#e1bee7", dark: "#9c27b0" },
-            orange: { name: "Laranja", light: "#ffe0b2", dark: "#ff9800" },
-            pink: { name: "Rosa", light: "#f8bbd9", dark: "#e91e63" },
-            cyan: { name: "Ciano", light: "#b2ebf2", dark: "#00bcd4" }
+            yellow: { name: "", light: "#fff9c4", dark: "#ffc107" },
+            green: { name: "", light: "#c8e6c9", dark: "#4caf50" },
+            blue: { name: "", light: "#bbdefb", dark: "#2196f3" },
+            red: { name: "", light: "#ffcdd2", dark: "#f44336" },
+            purple: { name: "", light: "#e1bee7", dark: "#9c27b0" },
+            orange: { name: "", light: "#ffe0b2", dark: "#ff9800" },
+            pink: { name: "", light: "#f8bbd9", dark: "#e91e63" },
+            cyan: { name: "", light: "#b2ebf2", dark: "#00bcd4" }
         };
         this.currentVerse = null;
         this.init();

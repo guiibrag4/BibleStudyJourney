@@ -1,19 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Referências aos elementos HTML que você criou na página video-player.html
-  const iframePlayer = document.getElementById('videoFrame'); // Você já tinha isso
-  const videoTypeTitleEl = document.getElementById('videoTypeTitle'); // Para "A Bíblia"
-  const videoLessonTitleEl = document.getElementById('videoLessonTitle'); // Para "Aula 01 - Inspiração..."
-  const videoDescriptionTextEl = document.getElementById('videoDescriptionText'); // Para o texto da descrição
-  const readMoreButton = document.getElementById('readMoreButton'); // Botão "Ler mais"
+  const iframePlayer = document.getElementById('videoFrame'); 
+  const videoTypeTitleEl = document.getElementById('videoTypeTitle');
+  const videoLessonTitleEl = document.getElementById('videoLessonTitle');
+  const videoDescriptionTextEl = document.getElementById('videoDescriptionText');
+  const readMoreButton = document.getElementById('readMoreButton');
 
   // Pega os parâmetros da URL
   const urlParams = new URLSearchParams(window.location.search);
   const videoId = urlParams.get('videoId');
-  const lessonTitleFromUrl = urlParams.get('title'); // Título da aula vindo da URL
-  const typeTitleFromUrl = urlParams.get('type');   // Título do tópico vindo da URL
+  const lessonTitleFromUrl = urlParams.get('title'); 
+  const typeTitleFromUrl = urlParams.get('type');
 
   if (videoId && iframePlayer) {
-    // URL CORRETA para embed do YouTube
     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
     iframePlayer.src = embedUrl;
 

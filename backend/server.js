@@ -5,6 +5,7 @@ const cors = require("cors");
 const path = require("path"); // Para lidar com caminhos de arquivos
 const app = express();
 
+// Origens permitidas para o CORS (Recursos de origem cruzada)
 const allowedOrigins = [
     "capacitor://localhost",
     "ionic://localhost",
@@ -14,13 +15,13 @@ const allowedOrigins = [
     "http://localhost:8100", // Porta padrão do Ionic/Capacitor serve
     "https://localhost",
     "https://localhost:8100",
-    "http://192.168.1.100:8100", // Exemplo de IP local, ajuste conforme necessário
-    "https://https://biblestudyjourney-v2.onrender.com" // Substitua pela URL do seu servidor Render
+    "http://192.168.1.100:8100",
+    "https://https://biblestudyjourney-v2.onrender.com" // 
 ];
 
 // Configuração CORS simplificada para desenvolvimento
 app.use(cors({
-    origin: true, // Permite todas as origens durante desenvolvimento
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -28,11 +29,10 @@ app.use(cors({
 
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware para processar requisições JSON
 app.use(bodyParser.json());
 
 // Servir os arquivos estáticos do frontend (Capacitor)
-// Certifique-se de que esta linha aponta para a pasta correta do seu frontend
 app.use(express.static(path.join(__dirname, "../www")));
 
 // Rotas
@@ -58,11 +58,6 @@ app.get("/tl1-teologia", (req, res) => {
 app.get("/tl2-teologia", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/tl2-teologia.html"));
 });
-
-// Rota de fallback temporariamente removida para debug
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "../www/index.html"));
-// });
 
 // Iniciar o servidor
 app.listen(PORT, "0.0.0.0", () => {

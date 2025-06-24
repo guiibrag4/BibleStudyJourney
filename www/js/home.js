@@ -447,13 +447,10 @@ function setupEventListeners() {
 isso garante que o estado seja salvo antes de sair da página */
 window.addEventListener('beforeunload', saveCurrentState);
 
-// Inicializa o app quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', async () => {
   setupEventListeners();
   await loadInitialState(); // Carrega o estado inicial
-});
-
-// ... todo o código existente de home.js ...
+})
 
 // ---- LÓGICA DE SELEÇÃO DE TEMA ----
 document.addEventListener('DOMContentLoaded', () => {
