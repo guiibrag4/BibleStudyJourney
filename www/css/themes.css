@@ -97,14 +97,6 @@ body.dark-mode .menu-itens img {
     filter: brightness(0) invert(0.75);
 }
 
-body.dark-mode .icon-container img {
-    background-color: rgb(0, 34, 146);
-}
-
-body.dark-mode .coming-soon-text {
-  /* color: yellow; */
-}
-
 /* Containers de vídeos escuros no modo dark */
 body.dark-mode .videos-list,
 body.dark-mode .video-item {
