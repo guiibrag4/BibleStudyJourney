@@ -19,16 +19,16 @@ document.addEventListener('DOMContentLoaded', function () {
   // Get no formulário os elementos
   const form = document.getElementById('registrationForm');
   const nameInput = document.getElementById('name');
+  const sobrenomeInput = document.getElementById('sobrenome');
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
-  const birthDateInput = document.getElementById('birthDate');
   const submitButton = document.getElementById('submitButton');
 
   // Get erro nos elementos
   const nameError = document.getElementById('nameError');
+  const sobrenomeError = document.getElementById('sobrenomeError');
   const emailError = document.getElementById('emailError');
   const passwordError = document.getElementById('passwordError');
-  const birthDateError = document.getElementById('birthDateError');
   const errorContainer = document.getElementById('errorContainer');
   const errorMessage = document.getElementById('errorMessage');
 
@@ -52,12 +52,16 @@ document.addEventListener('DOMContentLoaded', function () {
     nameError.textContent = '';
     emailError.textContent = '';
     passwordError.textContent = '';
-    birthDateError.textContent = '';
     errorContainer.style.display = 'none';
 
     // Validate name
     if (!nameInput.value.trim()) {
       nameError.textContent = 'Nome é obrigatório';
+      isValid = false;
+    }
+
+    if (!sobrenomeInput.value.trim()) {
+      sobrenomeError.textContent = 'Sobrenome é obrigatório';
       isValid = false;
     }
 
@@ -79,12 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
       isValid = false;
     }
 
-    // Validate birth date
-    if (!birthDateInput.value) {
-      birthDateError.textContent = 'Data de nascimento é obrigatória';
-      isValid = false;
-    }
-
     return isValid;
   }
 
@@ -100,9 +98,9 @@ document.addEventListener('DOMContentLoaded', function () {
       // Obter os dados do formulário
       const formData = {
         nome: nameInput.value,
+        sobrenome: sobrenomeInput.value,
         email: emailInput.value,
         senha: passwordInput.value,
-        data_nasc: birthDateInput.value
       };
 
       try {

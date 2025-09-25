@@ -1,0 +1,3 @@
+npm start -> Roda o servidor
+npx serve -> Roda o frontend para desenvolvimento web
+npx cap run android -> Instala no android quando conectado no pc

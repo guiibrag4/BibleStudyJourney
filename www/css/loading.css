@@ -1,0 +1,47 @@
+/* Merriweather Sans */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Merriweather Sans', Arial, sans-serif;
+    background: linear-gradient(137deg, #283A50, #5B84B6);
+    color: white;
+    font-size: 24px;
+    font-weight:300
+}
+
+p {
+    font-family: 'Merriweather Sans', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    animation: appearShrink 4.0s cubic-bezier(0.4, 0, 0.2, 1) 1;
+    color: #fff;
+    opacity: 0;
+}
+
+@keyframes appearShrink {
+    0% {
+        opacity: 0;
+        transform: scale(1.18);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

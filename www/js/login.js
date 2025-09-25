@@ -3,11 +3,15 @@ const API_CONFIG = {
     production: "https://biblestudyjourney-v2.onrender.com" // Substitua pela URL do seu servidor Render
 };
 
+
+
 // Detecta se o aplicativo está rodando em um ambiente Capacitor
 const isCapacitor = window.Capacitor !== undefined;
 
 // Define a URL da API com base no ambiente
-const API_URL = isCapacitor ? API_CONFIG.production : API_CONFIG.development;
+// const API_URL = isCapacitor ? API_CONFIG.production : API_CONFIG.development;
+
+const API_URL = API_CONFIG.production; // Força o uso do servidor de produção 
 
 // Função para inicializar o aplicativo após o DOM estar pronto
 function initApp() {
@@ -69,7 +73,7 @@ async function handleLogin(event) {
             alert("Login bem-sucedido!");
             localStorage.setItem("token", data.token);
             // Ajuste o caminho se necessário
-            window.location.href = "html/home.html";
+            window.location.href = "home.html";
         } else {
             alert(data.error || "Erro desconhecido no login");
         }

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>Bible Study Journey</title>
+    <link rel="stylesheet" href="../css/cadastro.css">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="stylesheet" href="../css/cadastro2.css">
+</head>
+
+<body>
+    <h1>Bible Study</h1>
+    <h1>Increver-se</h1>
+    <p>Crie uma conta para acessar estudos direcionados, ferramentas para estudo, bíblia integrada e muito mais.</p>
+    <p>Já tem uma conta? Iniciar sessão</p>
+
+
+    <div id="errorContainer" class="error-container" style="display: none;">
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <form method="post" id="registrationForm" class="registration-form">
+        <div class="input-container">
+            <input id="name" type="text" placeholder="Nome" required />
+            <p class="error-text" id="nameError"></p>
+        </div>
+        <div class="input-container">
+            <input id="sobrenome" type="text" placeholder="Sobrenome" required />
+            <p class="error-text" id="sobrenomeError"></p>
+        </div>
+        <div class="input-container">
+            <input id="email" type="email" placeholder="Endereço de e-mail" required />
+            <p class="error-text" id="emailError"></p>
+        </div>
+        <div class="input-container">
+            <input id="password" type="password" placeholder="Senha (pelo menos 8 caracteres)" required />
+            <p class="error-text" id="passwordError"></p>
+        </div>
+
+
+        <button type="submit" id="submitButton" class="submit-button">Criar Conta</button>
+    </form>
+
+    <!-- Success message (hidden by default) -->
+    <div id="successContainer" class="success-container" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="success-icon" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <h2 class="success-title">Cadastro Realizado!</h2>
+        <p class="success-message">
+            Seu cadastro foi realizado com sucesso. Bem-vindo à Bible Study Journey! <br> <br>
+            Você será redirecionado para a tela de login em breve.
+        </p>
+    </div>
+
+    <!-- Cordova script -->
+    <script type="text/javascript">
+        document.addEventListener('deviceready', onDeviceReady, false);
+
+        function onDeviceReady() {
+            // Hide status bar on iOS
+            if (window.StatusBar) {
+                StatusBar.overlaysWebView(true);
+                StatusBar.styleLightContent();
+            }
+
+            // Prevent keyboard from pushing elements up on iOS
+            if (window.Keyboard) {
+                window.Keyboard.hideFormAccessoryBar(true);
+                window.Keyboard.disableScroll(true);
+            }
+
+            // Handle back button
+            document.addEventListener('backbutton', handleBackButton, false);
+
+            console.log('Cordova is ready and plugins have been loaded');
+        }
+
+        function handleBackButton() {
+            // Confirm exit from app
+            if (confirm("Deseja sair do aplicativo?")) {
+                navigator.app.exitApp();
+            }
+        }
+    </script>
+
+    <script src="../js/cadastro.js"></script>
+</body>
+
+</html>

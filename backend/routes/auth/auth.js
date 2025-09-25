@@ -8,7 +8,7 @@ const router = express.Router();
 
 
 router.post('/register', async (req, res) => {
-    const { nome, email, senha, data_nasc } = req.body;
+    const { nome, sobrenome, email, senha } = req.body;
 
     try {
         // Verificação se o email já está cadastrado
@@ -23,8 +23,8 @@ router.post('/register', async (req, res) => {
 
         // Inserção do novo usuário no banco de dados
         const result = await pool.query(
-            'INSERT INTO app_biblia.Usuario (nome, email, senha_hash, data_nasc) VALUES ($1, $2, $3, $4) RETURNING id_usuario',
-            [nome, email, senhaHash, data_nasc]
+            'INSERT INTO app_biblia.Usuario (nome, sobrenome, email, senha_hash) VALUES ($1, $2, $3, $4) RETURNING id_usuario',
+            [nome, sobrenome, email, senhaHash]
         );
 
         res.status(201).json({ message: 'Usuário cadastrado com sucesso', userId: result.rows[0].id_usuario });

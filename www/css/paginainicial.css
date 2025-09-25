@@ -1,0 +1,92 @@
+/* Merriweather Sans */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* Lato */
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* Inknut Antiqua */
+@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Merriweather Sans', Arial, sans-serif;
+    background: linear-gradient(137deg, #283A50, #5B84B6);
+    color: white;
+    height: 100vh;
+    overflow: hidden;
+}   
+
+h1 {
+    font-family: 'Merriweather Sans', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 28vh;
+    color: #fff;
+}
+
+.subtitulo {
+    font-family: 'Lato', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 1.5vh;
+    color: #fff;
+}
+
+button {
+    margin: 0 auto;
+    margin-top: -1vw;
+    min-width: 85vw;
+    max-width: 90vw;
+    padding: 5px 0;
+    font-family: 'Inknut Antiqua', Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 2px 8px rgba(40,58,80,0.08);
+}
+
+.botoes-container {
+    margin-top: 8vh;
+    padding-bottom: 9vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.termos-rodape {
+    text-align: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 2vh;
+    width: 100vw;
+    color: #fff;
+    font-size: 15px;
+    z-index: 10;
+}
+
+.btn-criar {
+    background-color: #0043D3;
+    color: #fff;
+}
+
+.btn-login {
+    background-color: #282828;
+    color: #fff;
+    margin-top: 18px;
+}
+
+button:active {
+    filter: brightness(0.92);
+}
+

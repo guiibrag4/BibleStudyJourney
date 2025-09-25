@@ -5,9 +5,9 @@ CREATE SCHEMA IF NOT EXISTS app_biblia;
 CREATE TABLE app_biblia.usuario (
     id_usuario SERIAL PRIMARY KEY,
     nome VARCHAR(75) NOT NULL,
+    sobrenome VARCHAR (75) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     senha_hash TEXT,
-    data_nasc DATE NOT NULL,
     google_id VARCHAR(50) UNIQUE,
     data_criacao TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ultimo_login TIMESTAMP WITH TIME ZONE
