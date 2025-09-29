@@ -1,5 +1,5 @@
- /* Merriweather Sans */
-@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+/* Merriweather */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
 
 /* Lato */
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
@@ -23,3 +23,123 @@ body {
     display: flex;
     flex-direction: column;
 }   
+
+.cabecalho-titulo {
+    margin-top: 0;
+    padding-top: 16px;
+    font-family: 'Merriweather', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: lighter;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8vh;
+}
+
+.titulo-login {
+    font-family: 'Merriweather', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: lighter;
+    margin-top: 3vh;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.descricao-login {
+    margin-top: 1.0vh;
+    margin-bottom: 3vh;
+    text-align: center;
+    line-height: 1.2;
+    white-space: pre-line;
+    color: #ddd;
+}
+
+input {
+    margin: 0 auto;
+    margin-top: 2vw;
+    min-width: 85vw;
+    max-width: 90vw;
+    color: #000000;
+    padding: 1px;
+    font-family: 'Inknut Antiqua', Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 2px 8px rgba(40,58,80,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+#login-form input::placeholder {
+    color: #fff; /* Escolha a cor desejada */
+    opacity: 1;     /* Garante que a cor apareça */
+    padding-left: 1.5vh;
+    font-size: 16px;
+    font-family: Inknut Antiqua, Arial, sans-serif;
+}
+
+.form-container {
+    margin-top: 7vh;
+    padding-bottom:2vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.campo-email {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 2vh;
+}
+
+.campo-senha {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 2vh;
+}
+
+.termos-rodape {
+    text-align: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 2vh;
+    width: 100vw;
+    color: #fff;
+    font-size: 15px;
+    z-index: 10;
+}
+
+.recuperar-senha{
+    display: flex;
+    align-items: center;
+    color: #D3CC00;
+    font-weight: bold;
+    text-align: left;
+}
+
+.submit-button {
+    border: 1px solid #7E7E7E;
+    border-radius: 36px;
+    display: block;
+    width: 85%;
+    margin: 20px auto 0 auto;
+    align-items: center;
+    justify-content: center;
+    background-color: #414141;
+    color: #fff;
+    margin-top: 2vh;
+    padding: 2px 0px;
+    font-size: 18px;
+    font-family: 'Inknut Antiqua', Arial, sans-serif;
+    font-weight: lighter;
+}

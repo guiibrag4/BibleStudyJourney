@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // Define a URL da API com base no ambiente
   const API_URL = isCapacitor ? API_CONFIG.production : API_CONFIG.development;
 
+  // const API_URL = API_CONFIG.production; //Força o uso do servidor de produção
+
   console.log("API URL utilizada no cadastro: " + API_URL);
 
   // Get no formulário os elementos

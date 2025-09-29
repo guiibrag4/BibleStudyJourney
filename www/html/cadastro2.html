@@ -7,44 +7,45 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <title>Bible Study Journey</title>
-    <link rel="stylesheet" href="../css/cadastro.css">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <link rel="stylesheet" href="../css/cadastro2.css">
 </head>
 
 <body>
-    <h1>Bible Study</h1>
-    <h1>Increver-se</h1>
-    <p>Crie uma conta para acessar estudos direcionados, ferramentas para estudo, bíblia integrada e muito mais.</p>
-    <p>Já tem uma conta? Iniciar sessão</p>
+    <h1 class="cabecalho-titulo">Bible</h1>
+    <h1 class="titulo-increver">Inscrever-se</h1>
+    <p class="descricao-cadastro">
+        Crie uma conta para acessar estudos
+        direcionados, ferramentas para estudo,
+        bíblia integrada e muito mais.</p>
+    <p class="entrar-se-ja-tiver-conta">Já tem uma conta? <a class="iniciar-sessao"> Iniciar sessão </a></p>
 
 
     <div id="errorContainer" class="error-container" style="display: none;">
         <div id="errorMessage" class="error-message"></div>
     </div>
 
-    <form method="post" id="registrationForm" class="registration-form">
-        <div class="input-container">
-            <input id="name" type="text" placeholder="Nome" required />
+
+    <div class="form-container">
+        <form method="post" id="registrationForm" class="registration-form">
+
+            <input class="campo-nome" id="name" type="text" placeholder="Nome" required />
             <p class="error-text" id="nameError"></p>
-        </div>
-        <div class="input-container">
-            <input id="sobrenome" type="text" placeholder="Sobrenome" required />
+
+            <input class="campo-sobrenome" id="sobrenome" type="text" placeholder="Sobrenome" required />
             <p class="error-text" id="sobrenomeError"></p>
-        </div>
-        <div class="input-container">
-            <input id="email" type="email" placeholder="Endereço de e-mail" required />
+
+            <input class="campo-email" id="email" type="email" placeholder="Endereço de e-mail" required />
             <p class="error-text" id="emailError"></p>
-        </div>
-        <div class="input-container">
-            <input id="password" type="password" placeholder="Senha (pelo menos 8 caracteres)" required />
+
+            <input class="campo-senha" id="password" type="password" placeholder="Senha (pelo menos 8 caracteres)"
+                required />
             <p class="error-text" id="passwordError"></p>
-        </div>
 
-
-        <button type="submit" id="submitButton" class="submit-button">Criar Conta</button>
-    </form>
+            <button type="submit" id="submitButton" class="submit-button">Criar Conta</button>
+        </form>
+    </div>
 
     <!-- Success message (hidden by default) -->
     <div id="successContainer" class="success-container" style="display: none;">

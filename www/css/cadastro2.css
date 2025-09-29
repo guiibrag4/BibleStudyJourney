@@ -1,5 +1,9 @@
  /* Merriweather Sans */
-@import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap'); */
+
+/* Merriweather */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
+
 
 /* Lato */
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
@@ -15,16 +19,144 @@
 }
 
 body {
-    font-family: 'Merriweather Sans', Arial, sans-serif;
+    font-family: 'Merriweather', Arial, sans-serif;
     background: linear-gradient(137deg, #283A50, #5B84B6);
     color: white;
     height: 100vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}   
+    align-items: stretch; /* padrão */
+    justify-content: flex-start; /* garante alinhamento no topo */
+}  
 
- 
+.cabecalho-titulo {
+    margin-top: 0;
+    padding-top: 16px;
+    font-family: 'Merriweather', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: lighter;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8vh;
+}
+
+.titulo-increver {
+    font-family: 'Merriweather', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: lighter;
+    margin-top: 3vh;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.descricao-cadastro {
+    margin-top: -1.5vh;
+    margin-bottom: 3vh;
+    text-align: center;
+    line-height: 1.2;
+    white-space: pre-line;
+    color: #ddd;
+}
+
+input {
+    margin: 0 auto;
+    margin-top: 2vw;
+    min-width: 85vw;
+    max-width: 90vw;
+    color: #000000;
+    padding: 1px;
+    font-family: 'Inknut Antiqua', Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    box-shadow: 0 2px 8px rgba(40,58,80,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.registration-form input::placeholder {
+    color: #fff; /* Escolha a cor desejada */
+    opacity: 1;     /* Garante que a cor apareça */
+    padding-left: 1.5vh;
+    font-size: 16px;
+    font-family: Inknut Antiqua, Arial, sans-serif;
+}
+
+.form-container {
+    margin-top: 7vh;
+    padding-bottom:2vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.campo-nome {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 2vh;
+}
+
+.campo-sobrenome {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 2vh;
+}
+
+.campo-email {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 2vh;
+}
+
+.campo-senha {
+    background: transparent;
+    color: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 2vh;
+}
+
+.submit-button {
+    border: 1px solid #7E7E7E;
+    border-radius: 36px;
+    display: block;
+    width: 85%;
+    margin: 20px auto 0 auto;
+    align-items: center;
+    justify-content: center;
+    background-color: #414141;
+    color: #fff;
+    margin-top: 2vh;
+    padding: 2px 0px;
+    font-size: 18px;
+    font-family: 'Inknut Antiqua', Arial, sans-serif;
+    font-weight: lighter;
+}
+
+.iniciar-sessao {
+    color: #D3CC00;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 6px;
+}
+
+.entrar-se-ja-tiver-conta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
  .error-text {
     color: #ef4444;
     font-size: 12px;

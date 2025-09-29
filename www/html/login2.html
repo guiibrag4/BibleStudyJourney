@@ -2,40 +2,44 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-tap-highlight" content="no">
-    <title>Bible Study Journey</title>
-    <link rel="stylesheet" href="../css/cadastro.css">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-tap-highlight" content="no">
-    <link rel="stylesheet" href="../css/login2.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>Bible Study Journey</title>
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <link rel="stylesheet" href="../css/login2.css">
 </head>
 
 <body>
-  <div class="container">
-        <form id="login-form">  
-          <div class="account-title">Novo no Bible Study? Registra-se aqui</div>
+  <h1 class="cabecalho-titulo">Bible</h1>
+  <h1 class="titulo-login">Login</h1>
+  <p class="descricao-login">Novo no Bible Study? Registra-se aqui</p>
 
-          <div class="input-container">
-            <div class="icon-input email-input">
-              <input type="email" id="email" placeholder="Endereço de e-mail" required>
-            </div>
-          </div>
+  <div class="form-container">
+    <form id="login-form">
+      <input type="email" class="campo-email" id="email" placeholder="Endereço de e-mail" required>
 
-          <div class="input-container">
-            <div class="icon-input">
-              <input type="password" id="password" placeholder="Senha" required>
-            </div>
-          </div>
+      <input type="password" class="campo-senha" id="password" placeholder="Senha" required>
 
-          <p>Esqueceu sua senha?</p>
+      <p class="recuperar-senha">Esqueceu sua senha?</p>
 
-          <button type="submit" class="login-button">Login</button>
-        </form>
+      <button type="submit" class="submit-button">Login</button>
+      <button type="button" class="submit-button">
+        <img src="../img/google-icon-pequeno.svg" alt="Logo do Google"
+          style="height:20px;vertical-align:middle;margin-right:8px;">
+        Continuar com o Google  
+      </button>
+    </form>
   </div>
-  
+
+  <p class="termos-rodape">Ao entrar no Bible Study, você concorda com os nossos<br>
+    <strong>Termos</strong> e <strong>Política de Privacidade</strong>.
+  </p>
+
+
+
   <script type="text/javascript" src="../js/login.js"></script>
 </body>
 
