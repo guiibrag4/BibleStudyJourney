@@ -38,6 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const registrationContainer = document.getElementById('registrationContainer');
   const successContainer = document.getElementById('successContainer');
 
+  document.querySelector('.iniciar-sessao').addEventListener('click', function() {
+    window.location.href = 'login2.html'; // Redireciona para a página de login
+  });
+
   // Email validation regex
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 

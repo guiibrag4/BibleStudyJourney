@@ -29,6 +29,21 @@
     --highlight-cyan: #b2ebf2;
 }
 
+/* variaveis env */
+
+.saves-header {
+    padding-top: calc (1rem + env(safe-area-inset-top));
+}
+
+.fullscreen-modal {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.saves-content {
+    padding-bottom: calc (2rem + env(safe-area-inset-bottom));
+}
+
 /* Reset e base */
 * {
     margin: 0;

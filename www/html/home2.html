@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>Sua Jornada - Standalone</title>
+  <link rel="stylesheet" href="../css/home2.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lato:wght@400;700;900&family=Merriweather:wght@400;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <main class="aplicativo">
+    <div class="conteudo-principal">
+      <header class="cabecalho">
+        <h1 class="saudacao-usuario">Olá, Guilherme</h1>
+        <div class="painel-metas">
+          <div class="meta-dias">
+            <div class="meta-topo"><span class="emoji-fogo">🔥</span><span class="dias-seguidos">10 dias</span></div>
+            <div class="meta-subtitulo">Mantenha a chama<br />Acesa!</div>
+          </div>
+          <div class="meta-recorde">
+            <div class="recorde-topo"><span class="emoji-forca">💪</span>
+              <div class="texto-recorde">
+                <div class="texto-suave">Seu recorde</div>
+                <div class="dias-recorde">17 dias</div>
+              </div>
+            </div>
+            <div class="recorde-subtitulo">Supere sua marca!</div>
+          </div>
+        </div>
+      </header>
+
+      <section class="secao-jornada">
+        <h2>Sua Jornada</h2>
+        <div class="cartoes-jornada">
+          <article class="cartao-jornada">
+            <img
+              src="https://api.builder.io/api/v1/image/assets/TEMP/7afe1b05aec0b6b6eeee56355e8e0c000ecf86f5?width=326"
+              alt="Fundamentos" />
+            <div class="legenda-cartao">Fundamentos 3/10</div>
+          </article>
+          <article class="cartao-jornada">
+            <img
+              src="https://api.builder.io/api/v1/image/assets/TEMP/b81165a1c36f1f63cf55a957825faa16f8923d67?width=326"
+              alt="Bíblia" />
+            <div class="legenda-cartao">Bíblia 4/7</div>
+          </article>
+          <article class="cartao-jornada pequeno">
+            <img
+              src="https://api.builder.io/api/v1/image/assets/TEMP/9222ac5bac146b554b0fe4d42f256fe943ed8a36?width=326"
+              alt="Outro" />
+          </article>
+        </div>
+      </section>
+
+      <section class="secao-leitura">
+        <div class="cartao-leitura">
+          <div class="icone-livro" aria-hidden>
+            <!-- Book SVG simplified -->
+            <svg viewBox="0 0 95 95" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M91.04 15.83C91.04 12.33 86.51 11.09 83.51 10.27 78.98 8.98 73.67 7.92 67.29 7.92 60.47 7.92 54.84 10.19 50.98 12.4 47.5 14.66 44.02 12.4 27.71 7.92 21.33 7.92 16.02 8.98 12.27 10.05 3.96 12.34 3.96 15.83 3.96 67.29 5.84 70.66 12.31 69.91 27.71 67.29 67.29 67.29 77.37 68.21 82.75 69.95 89.16 70.66 91.04 67.29 91.04 15.83Z"
+                fill="#fff" />
+            </svg>
+          </div>
+          <div class="conteudo-leitura">
+            <h3>Sua Leitura</h3>
+            <p class="texto-suave">Você parou em <strong>Eclesiastes 5</strong></p>
+            <button id="botao-continuar-leitura" class="botao-acao">Continuar Leitura</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="secao-versiculo">
+        <h3>Versículo do dia</h3>
+        <div class="cartao-versiculo">
+          <p class="texto-versiculo">⁶ Certamente que a bondade e a misericórdia me seguirão todos os dias da minha
+            vida; e habitarei na casa do Senhor por longos dias.</p>
+          <p class="referencia-versiculo">Salmos 23:6</p>
+          <div class="acoes-versiculo">
+            <button id="botao-copiar-versiculo" aria-label="Copiar versículo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 16H17V6H12" stroke="white" stroke-width="1.6" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+            <button id="botao-compartilhar-versiculo" aria-label="Compartilhar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 12V6a2 2 0 012-2h12" stroke="white" stroke-width="1.6" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M16 4l4 4-4 4" stroke="white" stroke-width="1.6" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <nav class="navegacao-inferior" role="navigation" aria-label="Navegação">
+      <button class="botao-nav" aria-current="page">
+        <!-- home icon -->
+        <svg width="28" height="28" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M33 18.3V20.6C33 26.44 33 29.36 31.24 31.18 29.49 33 26.66 33 21 33H15C9.34 33 6.51 33 4.76 31.18 3 29.36 3 26.44 3 20.59V18.31C3 14.87 3 13.16 3.78 11.73 4.56 10.31 5.98 9.43 8.83 7.66L11.83 5.8C14.83 3.93 16.34 3 18 3 19.66 3 21.17 3.93 24.17 5.8L27.17 7.66C30.02 9.43 31.44 10.31 32.22 11.73"
+            stroke="white" stroke-width="2.3" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button class="botao-nav">
+        <!-- book icon -->
+        <svg width="28" height="28" viewBox="0 0 31 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M2 16.1V23.84C2 28.64 2 31.04 3.14 32.09 5.09 33.31 11.99 31.58 19.91 26.42 23.49 24.02 24.16 23.32 26.21 22.84 27.55 22.55 29.91 21.58 31.8 20.99"
+            stroke="white" stroke-width="2.2" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button class="botao-nav">
+        <!-- cap icon -->
+        <svg width="28" height="28" viewBox="0 0 53 53" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M13.16 24.84V34.57c.01.28.09.55.24.78L23.82 40.21c1.21.54 2.53.79 3.86.73 1.33-.06 2.62-.43 3.78-1.07L38.53 36.02"
+            stroke="white" stroke-width="2.2" stroke-linecap="round" />
+        </svg>
+      </button>
+      <button class="botao-nav">
+        <!-- bookmark icon -->
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 2h12v20l-6-4-6 4V2z" stroke="white" stroke-width="1.6" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+      <button class="botao-nav">
+        <!-- menu icon -->
+        <svg width="28" height="28" viewBox="0 0 33 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 2H31.33M2 13H31.33M2 24H31.33" stroke="white" stroke-width="2.3" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </button>
+    </nav>
+
+  </main>
+  <script src="../js/home2.js"></script>
+</body>
+
+</html>

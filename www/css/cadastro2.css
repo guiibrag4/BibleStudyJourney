@@ -149,6 +149,8 @@ input {
     cursor: pointer;
     font-weight: bold;
     margin-left: 6px;
+    text-decoration: underline;
+    text-underline-offset: 4px; /* Aumenta a distância entre o texto e o sublinhado */
 }
 
 .entrar-se-ja-tiver-conta {
@@ -156,6 +158,8 @@ input {
     justify-content: center;
     align-items: center;
 }
+
+
 
  .error-text {
     color: #ef4444;

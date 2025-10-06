@@ -7,6 +7,16 @@
 /* Inknut Antiqua */
 @import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
+/* variáveis env */
+
+.cabecalho-titulo {
+    padding-top: env(safe-area-inset-top);
+}
+
+.termos-rodape {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* Reset básico */
 * {
     margin: 0;
@@ -22,7 +32,9 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-}   
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
 
 .cabecalho-titulo {
     margin-top: 0;
@@ -71,7 +83,7 @@ input {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
-    box-shadow: 0 2px 8px rgba(40,58,80,0.08);
+    box-shadow: 0 2px 8px rgba(40, 58, 80, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,8 +91,10 @@ input {
 }
 
 #login-form input::placeholder {
-    color: #fff; /* Escolha a cor desejada */
-    opacity: 1;     /* Garante que a cor apareça */
+    color: #fff;
+    /* Escolha a cor desejada */
+    opacity: 1;
+    /* Garante que a cor apareça */
     padding-left: 1.5vh;
     font-size: 16px;
     font-family: Inknut Antiqua, Arial, sans-serif;
@@ -88,7 +102,7 @@ input {
 
 .form-container {
     margin-top: 7vh;
-    padding-bottom:2vh;
+    padding-bottom: 2vh;
     display: flex;
     flex-direction: column;
 }
@@ -119,12 +133,25 @@ input {
     z-index: 10;
 }
 
-.recuperar-senha{
+.recuperar-senha {
     display: flex;
     align-items: center;
     color: #D3CC00;
     font-weight: bold;
     text-align: left;
+    margin-left: 7.5vw;
+    /* Alinha com o início dos inputs */
+    margin-bottom: 2vh;
+
+    opacity: 0.5;
+    /* Reduz a opacidade para dar aspecto desativado */
+    cursor: not-allowed;
+    /* Muda o cursor para indicar que não está disponível */
+    filter: grayscale(50%);
+    /* Adiciona um filtro de cinza */
+    pointer-events: none;
+    /* Desabilita cliques */
+    position: relative;
 }
 
 .submit-button {
@@ -142,4 +169,16 @@ input {
     font-size: 18px;
     font-family: 'Inknut Antiqua', Arial, sans-serif;
     font-weight: lighter;
+}
+
+.btn-google {
+    opacity: 0.5;
+    /* Reduz a opacidade para dar aspecto desativado */
+    cursor: not-allowed;
+    /* Muda o cursor para indicar que não está disponível */
+    filter: grayscale(50%);
+    /* Adiciona um filtro de cinza */
+    pointer-events: none;
+    /* Desabilita cliques */
+    position: relative;
 }
