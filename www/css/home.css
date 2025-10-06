@@ -38,11 +38,12 @@ body {
 .bible-header {
   width: 100%;
   height: 57px;
-  background-color: #283A50;
+  margin-top: 10px;
+  margin-left: 0px;
   display: flex;
   align-items: center;
-  gap: 13px;
-  padding: 0 9px;
+  gap: 13pxpx;
+  padding: 0px;
   padding-top: env(safe-area-inset-top);
   position: sticky;
   top: 0;
@@ -78,11 +79,12 @@ body {
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  border: 1px solid #191616;
+  border-radius: 16px;
   /* Impede que os botões encolham */
 }
 
 .version-selector {
-  margin-left: 10px;
   width: 75px;
 }
 
@@ -98,11 +100,11 @@ body {
   /* Impede que os botões encolham */
 }
 
-.save-page,
 .font-size-button {
   background: none;
   border: none;
   cursor: pointer;
+  filter: invert(1);;
 }
 
 .save-page img {
@@ -118,6 +120,7 @@ body {
 .bible-content {
   padding-top: 9px;
   padding-bottom: calc(9px + env(safe-area-inset-bottom));
+  padding-left: 10px;
   word-wrap: break-word;
   /* Quebra palavras longas */
   overflow-x: hidden;
@@ -429,6 +432,8 @@ select {
     flex-shrink: 1;
     /* Permite que os botões encolham em telas menores */
     max-width: 100%;
+    border-radius: 16px;
+    border: 1px solid #191616;
     /* Garante que os botões não excedam a largura da tela */
   }
 
