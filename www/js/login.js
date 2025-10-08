@@ -73,7 +73,7 @@ async function handleLogin(event) {
             alert("Login bem-sucedido!");
             localStorage.setItem("token", data.token);
             // Ajuste o caminho se necessário
-            window.location.href = "home.html";
+            window.location.href = "biblia.html";
         } else {
             alert(data.error || "Erro desconhecido no login");
         }

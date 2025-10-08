@@ -61,6 +61,7 @@ body {
     line-height: 1.2;
     white-space: pre-line;
     color: #ddd;
+
 }
 
 input {
@@ -82,12 +83,12 @@ input {
     align-items: center;
     justify-content: center;
     gap: 14px;
+    padding-left: 1.5vh;
 }
 
 .registration-form input::placeholder {
     color: #fff; /* Escolha a cor desejada */
     opacity: 1;     /* Garante que a cor apareça */
-    padding-left: 1.5vh;
     font-size: 16px;
     font-family: Inknut Antiqua, Arial, sans-serif;
 }
