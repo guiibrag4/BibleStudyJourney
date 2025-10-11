@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign (
             { id_usuario: usuario.id_usuario, email: usuario.email},
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '30d' }
         );
 
         await pool.query('UPDATE app_biblia.Usuario SET ultimo_login = NOW () WHERE id_usuario = $1', [usuario.id_usuario]);
