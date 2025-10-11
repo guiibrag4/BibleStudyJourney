@@ -70,6 +70,7 @@ button {
 }
 
 .termos-rodape {
+    font-family: 'Merriweather', Arial, sans-serif;
     text-align: center;
     position: fixed;
     left: 0;
@@ -77,8 +78,9 @@ button {
     bottom: 2vh;
     width: 100vw;
     color: #fff;
-    font-size: 15px;
+    font-size: 14px;
     z-index: 10;
+    white-space: pre-line;
 }
 
 .btn-criar {

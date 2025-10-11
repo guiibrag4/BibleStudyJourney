@@ -13,10 +13,6 @@
   padding-top: env(safe-area-inset-top);
 } */
 
-.termos-rodape {
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
 
 /* Reset básico */
 * {
@@ -134,6 +130,7 @@ button {
     font-size: 14px;
     z-index: 10;
     white-space: pre-line;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .contaExistente {

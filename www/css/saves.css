@@ -1,22 +1,34 @@
-/* CSS melhorado para a página de salvos */
+/* =================================
+   SAVES PAGE - CSS ORGANIZADO
+   ================================= */
 
+/* ===== VARIÁVEIS ===== */
 :root {
+    /* Cores principais */
     --primary-color: #4a90e2;
     --secondary-color: #7b68ee;
     --success-color: #4caf50;
     --warning-color: #ff9800;
     --danger-color: #f44336;
+    
+    /* Texto */
     --text-primary: #2c3e50;
     --text-secondary: #7f8c8d;
-    --background-primary: #ffffff;
-    --background-secondary: #f8f9fa;
-    --background-card: #ffffff;
+    
+    /* Backgrounds */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    
+    /* Elementos */
     --border-color: #e9ecef;
-    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
-    --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.15);
     --border-radius: 12px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
     
     /* Cores de grifo */
     --highlight-yellow: #fff9c4;
@@ -29,22 +41,7 @@
     --highlight-cyan: #b2ebf2;
 }
 
-/* variaveis env */
-
-.saves-header {
-    padding-top: calc (1rem + env(safe-area-inset-top));
-}
-
-.fullscreen-modal {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
-.saves-content {
-    padding-bottom: calc (2rem + env(safe-area-inset-bottom));
-}
-
-/* Reset e base */
+/* ===== RESET E BASE ===== */
 * {
     margin: 0;
     padding: 0;
@@ -53,21 +50,24 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background: var(--background-secondary);
+    background: var(--bg-secondary);
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
-/* Header */
+/* ===== HEADER ===== */
 .saves-header {
-    background: var(--background-primary);
+    background: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: var(--shadow-light);
+    box-shadow: var(--shadow-sm);
 }
 
 .header-content {
@@ -107,7 +107,6 @@ body {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0;
 }
 
 .title-icon {
@@ -139,9 +138,9 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Menu de navegação */
+/* ===== MENU DE NAVEGAÇÃO ===== */
 .saves-menu {
-    background: var(--background-primary);
+    background: var(--bg-primary);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: center;
@@ -196,6 +195,7 @@ body {
     background: rgba(74, 144, 226, 0.05);
 }
 
+/* Elementos do menu */
 .tab-icon {
     font-size: 1.25rem;
 }
@@ -219,11 +219,12 @@ body {
     background: var(--text-secondary);
 }
 
-/* Conteúdo principal */
+/* ===== CONTEÚDO PRINCIPAL ===== */
 .saves-content {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
 }
 
 .saves-tab {
@@ -246,7 +247,7 @@ body {
     }
 }
 
-/* Estado vazio */
+/* ===== ESTADO VAZIO ===== */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -271,18 +272,17 @@ body {
     margin: 0 auto;
 }
 
-/* Grid de itens */
+/* ===== GRID E CARDS ===== */
 .items-grid {
     display: grid;
     gap: 1.5rem;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 }
 
-/* Cards */
 .save-card {
-    background: var(--background-card);
+    background: var(--bg-card);
     border-radius: var(--border-radius);
-    box-shadow: var(--shadow-light);
+    box-shadow: var(--shadow-sm);
     transition: var(--transition);
     overflow: hidden;
     border: 1px solid var(--border-color);
@@ -291,10 +291,11 @@ body {
 }
 
 .save-card:hover {
-    box-shadow: var(--shadow-medium);
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
+/* Header do card */
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -306,7 +307,6 @@ body {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0;
 }
 
 .card-subtitle {
@@ -315,6 +315,7 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* Ações do card */
 .card-actions {
     display: flex;
     gap: 0.5rem;
@@ -327,7 +328,7 @@ body {
 }
 
 .action-btn {
-    background: var(--background-secondary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0.5rem;
@@ -355,6 +356,7 @@ body {
     border-color: var(--success-color);
 }
 
+/* Conteúdo do card */
 .card-content {
     margin-bottom: 1rem;
 }
@@ -389,6 +391,7 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Botão expandir */
 .card-expand {
     position: absolute;
     top: 1rem;
@@ -417,49 +420,9 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Cards específicos */
+/* ===== TIPOS DE CARDS ===== */
 .versiculo-card {
     border-left: 4px solid var(--primary-color);
-}
-
-.versiculo-card.highlight-yellow {
-    border-left-color: #ffc107;
-    background: linear-gradient(135deg, var(--highlight-yellow) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-green {
-    border-left-color: #4caf50;
-    background: linear-gradient(135deg, var(--highlight-green) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-blue {
-    border-left-color: #2196f3;
-    background: linear-gradient(135deg, var(--highlight-blue) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-red {
-    border-left-color: #f44336;
-    background: linear-gradient(135deg, var(--highlight-red) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-purple {
-    border-left-color: #9c27b0;
-    background: linear-gradient(135deg, var(--highlight-purple) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-orange {
-    border-left-color: #ff9800;
-    background: linear-gradient(135deg, var(--highlight-orange) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-pink {
-    border-left-color: #e91e63;
-    background: linear-gradient(135deg, var(--highlight-pink) 0%, var(--background-card) 100%);
-}
-
-.versiculo-card.highlight-cyan {
-    border-left-color: #00bcd4;
-    background: linear-gradient(135deg, var(--highlight-cyan) 0%, var(--background-card) 100%);
 }
 
 .capitulo-card {
@@ -470,7 +433,48 @@ body {
     border-left: 4px solid var(--success-color);
 }
 
-/* Modal */
+/* Cards com destaque colorido */
+.versiculo-card.highlight-yellow {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, var(--highlight-yellow) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-green {
+    border-left-color: #4caf50;
+    background: linear-gradient(135deg, var(--highlight-green) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-blue {
+    border-left-color: #2196f3;
+    background: linear-gradient(135deg, var(--highlight-blue) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-red {
+    border-left-color: #f44336;
+    background: linear-gradient(135deg, var(--highlight-red) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-purple {
+    border-left-color: #9c27b0;
+    background: linear-gradient(135deg, var(--highlight-purple) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-orange {
+    border-left-color: #ff9800;
+    background: linear-gradient(135deg, var(--highlight-orange) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-pink {
+    border-left-color: #e91e63;
+    background: linear-gradient(135deg, var(--highlight-pink) 0%, var(--bg-card) 100%);
+}
+
+.versiculo-card.highlight-cyan {
+    border-left-color: #00bcd4;
+    background: linear-gradient(135deg, var(--highlight-cyan) 0%, var(--bg-card) 100%);
+}
+
+/* ===== MODAL ===== */
 .fullscreen-modal {
     position: fixed;
     top: 0;
@@ -558,7 +562,7 @@ body {
     white-space: pre-wrap;
 }
 
-/* Responsividade */
+/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     .header-content {
         padding: 0 1rem;
@@ -591,6 +595,7 @@ body {
     
     .saves-content {
         padding: 1.5rem 1rem;
+        padding-bottom: calc(84px + env(safe-area-inset-bottom));
     }
     
     .items-grid {
@@ -608,10 +613,7 @@ body {
         gap: 0.5rem;
     }
     
-    .card-actions {
-        opacity: 1;
-    }
-    
+    .card-actions,
     .card-expand {
         opacity: 1;
     }
@@ -667,22 +669,21 @@ body {
     }
 }
 
-/* Temas */
+/* ===== TEMAS ===== */
 .dark-mode {
     --text-primary: #e9ecef;
     --text-secondary: #adb5bd;
-    --background-primary: #212529;
-    --background-secondary: #343a40;
-    --background-card: #2d3436;
+    --bg-primary: #212529;
+    --bg-secondary: #343a40;
+    --bg-card: #2d3436;
     --border-color: #495057;
 }
 
 .sepia-mode {
     --text-primary: #5d4e37;
     --text-secondary: #8b7355;
-    --background-primary: #f4f1e8;
-    --background-secondary: #ede6d3;
-    --background-card: #f9f6f0;
+    --bg-primary: #f4f1e8;
+    --bg-secondary: #ede6d3;
+    --bg-card: #f9f6f0;
     --border-color: #d4c5a9;
 }
-
