@@ -37,6 +37,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "localforage": "^1.10.0",
+    "node-fetch": "^2.7.0",
     "pg": "^8.14.1",
     "serve": "^14.2.4"
   }
