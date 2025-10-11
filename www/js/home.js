@@ -204,6 +204,25 @@ document.addEventListener('click', (event) => {
   }
 });
 
+document.querySelectorAll('.book-item').forEach(button => {
+    button.addEventListener('click', (e) => {
+        const selectedBook = e.target.dataset.book;
+        
+        // Atualizar a interface
+        updateChapterSelector(selectedBook);
+        
+        // Fechar o modal
+        closeAllModals();
+    });
+});
+
+// Função para atualizar o seletor de capítulos
+function updateChapterSelector(book) {
+    const chapterSelector = document.getElementById('chapter-selector');
+    // Implementar lógica para atualizar o texto do capítulo
+    // Exemplo: chapterSelector.textContent = `${bookName} 1`;
+}
+
 // Só para aumentar o tamanho da caixa de capítulo para esse livro específico
 function updateChapterSelectorStyle() {
   if (livroAtual === "1ts" || livroAtual === "2ts") {

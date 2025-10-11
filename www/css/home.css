@@ -7,9 +7,10 @@
 /* Alternativa ainda mais moderna com CSS Container Queries (se suportado) */
 @supports (height: 100dvh) {
   body {
-    min-height: 100dvh; /* Dynamic viewport height */
+    min-height: 100dvh;
+    /* Dynamic viewport height */
   }
-  
+
   #bible-reader {
     min-height: 100dvh;
   }
@@ -104,7 +105,8 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  filter: invert(1);;
+  filter: invert(1);
+  ;
 }
 
 .save-page img {
@@ -124,7 +126,8 @@ body {
   word-wrap: break-word;
   /* Quebra palavras longas */
   overflow-x: hidden;
-    background-color: white; /* Garantir fundo branco no conteúdo */
+  background-color: white;
+  /* Garantir fundo branco no conteúdo */
   flex: 1;
 }
 
@@ -150,6 +153,33 @@ body {
   transition: opacity 0.3s ease;
 }
 
+#version-dialog {
+  align-items: flex-start;
+  /* Alinha no topo */
+  padding-top: calc(90px + env(safe-area-inset-top));
+  /* Espaço do header + área segura */
+}
+
+#version-dialog .dialog-content {
+  width: 85%;
+  max-width: 300px;
+  /* Menor que os outros modais */
+  padding: 12px;
+  margin-top: 0;
+}
+
+#version-dialog .dialog-body {
+  max-height: 200px;
+  /* Altura menor já que é só um select */
+  padding: 5px;
+}
+
+#version-dialog select {
+  padding: 10px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+}
+
 .dialog.open {
   opacity: 1;
   pointer-events: auto;
@@ -159,11 +189,13 @@ body {
   background: white;
   border-radius: 8px;
   width: 90%;
-  max-width: 425px;
-  padding: 20px;
+  max-width: 350px;
+  padding: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1001;
   position: relative;
+  max-height: 70vh;
+  height: auto;
 }
 
 /* Ajusta o cabeçalho do diálogo */
@@ -172,11 +204,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  /* Reduz o espaçamento inferior */
   padding-bottom: 5px;
-  /* Adiciona um pequeno espaçamento interno */
   border-bottom: 1px solid #ddd;
-  /* Linha sutil para separar o título do conteúdo */
 }
 
 .dialog-header h2 {
@@ -196,15 +225,12 @@ body {
 /* Ajusta o corpo do diálogo */
 .dialog-body {
   overflow-y: auto;
-  /* Adiciona barra de rolagem vertical */
-  padding: 10px;
-  /* Espaçamento interno */
+  padding: 8px;
   margin-top: 0;
-  /* Remove qualquer margem superior */
   display: flex;
   flex-direction: column;
   gap: 10px;
-  /* Espaçamento uniforme entre os elementos */
+  max-height: 60vh;
 }
 
 /* Remove a barra de rolagem horizontal, se necessário */
@@ -228,18 +254,6 @@ body {
 .dialog-body::-webkit-scrollbar-track {
   background-color: #f0f0f0;
   /* Cor do fundo da barra */
-}
-
-/* Garante que o conteúdo fique imediatamente abaixo do cabeçalho */
-.dialog-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  /* Alinha o conteúdo ao topo */
-  height: 750px;
-  /* Altura fixa para todos os diálogos */
-  padding: 10px;
-  /* Espaçamento interno */
 }
 
 select {
@@ -373,24 +387,32 @@ select {
 
 @media (min-width: 640px) {
   .dialog-content {
-    padding: 24px;
+    width: 90%;
+    max-width: 320px;
+    padding: 12px;
+  }
+
+  .dialog-body {
+    max-height: 50vh;
   }
 }
 
 
 @media (max-width: 480px) {
-  .bible-header {
-    flex-wrap: wrap;
-    /* Permite quebra de linha para evitar sobreposição */
-    gap: 8px;
-    /* Reduz o espaçamento entre os elementos */
+  .dialog-content {
+    width: 90%;
+    max-width: 320px;
+    padding: 12px;
   }
 
-  /* .selectors {
-    flex-grow: 1;
-    gap: 15px;
-    margin-left: 10px;
-  } */
+  .dialog-body {
+    max-height: 50vh;
+  }
+
+  .bible-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
   .selectors {
     display: flex;
@@ -398,7 +420,6 @@ select {
     flex-grow: 1;
     /* Permite que os seletores ocupem o espaço disponível */
     min-width: 0;
-    /* Garante que os seletores não forcem o layout */
   }
 
   .actions {
@@ -420,9 +441,7 @@ select {
   .save-page,
   .font-size-button {
     flex-shrink: 0;
-    /* Impede que os botões encolham */
     min-width: 34px;
-    /* Largura mínima para os botões */
   }
 
   .version-selector,
@@ -430,39 +449,36 @@ select {
     font-size: 19px;
     height: 33px;
     flex-shrink: 1;
-    /* Permite que os botões encolham em telas menores */
     max-width: 100%;
     border-radius: 16px;
     border: 1px solid #191616;
-    /* Garante que os botões não excedam a largura da tela */
   }
 
   .chapter-selector {
     width: 150px;
-    /* Largura reduzida para dispositivos móveis */
   }
 
   .chapter-selector.tessalonicenses {
     width: 190px;
-    /* Largura maior para caber o nome completo */
     flex-shrink: 0;
-    /* Impede que o botão encolha */
   }
+
+  #version-dialog .dialog-content {
+    width: 90%;
+    max-width: 280px;
+  }
+
+
 }
 
 .bible-header {
   display: flex;
   justify-content: space-between;
-  /* Distribui os elementos uniformemente */
   align-items: center;
   gap: 10px;
-  /* Espaçamento entre os elementos */
   padding: 0 15px;
-  /* Ajuste no espaçamento interno */
   flex-wrap: nowrap;
-  /* Impede quebra de linha */
   overflow: hidden;
-  /* Garante que o conteúdo não ultrapasse os limites */
 }
 
 /* Telas muitooo pequenas */
@@ -471,58 +487,41 @@ select {
 @media (max-width: 386px) {
   .bible-header {
     flex-wrap: nowrap;
-    /* Impede quebra de linha */
     gap: 5px;
-    /* Reduz o espaçamento entre os elementos */
     overflow: hidden;
-    /* Garante que o conteúdo não ultrapasse os limites */
   }
 
   .selectors {
     display: flex;
     flex-grow: 1;
-    /* Permite que os seletores ocupem o espaço disponível */
     min-width: 0;
-    /* Garante que os seletores não forcem o layout */
   }
 
   .version-selector,
   .chapter-selector {
     font-size: 14px;
-    /* Reduz o tamanho da fonte */
     height: 30px;
-    /* Reduz a altura */
     flex-shrink: 1;
-    /* Permite que os botões encolham */
     max-width: 100%;
-    /* Garante que os botões respeitem o espaço disponível */
     overflow: hidden;
-    /* Esconde o texto que ultrapassa o limite */
     text-overflow: ellipsis;
-    /* Adiciona reticências ao texto que ultrapassa */
     white-space: nowrap;
-    /* Impede quebra de linha no texto */
   }
 
   .chapter-selector.tessalonicenses {
     width: auto;
-    /* Ajusta a largura automaticamente */
     flex-shrink: 1;
-    /* Permite que o botão encolha */
   }
 
   .actions {
     display: flex;
     gap: 5px;
-    /* Reduz o espaçamento entre os botões */
     flex-shrink: 0;
-    /* Impede que os botões encolham */
   }
 
   .save-page img,
   .font-size-button img {
     width: 30px;
-    /* Reduz o tamanho dos ícones */
     height: 30px;
   }
 }
