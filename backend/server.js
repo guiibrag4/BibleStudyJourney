@@ -19,7 +19,8 @@ const allowedOrigins = [
     "https://localhost",
     "https://localhost:8100",
     "http://192.168.1.100:8100",
-    "https://biblestudyjourney-v2.onrender.com"
+    "https://biblestudyjourney-v2.onrender.com",
+    "https://biblestudyjourney.duckdns.org"
 ];
 
 /* Configuração CORS (sem alterações aqui, esse CORS é para todas as rotas, em ambiente de desenvolvimento */
