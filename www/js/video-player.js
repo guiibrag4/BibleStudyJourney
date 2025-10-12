@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // --- BUSCA DE DADOS NA API (TÍTULO, DESCRIÇÃO E DURAÇÃO) ---
-    const apiUrl = `http://localhost:3000/api/video-info?videoId=${videoId}`;
+    const apiUrl = `http://163.176.140.70/api/video-info?videoId=${videoId}`;
     fetch(apiUrl )
       .then(response => {
         if (!response.ok) throw new Error(`Falha ao buscar dados do vídeo. Status: ${response.status}`);

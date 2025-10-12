@@ -5,16 +5,16 @@ document.addEventListener('DOMContentLoaded', function () {
   // Configuração da API (similar ao login.js)
   const API_CONFIG = {
     development: "http://localhost:3000", // URL do seu backend local
-    production: "https://biblestudyjourney-v2.onrender.com" // Substitua pela URL do seu servidor Render
+    production: "http://163.176.140.70" // Substitua pela URL do seu servidor
   };
 
   // Detecta se o aplicativo está rodando em um ambiente Capacitor
   const isCapacitor = window.Capacitor !== undefined;
 
   // Define a URL da API com base no ambiente
-  const API_URL = isCapacitor ? API_CONFIG.production : API_CONFIG.development;
+  // const API_URL = isCapacitor ? API_CONFIG.production : API_CONFIG.development;
 
-  // const API_URL = API_CONFIG.production; //Força o uso do servidor de produção
+  const API_URL = API_CONFIG.production; //Força o uso do servidor de produção
 
   console.log("API URL utilizada no cadastro: " + API_URL);
 

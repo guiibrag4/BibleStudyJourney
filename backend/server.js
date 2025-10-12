@@ -22,13 +22,31 @@ const allowedOrigins = [
     "https://biblestudyjourney-v2.onrender.com"
 ];
 
-// Configuração CORS (sem alterações aqui )
-app.use(cors({
-    origin: true,
+/* Configuração CORS (sem alterações aqui, esse CORS é para todas as rotas, em ambiente de desenvolvimento */
+
+// app.use(cors({
+//     origin: true,
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization']
+// }));
+
+/* Configuração CORS aprimorada para permitir apenas origens específicas, garantindo segurança em produção */
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Permite requisições sem 'origin' (como apps mobile ou Postman) e as origens da sua lista
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000;
 
