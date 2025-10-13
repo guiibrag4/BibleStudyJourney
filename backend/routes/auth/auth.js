@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 router.post('/register', async (req, res) => {
+    console.log('Corpo da requisição de registro recebido:', req.body);
     const { nome, sobrenome, email, senha } = req.body;
 
     try {
@@ -36,6 +37,7 @@ router.post('/register', async (req, res) => {
 
 // Endpoint para login do usuário
 router.post('/login', async (req, res) => {
+    console.log('Corpo da requisição de login recebido:', req.body);
     const { email, senha } = req.body;
 
     try {
