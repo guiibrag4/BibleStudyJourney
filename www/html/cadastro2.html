@@ -23,12 +23,12 @@
     <p class="entrar-se-ja-tiver-conta">Já tem uma conta? <a class="iniciar-sessao"> Iniciar sessão </a></p>
 
 
-    <div id="errorContainer" class="error-container" style="display: none;">
+    <div id="errorContainer" class="error-container" style="display: none; text-align: center; margin-bottom: -20px; margin-top: 20px;">
         <div id="errorMessage" class="error-message"></div>
     </div>
 
 
-    <div class="form-container">
+    <div id= "registrationContainer" class="form-container">
         <form method="post" id="registrationForm" class="registration-form">
 
             <input class="campo-nome" id="name" type="text" placeholder="Nome" required />
@@ -57,8 +57,9 @@
         <h2 class="success-title">Cadastro Realizado!</h2>
         <p class="success-message">
             Seu cadastro foi realizado com sucesso. Bem-vindo à Bible Study Journey! <br> <br>
-            Você será redirecionado para a tela de login em breve.
+            Clique no botão abaixo para ser redirecionado.
         </p>
+        <button type="button" id="goToLoginButton" class="submit-button">Ir para página de Login</button>
     </div>
 
     <!-- Cordova script -->

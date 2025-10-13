@@ -1,172 +1,256 @@
  /* Merriweather Sans */
-/* @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap'); */
+ /* @import url('https://fonts.googleapis.com/css2?family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap'); */
 
-/* Merriweather */
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
-
-
-/* Lato */
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-
-/* Inknut Antiqua */
-@import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-
-/* Reset básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Merriweather', Arial, sans-serif;
-    background: linear-gradient(137deg, #283A50, #5B84B6);
-    color: white;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch; /* padrão */
-    justify-content: flex-start; /* garante alinhamento no topo */
-}  
-
-.cabecalho-titulo {
-    margin-top: 0;
-    padding-top: 16px;
-    font-family: 'Merriweather', Arial, sans-serif;
-    font-size: 20px;
-    font-weight: lighter;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8vh;
-}
-
-.titulo-increver {
-    font-family: 'Merriweather', Arial, sans-serif;
-    font-size: 28px;
-    font-weight: lighter;
-    margin-top: 3vh;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.descricao-cadastro {
-    margin-top: -1.5vh;
-    margin-bottom: 3vh;
-    text-align: center;
-    line-height: 1.2;
-    white-space: pre-line;
-    color: #ddd;
-
-}
-
-input {
-    margin: 0 auto;
-    margin-top: 2vw;
-    min-width: 85vw;
-    max-width: 90vw;
-    color: #000000;
-    padding: 1px;
-    font-family: 'Inknut Antiqua', Arial, sans-serif;
-    font-size: 18px;
-    font-weight: 300;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    box-shadow: 0 2px 8px rgba(40,58,80,0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding-left: 1.5vh;
-}
-
-.registration-form input::placeholder {
-    color: #fff; /* Escolha a cor desejada */
-    opacity: 1;     /* Garante que a cor apareça */
-    font-size: 16px;
-    font-family: Inknut Antiqua, Arial, sans-serif;
-}
-
-.form-container {
-    margin-top: 7vh;
-    padding-bottom:2vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.campo-nome {
-    background: transparent;
-    color: #fff;
-    border: 1px solid #ccc;
-    margin-bottom: 2vh;
-}
-
-.campo-sobrenome {
-    background: transparent;
-    color: #fff;
-    border: 1px solid #ccc;
-    margin-bottom: 2vh;
-}
-
-.campo-email {
-    background: transparent;
-    color: #fff;
-    border: 1px solid #ccc;
-    margin-bottom: 2vh;
-}
-
-.campo-senha {
-    background: transparent;
-    color: #fff;
-    border: 1px solid #ccc;
-    margin-bottom: 2vh;
-}
-
-.submit-button {
-    border: 1px solid #7E7E7E;
-    border-radius: 36px;
-    display: block;
-    width: 85%;
-    margin: 20px auto 0 auto;
-    align-items: center;
-    justify-content: center;
-    background-color: #414141;
-    color: #fff;
-    margin-top: 2vh;
-    padding: 2px 0px;
-    font-size: 18px;
-    font-family: 'Inknut Antiqua', Arial, sans-serif;
-    font-weight: lighter;
-}
-
-.iniciar-sessao {
-    color: #D3CC00;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 6px;
-    text-decoration: underline;
-    text-underline-offset: 4px; /* Aumenta a distância entre o texto e o sublinhado */
-}
-
-.entrar-se-ja-tiver-conta {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+ /* Merriweather */
+ @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap');
 
 
+ /* Lato */
+ @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+ /* Inknut Antiqua */
+ @import url('https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@300;400;500;600;700;800;900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Merriweather+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+ /* Reset básico */
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+ }
+
+ body {
+     font-family: 'Merriweather', Arial, sans-serif;
+     background: linear-gradient(137deg, #283A50, #5B84B6);
+     color: white;
+     height: 100vh;
+     overflow: hidden;
+     display: flex;
+     flex-direction: column;
+     align-items: stretch;
+     /* padrão */
+     justify-content: flex-start;
+     /* garante alinhamento no topo */
+ }
+
+ .cabecalho-titulo {
+     margin-top: 0;
+     padding-top: 16px;
+     font-family: 'Merriweather', Arial, sans-serif;
+     font-size: 20px;
+     font-weight: lighter;
+     color: #fff;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin-bottom: 8vh;
+ }
+
+ .titulo-increver {
+     font-family: 'Merriweather', Arial, sans-serif;
+     font-size: 28px;
+     font-weight: lighter;
+     margin-top: 3vh;
+     color: #fff;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .descricao-cadastro {
+     margin-top: -1.5vh;
+     margin-bottom: 3vh;
+     text-align: center;
+     line-height: 1.2;
+     white-space: pre-line;
+     color: #ddd;
+
+ }
+
+ input {
+     margin: 10px auto;
+     margin-top: 0.5vw;
+     min-width: 85vw;
+     max-width: 90vw;
+     color: #000000;
+     padding: 14px;
+     font-family: 'Merriweather Sans', Arial, sans-serif;
+     font-size: 18px;
+     font-weight: 300;
+     border: none;
+     border-radius: 8px;
+     cursor: pointer;
+     transition: background-color 0.3s, color 0.3s;
+     box-shadow: 0 2px 8px rgba(40, 58, 80, 0.08);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 14px;
+     padding-left: 1.5vh;
+ }
+
+ .registration-form input::placeholder {
+     color: #fff;
+     /* Escolha a cor desejada */
+     opacity: 1;
+     /* Garante que a cor apareça */
+     font-size: 16px;
+     font-family: Inknut Antiqua, Arial, sans-serif;
+ }
+ 
+ .form-container {
+     margin-top: 7vh;
+     padding-bottom: 2vh;
+     display: flex;
+     flex-direction: column;
+ }
+
+ .registration-form {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 5px;
+ }
+
+ .campo-nome {
+     background: transparent;
+     color: #fff;
+     border: 1px solid #ccc;
+     margin-bottom: 2vh;
+ }
+
+ .campo-sobrenome {
+     background: transparent;
+     color: #fff;
+     border: 1px solid #ccc;
+     margin-bottom: 2vh;
+ }
+
+ .campo-email {
+     background: transparent;
+     color: #fff;
+     border: 1px solid #ccc;
+     margin-bottom: 2vh;
+ }
+
+ .campo-senha {
+     background: transparent;
+     color: #fff;
+     border: 1px solid #ccc;
+     margin-bottom: 2vh;
+ }
+
+ .submit-button {
+     border: none;
+     border-radius: 12px;
+     display: block;
+     width: 85%;
+     margin: 20px auto 0 auto;
+     align-items: center;
+     justify-content: center;
+
+     background: linear-gradient(137deg, #283A50 0%, #5B84B6 100%);
+     background-size: 200% 200%;
+     background-position: 0% 50%;
+     color: #fff;
+
+     margin-top: 0.5vh;
+     padding: 2px 0px;
+
+     font-size: 18px;
+     font-family: 'Inknut Antiqua', Arial, sans-serif;
+     font-weight: lighter;
+
+     box-shadow: 0 8px 20px rgba(40, 58, 80, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+     transition: background-position 0.3s ease, box-shadow 0.2s ease, transform 0.05s ease, filter 0.08s;
+ }
+
+ .submit-button:hover {
+     background-position: 100% 50%;
+     box-shadow: 0 12px 28px rgba(77, 80, 40, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+ }
+
+ .submit-button:active {
+     transform: translateY(1px) scale(0.99);
+     filter: brightness(0.98);
+     /* adiciona um brilho amarelo para enfatizar o clique */
+     box-shadow: 0 8px 16px rgba(40, 58, 80, 0.35), 0 0 20px rgba(211, 204, 0, 0.12);
+     background-position: 100% 60%;
+ }
+
+ .submit-button:focus-visible {
+     outline: 2px solid #D3CC00;
+     outline-offset: 2px;
+ }
+
+ .iniciar-sessao {
+     color: #D3CC00;
+     cursor: pointer;
+     font-weight: bold;
+     margin-left: 6px;
+     text-decoration: underline;
+     text-underline-offset: 4px;
+     /* Aumenta a distância entre o texto e o sublinhado */
+ }
+
+ .entrar-se-ja-tiver-conta {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+ }
 
  .error-text {
-    color: #ef4444;
-    font-size: 12px;
-    margin-top: 4px;
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-  }
+     color: #ef4444;
+     font-size: 12px;
+     margin-top: 4px;
+     position: absolute;
+     bottom: -20px;
+     left: 0;
+ }
+
+ /* Mensagem de cadastro feita com sucesso */
+ .success-container {
+     display: none;
+     /* controlado via JS */
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     gap: 12px;
+     padding: 24px;
+     margin-top: 4vh;
+
+     /* novo: visual “glass” */
+     width: min(520px, 90vw);
+     margin-left: auto;
+     margin-right: auto;
+     border-radius: 16px;
+     border: 1px solid rgba(255, 255, 255, 0.18);
+     background: linear-gradient(137deg,
+             rgba(255, 255, 255, 0.10) 0%,
+             rgba(255, 255, 255, 0.06) 100%);
+     box-shadow:
+         0 10px 30px rgba(0, 0, 0, 0.35),
+         inset 0 1px 0 rgba(255, 255, 255, 0.08);
+     backdrop-filter: blur(10px) saturate(120%);
+     -webkit-backdrop-filter: blur(10px) saturate(120%);
+ }
+
+ .success-icon {
+     width: 64px;
+     height: 64px;
+     color: #D3CC00;
+     /* usa currentColor no SVG */
+ }
+
+ .success-title {
+     font-family: 'Merriweather', Arial, sans-serif;
+     font-size: 24px;
+     font-weight: 400;
+     color: #fff;
+ }
+
+ .success-message {
+     color: #ddd;
+     line-height: 1.4;
+     max-width: 85vw;
+ }

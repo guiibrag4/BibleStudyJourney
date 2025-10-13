@@ -13,7 +13,7 @@ const API_CONFIG = {
 
 const CONFIG = {
     REDIRECT_PAGE: "biblia.html",
-    SIGNUP_PAGE: "html/cadastro.html"
+    SIGNUP_PAGE: "cadastro2.html"
 };
 
 // =============================================================================
@@ -53,7 +53,7 @@ const AuthManager = {
         try {
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
@@ -82,7 +82,7 @@ const AuthManager = {
      */
     async loginWithGoogle() {
         console.log("Google login clicked");
-        
+
         // TODO: Implementar lógica de login com Google
         if (Environment.isCapacitor && window.Capacitor.Plugins?.GoogleAuth) {
             try {
@@ -266,6 +266,21 @@ const UIManager = {
 };
 
 // =============================================================================
+// INTERAÇÕES COM A APLICAÇÃO
+// =============================================================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.submit-button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            // adiciona efeito visual persistente rápido
+            btn.classList.add('is-pressed');
+            // remove depois de 250ms para não bloquear navegação
+            setTimeout(() => btn.classList.remove('is-pressed'), 250);
+        });
+    });
+});
+
+// =============================================================================
 // INICIALIZAÇÃO DA APLICAÇÃO
 // =============================================================================
 const App = {
@@ -275,7 +290,7 @@ const App = {
     init() {
         console.log(`API URL utilizada: ${API_URL}`);
         console.log(`Ambiente: ${Environment.isCapacitor ? 'Capacitor' : 'Navegador'}`);
-        
+
         UIManager.init();
     }
 };
@@ -283,12 +298,12 @@ const App = {
 // =============================================================================
 // BOOTSTRAP DA APLICAÇÃO
 // =============================================================================
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     if (Environment.isCapacitor) {
         console.log("Capacitor detectado. Inicializando app.");
     } else {
         console.log("Navegador detectado. Inicializando app.");
     }
-    
+
     App.init();
 });

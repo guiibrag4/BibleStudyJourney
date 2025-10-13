@@ -44,9 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sucesso / containers
     registrationContainer: document.getElementById('registrationContainer'),
     successContainer: document.getElementById('successContainer'),
-
-    // link para iniciar sessão
-    iniciarSessaoBtn: document.querySelector('.iniciar-sessao')
+    iniciarSessaoBtn: document.querySelector('.iniciar-sessao'),
+    goToLoginButton: document.getElementById('goToLoginButton')
   };
 
   /* =========================
@@ -91,12 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showSuccessAndRedirect() {
-    if (DOM.registrationContainer) DOM.registrationContainer.style.display = 'none';
-    if (DOM.successContainer) DOM.successContainer.style.display = 'flex';
-
-    setTimeout(() => {
-      window.location.href = 'login2.html';
-    }, 3000);
+    if (DOM.registrationContainer)  DOM.registrationContainer.style.display = 'none';
+    if (DOM.successContainer) { DOM.successContainer.style.display = 'flex';
+    }
+    if (DOM.goToLoginButton) DOM.goToLoginButton.focus();
   }
 
   /* =========================
@@ -191,6 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login2.html';
       });
     }
+  }
+  if (DOM.goToLoginButton) {
+    DOM.goToLoginButton.addEventListener('click', () => {
+      window.location.href = 'login2.html';
+    });
   }
 
   /* =========================

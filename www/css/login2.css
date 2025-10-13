@@ -69,14 +69,25 @@ body {
     color: #ddd;
 }
 
+ .registrar-se {
+        color: #D3CC00;
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 6px;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        /* Aumenta a distância entre o texto e o sublinhado */
+ }
+
+
 input {
     margin: 0 auto;
     margin-top: 2vw;
     min-width: 85vw;
     max-width: 90vw;
     color: #000000;
-    padding: 1px;
-    font-family: 'Inknut Antiqua', Arial, sans-serif;
+    padding: 14px;
+    font-family: 'Merriweather Sans', Arial, sans-serif;
     font-size: 18px;
     font-weight: 300;
     border: none;
@@ -153,20 +164,54 @@ input {
 }
 
 .submit-button {
-    border: 1px solid #7E7E7E;
-    border-radius: 36px;
+    border: none;
+    border-radius: 12px;
     display: block;
     width: 85%;
     margin: 20px auto 0 auto;
     align-items: center;
     justify-content: center;
-    background-color: #414141;
+
+    background: linear-gradient(137deg, #283A50 0%, #5B84B6 100%);
+    background-size: 200% 200%;
+    background-position: 0% 50%;
     color: #fff;
+
     margin-top: 2vh;
     padding: 2px 0px;
+
     font-size: 18px;
     font-family: 'Inknut Antiqua', Arial, sans-serif;
     font-weight: lighter;
+
+    box-shadow: 0 8px 20px rgba(40, 58, 80, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: background-position 0.3s ease, box-shadow 0.2s ease, transform 0.05s ease, filter 0.08s;
+}
+
+.submit-button:hover {
+    background-position: 100% 50%;
+    box-shadow: 0 12px 28px rgba(77, 80, 40, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.submit-button:active {
+    transform: translateY(1px) scale(0.99);
+    filter: brightness(0.98);
+    /* adiciona um brilho amarelo para enfatizar o clique */
+    box-shadow: 0 8px 16px rgba(40,58,80,0.35), 0 0 20px rgba(211,204,0,0.12);
+    background-position: 100% 60%;
+}
+
+.submit-button:focus-visible {
+    outline: 2px solid #D3CC00;
+    outline-offset: 2px;
+}
+
+.submit-button.is-pressed {
+    transform: translateY(1px) scale(0.99);
+    filter: brightness(0.98);
+    box-shadow: 0 8px 16px rgba(40,58,80,0.35), 0 0 30px rgba(211,204,0,0.18);
+    /* leve sobreposição amarela para combinar com foco */
+    background-image: linear-gradient(137deg, rgba(211,204,0,0.12), rgba(211,204,0,0.06));
 }
 
 .btn-google {

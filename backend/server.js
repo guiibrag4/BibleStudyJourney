@@ -8,6 +8,11 @@ const path = require("path");
 
 const app = express();
 
+app.use((req, res, next) => {
+    console.log('Origin recebido:', req.headers.origin);
+    next();
+});
+
 // Origens permitidas (sem alterações aqui)
 const allowedOrigins = [
     "capacitor://localhost",
@@ -20,8 +25,13 @@ const allowedOrigins = [
     "https://localhost:8100",
     "http://192.168.1.100:8100",
     "https://biblestudyjourney-v2.onrender.com",
-    "https://biblestudyjourney.duckdns.org"
+    "https://biblestudyjourney.duckdns.org",
+    "http://127.0.0.1:5500"
 ];
+
+app.options('*', cors(corsOptions));
+
+
 
 /* Configuração CORS (sem alterações aqui, esse CORS é para todas as rotas, em ambiente de desenvolvimento */
 
