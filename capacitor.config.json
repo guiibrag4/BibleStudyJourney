@@ -1,5 +1,9 @@
 {
   "appId": "com.biblestudyjourney.app",
   "appName": "BibleStudyJourney",
-  "webDir": "www"
+  "webDir": "www",
+  "server"  {
+    "androidScheme": "https",
+    "hostname": "localhost"
+  }
 }

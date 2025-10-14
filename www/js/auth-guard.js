@@ -47,7 +47,7 @@ const AuthManager = {
     async redirectToLogin() {
         console.warn("Usuário não autenticado. Redirecionando...");
         await this.clearAuthData();
-        window.location.href = 'login2.html';
+        window.location.href = 'html/login2.html';
     }
 };
 
