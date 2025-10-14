@@ -15,7 +15,8 @@
   // ALTERAÇÃO CRÍTICA: Adicionando a mesma lógica de ambiente do login.js
   const API_CONFIG = {
     development: "http://localhost:3000",
-    production: "https://biblestudyjourney.duckdns.org"
+    production: "https://biblestudyjourney.duckdns.org",
+    production_render: "https://biblestudyjourney-v2.onrender.com"
   };
   // Para testar localmente, use 'development'. Mude para 'production' ao fazer o deploy.
   const API_BASE_URL = API_CONFIG.development;

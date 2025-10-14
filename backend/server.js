@@ -20,8 +20,8 @@ const allowedOrigins = [
     "http://localhost:3000",
 
     // Origens de produção
-    // "https://biblestudyjourney-v2.onrender.com",
-    // "https://biblestudyjourney.duckdns.org",
+    "https://biblestudyjourney-v2.onrender.com",
+    "https://biblestudyjourney.duckdns.org",
 ];
 
 const corsOptions = {

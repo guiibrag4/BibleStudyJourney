@@ -13,14 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
      ========================= */
   const API_CONFIG = {
     development: "http://localhost:3000",
-    production: "https://biblestudyjourney.duckdns.org"
+    production: "https://biblestudyjourney.duckdns.org",
+    production_render: "https://biblestudyjourney-v2.onrender.com"
   };
 
   const isCapacitor = window.Capacitor !== undefined;
   // Força uso do servidor de produção (mantido do código original)
   // const API_URL = API_CONFIG.production;
- const API_URL = API_CONFIG.development;
-    
+  const API_URL = API_CONFIG.development;
+
 
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -92,8 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showSuccessAndRedirect() {
-    if (DOM.registrationContainer)  DOM.registrationContainer.style.display = 'none';
-    if (DOM.successContainer) { DOM.successContainer.style.display = 'flex';
+    if (DOM.registrationContainer) DOM.registrationContainer.style.display = 'none';
+    if (DOM.successContainer) {
+      DOM.successContainer.style.display = 'flex';
     }
     if (DOM.goToLoginButton) DOM.goToLoginButton.focus();
   }

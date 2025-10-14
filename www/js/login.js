@@ -15,7 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Configurações e constantes
     const API_CONFIG = {
         development: "http://localhost:3000",
-        production: "https://biblestudyjourney.duckdns.org"
+        production: "https://biblestudyjourney.duckdns.org",
+        production_render: "https://biblestudyjourney-v2.onrender.com"
     };
     const CONFIG = {
         REDIRECT_PAGE: "biblia.html",
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     // const API_URL = API_CONFIG.production;
     const API_URL = API_CONFIG.development;
-    
+
     const DEBUG = false; // Ative para logs detalhados (não em produção)
 
     const UIManager = {
@@ -46,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
             this.elements.signupLink?.addEventListener("click", () => this.redirectTo(CONFIG.SIGNUP_PAGE));
         },
 
-                async handleLoginSubmit(event) {
+        async handleLoginSubmit(event) {
             event.preventDefault();
             if (DEBUG) console.log("Formulário de login enviado.");
 
