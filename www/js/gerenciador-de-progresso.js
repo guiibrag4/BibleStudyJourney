@@ -1,8 +1,7 @@
-// ...existing code...
+// Arquivo: www/js/gerenciador-de-progresso.js (VERSÃO CORRIGIDA PARA AUTH ASSÍNCRONO)
 /**
- * gerenciador-de-progresso.js
- * Gerencia progresso de vídeos usando localForage.
- * API pública: saveProgress, getProgress, getAllProgress, removeProgress, clearAll, getRawStorage
+ * Gerencia progresso de vídeos, alternando entre API (usuário logado) e localForage (anônimo).
+ * API pública: saveProgress, getProgress, getAllProgress, removeProgress, clearAll
  */
 
 (function () {
@@ -11,16 +10,49 @@
   /* =========================
      CONFIGURAÇÃO / CONSTANTES
      ========================= */
-  const PROGRESS_KEY = 'videoProgress';
-  const DEBUG = false;
+  const PROGRESS_KEY_LOCAL = 'videoProgress';
+
+  // ALTERAÇÃO CRÍTICA: Adicionando a mesma lógica de ambiente do login.js
+  const API_CONFIG = {
+    development: "http://localhost:3000",
+    production: "https://biblestudyjourney.duckdns.org"
+  };
+  // Para testar localmente, use 'development'. Mude para 'production' ao fazer o deploy.
+  const API_BASE_URL = API_CONFIG.development;
+
+  const API_ENDPOINT = `${API_BASE_URL}/api/user/progress`;
+
+  const DEBUG = true;
 
   /* =========================
      UTILITÁRIOS INTERNOS
      ========================= */
   function debugLog(...args) {
-    if (DEBUG) console.debug('[progress-manager]', ...args);
+    if (DEBUG) console.log('[progress-manager]', ...args);
   }
 
+  // ALTERADO: Funções agora usam o AuthManager global e são assíncronas
+  async function isUserLoggedIn() {
+    console.log('Verificando login. AuthManager existe?', !!window.AuthManager);
+    // Verifica se o AuthManager existe e chama a função assíncrona corretamente
+    if (window.AuthManager && typeof window.AuthManager.isAuthenticated === 'function') {
+      const loggedIn = await window.AuthManager.isAuthenticated();
+      // NOVO LOG: Qual o resultado da verificação?
+      console.log('Resultado de isAuthenticated:', loggedIn);
+      return loggedIn;
+    }
+    console.log('AuthManager não encontrado ou não é uma função.'); // NOVO LOG
+    return false;
+  }
+
+  async function getAuthToken() {
+    if (window.AuthManager && typeof window.AuthManager.getToken === 'function') {
+      return await window.AuthManager.getToken();
+    }
+    return null;
+  }
+
+  // Funções de normalização e verificação (sem alterações)
   function isLocalForageAvailable() {
     return typeof localforage !== 'undefined' && localforage !== null;
   }
@@ -30,7 +62,6 @@
   }
 
   function normalizeVideoData(videoData) {
-    // Mantém apenas campos esperados e garante lastWatched
     return {
       id: String(videoData.id || videoData.videoId || '').trim(),
       title: videoData.title || '',
@@ -42,56 +73,109 @@
   }
 
   /* =========================
-     OPERAÇÕES ASSÍNCRONAS
+     OPERAÇÕES DE DADOS (ABSTRATAS)
      ========================= */
+
+  // ALTERADO: Agora usa 'await' para verificar o login
   async function readStorage() {
-    if (!isLocalForageAvailable()) {
-      throw new Error('localForage não está disponível');
+    if (await isUserLoggedIn()) { // <-- MUDANÇA CRÍTICA
+      debugLog('Lendo do STORAGE (API)');
+      const token = await getAuthToken();
+      if (!token) throw new Error('Usuário logado mas sem token.');
+
+      const response = await fetch(API_ENDPOINT, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error(`Falha ao buscar progresso da API: ${response.statusText}`);
+
+      const data = await response.json();
+      return data.progress || {};
+    } else {
+      debugLog('Lendo do STORAGE (Local)');
+      if (!isLocalForageAvailable()) throw new Error('localForage não está disponível');
+      return (await localforage.getItem(PROGRESS_KEY_LOCAL)) || {};
     }
-    const data = (await localforage.getItem(PROGRESS_KEY)) || {};
-    return data;
   }
 
-  async function writeStorage(obj) {
-    if (!isLocalForageAvailable()) {
-      throw new Error('localForage não está disponível');
+  // ALTERADO: Agora usa 'await' para verificar o login
+  async function writeStorage(videoId, videoData) {
+    if (await isUserLoggedIn()) { // <-- MUDANÇA CRÍTICA
+      debugLog('Escrevendo no STORAGE (API)', videoId);
+      const token = await getAuthToken();
+      if (!token) throw new Error('Usuário logado mas sem token.');
+
+      const response = await fetch(`${API_ENDPOINT}/${videoId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(videoData)
+      });
+
+      if (!response.ok) throw new Error(`Falha ao salvar progresso na API: ${response.statusText}`);
+      return await response.json();
+    } else {
+      debugLog('Escrevendo no STORAGE (Local)', videoId);
+      if (!isLocalForageAvailable()) throw new Error('localForage não está disponível');
+
+      const all = (await localforage.getItem(PROGRESS_KEY_LOCAL)) || {};
+      all[videoId] = videoData;
+      await localforage.setItem(PROGRESS_KEY_LOCAL, all);
     }
-    await localforage.setItem(PROGRESS_KEY, obj);
-    return obj;
+  }
+
+  // ALTERADO: Agora usa 'await' para verificar o login
+  async function deleteFromStorage(videoId) {
+    if (await isUserLoggedIn()) { // <-- MUDANÇA CRÍTICA
+      debugLog('Removendo do STORAGE (API)', videoId);
+      const token = await getAuthToken();
+      if (!token) throw new Error('Usuário logado mas sem token.');
+
+      const response = await fetch(`${API_ENDPOINT}/${videoId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (!response.ok) throw new Error(`Falha ao remover progresso da API: ${response.statusText}`);
+    } else {
+      debugLog('Removendo do STORAGE (Local)', videoId);
+      if (!isLocalForageAvailable()) throw new Error('localForage não está disponível');
+
+      const all = (await localforage.getItem(PROGRESS_KEY_LOCAL)) || {};
+      if (all[videoId]) {
+        delete all[videoId];
+        await localforage.setItem(PROGRESS_KEY_LOCAL, all);
+      }
+    }
   }
 
   /* =========================
-     API PÚBLICA
+     API PÚBLICA (Sem alterações na sua estrutura, mas agora totalmente assíncrona)
      ========================= */
   const progressManager = {
-    /**
-     * Salva/atualiza o progresso de um vídeo.
-     * videoData deve conter pelo menos { id, currentTime, duration }.
-     */
     async saveProgress(videoData = {}) {
       try {
-        if (!isLocalForageAvailable()) {
-          console.error('localForage não está carregado. Progresso não salvo.');
-          return false;
-        }
-
         const normalized = normalizeVideoData(videoData);
         if (!normalized.id) {
           console.warn('saveProgress: id do vídeo ausente, progresso ignorado.');
           return false;
         }
 
-        const all = await readStorage();
-        const prev = all[normalized.id] || {};
-        // Mescla mantendo campos antigos quando apropriado
-        all[normalized.id] = {
-          ...prev,
+        const currentProgress = await this.getProgress(normalized.id) || {};
+        const dataToSave = {
+          ...currentProgress,
           ...normalized,
           lastWatched: Date.now()
         };
 
-        await writeStorage(all);
-        debugLog('Progresso salvo', normalized.id, all[normalized.id]);
+        await writeStorage(normalized.id, dataToSave);
+        debugLog('Progresso salvo', normalized.id, dataToSave);
         return true;
       } catch (err) {
         console.error('Erro ao salvar o progresso:', err);
@@ -99,9 +183,6 @@
       }
     },
 
-    /**
-     * Retorna o progresso de um vídeo ou undefined se não existir.
-     */
     async getProgress(videoId) {
       try {
         if (!videoId) return undefined;
@@ -113,9 +194,6 @@
       }
     },
 
-    /**
-     * Retorna array com todos os itens de progresso, ordenados por lastWatched (desc).
-     */
     async getAllProgress() {
       try {
         const all = await readStorage();
@@ -128,16 +206,10 @@
       }
     },
 
-    /**
-     * Remove o progresso de um vídeo específico.
-     */
     async removeProgress(videoId) {
       try {
         if (!videoId) return false;
-        const all = await readStorage();
-        if (!Object.prototype.hasOwnProperty.call(all, videoId)) return false;
-        delete all[videoId];
-        await writeStorage(all);
+        await deleteFromStorage(videoId);
         debugLog('Progresso removido', videoId);
         return true;
       } catch (err) {
@@ -146,46 +218,37 @@
       }
     },
 
-    /**
-     * Limpa todo o progresso salvo.
-     */
     async clearAll() {
       try {
-        if (!isLocalForageAvailable()) {
-          console.error('localForage não está carregado. Clear ignorado.');
+        if (await isUserLoggedIn()) { // <-- MUDANÇA CRÍTICA
+          console.warn("clearAll não é suportado para usuários logados por segurança.");
           return false;
         }
-        await localforage.removeItem(PROGRESS_KEY);
-        debugLog('Progresso limpo');
+        if (!isLocalForageAvailable()) return false;
+        await localforage.removeItem(PROGRESS_KEY_LOCAL);
+        debugLog('Progresso local limpo');
         return true;
       } catch (err) {
         console.error('Erro ao limpar progresso:', err);
         return false;
       }
     },
-
-    /**
-     * Retorna o objeto bruto armazenado (útil para debug).
-     */
-    async getRawStorage() {
-      try {
-        return await readStorage();
-      } catch (err) {
-        return {};
-      }
-    }
   };
 
   /* =========================
-     EXPORTAÇÃO GLOBAL
-     ========================= */
-  // Congela a API para evitar sobrescritas acidentais
-  try {
-    window.progressManager = Object.freeze(progressManager);
-    debugLog('progressManager inicializado');
-  } catch (err) {
-    // fallback simples
-    window.progressManager = progressManager;
-    console.warn('Não foi possível congelar progressManager:', err);
-  }
-})();
+       EXPORTAÇÃO GLOBAL (ALTERADA)
+       ========================= */
+  // NOVO: Espera o DOM carregar antes de expor o progressManager globalmente.
+  document.addEventListener("DOMContentLoaded", function () {
+    try {
+      // Agora, quando o video-player.js (que também espera o DOM) for executado,
+      // o window.progressManager garantidamente existirá.
+      window.progressManager = Object.freeze(progressManager);
+      debugLog('progressManager inicializado e exposto após DOMContentLoaded.');
+    } catch (err) {
+      window.progressManager = progressManager;
+      console.warn('Não foi possível congelar progressManager:', err);
+    }
+  });
+
+})(); // Fim da IIFE

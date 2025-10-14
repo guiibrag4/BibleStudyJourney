@@ -21,7 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
         REDIRECT_PAGE: "biblia.html",
         SIGNUP_PAGE: "cadastro2.html"
     };
-    const API_URL = API_CONFIG.production; // Ou a lógica de ambiente que preferir
+    // const API_URL = API_CONFIG.production;
+    const API_URL = API_CONFIG.development;
+    
     const DEBUG = false; // Ative para logs detalhados (não em produção)
 
     const UIManager = {

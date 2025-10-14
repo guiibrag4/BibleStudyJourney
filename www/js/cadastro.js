@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const isCapacitor = window.Capacitor !== undefined;
   // Força uso do servidor de produção (mantido do código original)
-  const API_URL = API_CONFIG.production;
+  // const API_URL = API_CONFIG.production;
+ const API_URL = API_CONFIG.development;
+    
 
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 

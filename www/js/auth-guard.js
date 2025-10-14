@@ -1,19 +1,16 @@
 /**
- * auth-guard.js (VERSÃO FINAL E ROBUSTA)
- * Usa Capacitor/Preferences para persistência nativa e localStorage como fallback.
+ * auth-guard.js
  */
 
 // Pega o plugin do Capacitor, se disponível
 const { Preferences } = window.Capacitor?.Plugins ?? {};
 
-const AuthManager = {
-    // Agora as funções são assíncronas (async) pois o armazenamento nativo é
+// ALTERAÇÃO CRÍTICA: Atribui diretamente a 'window.AuthManager'
+// Isso garante que ele seja um objeto global que outros scripts podem ver.
+window.AuthManager = {
     async saveToken(token) {
         if (Preferences) {
-            await Preferences.set({
-                key: 'token-jwt',
-                value: token,
-            });
+            await Preferences.set({ key: 'token-jwt', value: token });
             console.log("Token salvo no armazenamento nativo (Capacitor).");
         } else {
             localStorage.setItem("token-jwt", token);
@@ -38,9 +35,9 @@ const AuthManager = {
         }
     },
 
-    // A verificação de autenticação também precisa ser assíncrona
     async isAuthenticated() {
         const token = await this.getToken();
+        console.log('AuthManager.isAuthenticated chamado. Token encontrado:', token ? 'Sim' : 'Não');
         return !!token;
     },
 
@@ -51,17 +48,20 @@ const AuthManager = {
     }
 };
 
-// A função de proteção também se torna assíncrona
-async function protectPage() {
-    const publicPages = ['login2.html', 'cadastro2.html', 'index.html'];
-    const currentPage = window.location.pathname.split('/').pop();
+// A lógica do DOMContentLoaded pode permanecer, pois ainda é uma boa prática.
+document.addEventListener("DOMContentLoaded", function() {
+    async function protectPage() {
+        const publicPages = ['login2.html', 'cadastro2.html', 'index.html'];
+        const currentPage = window.location.pathname.split('/').pop();
 
-    const isUserAuthenticated = await AuthManager.isAuthenticated();
+        // Agora ele usa o window.AuthManager que acabamos de definir.
+        const isUserAuthenticated = await window.AuthManager.isAuthenticated();
 
-    if (!publicPages.includes(currentPage) && !isUserAuthenticated) {
-        AuthManager.redirectToLogin();
+        if (!publicPages.includes(currentPage) && !isUserAuthenticated) {
+            window.AuthManager.redirectToLogin();
+        }
     }
-}
 
-// Executa a proteção
-protectPage();
+    protectPage();
+    console.log("auth-guard.js executado após DOMContentLoaded.");
+});

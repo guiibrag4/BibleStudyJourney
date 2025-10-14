@@ -1,33 +1,31 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const authRoutes = require("./routes/auth/auth.js");
-const verifyToken = require("./routes/auth/authMiddleware.js");
 const cors = require("cors");
 const fetch = require('node-fetch');
 const path = require("path");
 
+// --- ARQUIVOS DE ROTAS ---
+const authRoutes = require("./routes/auth/auth.js");
+const verifyToken = require("./routes/auth/authMiddleware.js");
+const progressRoutes = require("./routes/progressRoutes.js"); // NOVO: Importa as rotas de progresso
+
 const app = express();
 
-// Origens permitidas (sem alterações aqui)
+// --- CONFIGURAÇÕES DO SERVIDOR ---
 const allowedOrigins = [
     "capacitor://localhost",
     "ionic://localhost",
-    "http://localhost",
+   
     "http://localhost:3000",
-    "http://localhost:8080",
-    "http://localhost:8100",
-    "https://localhost",
-    "https://localhost:8100",
-    "http://192.168.1.100:8100",
-    "https://biblestudyjourney-v2.onrender.com",
-    "https://biblestudyjourney.duckdns.org",
+
+    // Origens de produção
+    // "https://biblestudyjourney-v2.onrender.com",
+    // "https://biblestudyjourney.duckdns.org",
 ];
 
-/* Configuração CORS aprimorada para permitir apenas origens específicas, garantindo segurança em produção */
 const corsOptions = {
-    origin: function (origin, callback) {
-        // Permite requisições sem 'origin' (como apps mobile ou Postman) e as origens da sua lista
+    origin: function (origin, callback ) {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
@@ -40,35 +38,17 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 3000;
 
-// Middleware para processar requisições JSON
-app.use(bodyParser.json());
+// --- ROTAS DA API ---
 
-// Servir os arquivos estáticos do frontend (Capacitor)
-app.use(express.static(path.join(__dirname, "../www")));
-
-// --- NOVO CÓDIGO: Rota da API do YouTube ---
-// Coloque esta rota antes das suas rotas de autenticação e de arquivos HTML.
-// Isso garante que requisições para '/api/...' sejam tratadas aqui.
-
-function parseYoutubeDuration(duration) {
-    const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
-    const matches = duration.match(regex);
-
-    if (!matches) return 0;
-
-    const hours = parseInt(matches[1] || 0);
-    const minutes = parseInt(matches[2] || 0);
-    const seconds = parseInt(matches[3] || 0);
-
-    return (hours * 3600) + (minutes * 60) + seconds;
-}
-
+// Rota pública para informações de vídeo (não requer login)
 app.get('/api/video-info', async (req, res) => {
+    // ... (seu código da API do YouTube permanece inalterado aqui)
     const videoId = req.query.videoId;
-    const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY; // Pega a chave do arquivo .env
+    const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
     if (!videoId) {
         return res.status(400).json({ error: 'O ID do vídeo é obrigatório.' });
@@ -81,22 +61,31 @@ app.get('/api/video-info', async (req, res) => {
     const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${YOUTUBE_API_KEY}&part=snippet,contentDetails`;
 
     try {
-        const youtubeResponse = await fetch(url);
+        const youtubeResponse = await fetch(url );
         const data = await youtubeResponse.json();
 
-        // TRECHO CORRIGIDO
         if (data.items && data.items.length > 0) {
-            const item = data.items[0]; // Precisamos do 'item' completo
+            const item = data.items[0];
             const snippet = item.snippet;
-            const durationFromAPI = item.contentDetails.duration; // Pegamos a duração aqui
+            const durationFromAPI = item.contentDetails.duration;
+            
+            // Função para converter a duração do YouTube para segundos
+            function parseYoutubeDuration(duration) {
+                const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+                const matches = duration.match(regex);
+                if (!matches) return 0;
+                const hours = parseInt(matches[1] || 0);
+                const minutes = parseInt(matches[2] || 0);
+                const seconds = parseInt(matches[3] || 0);
+                return (hours * 3600) + (minutes * 60) + seconds;
+            }
 
             res.json({
                 title: snippet.title,
                 description: snippet.description,
-                durationInSeconds: parseYoutubeDuration(durationFromAPI) // Usamos a variável correta
+                durationInSeconds: parseYoutubeDuration(durationFromAPI)
             });
         } else {
-            // Se a API do YouTube não retornar o vídeo, pode ser um ID inválido
             res.status(404).json({ error: 'Vídeo não encontrado na API do YouTube.' });
         }
     } catch (error) {
@@ -104,13 +93,22 @@ app.get('/api/video-info', async (req, res) => {
         res.status(500).json({ error: 'Erro interno do servidor ao contatar a API do YouTube.' });
     }
 });
-// --- FIM DO CÓDIGO PARA API ---
 
-
-// Rotas de Autenticação
+// Rotas públicas de autenticação (não requerem login)
 app.use("/auth", authRoutes);
 
-// Rotas para servir as páginas de frontend (HTML)
+// --- ROTAS PROTEGIDAS ---
+// ALTERADO: Todas as rotas abaixo desta linha usarão o middleware 'verifyToken'.
+// Qualquer requisição para '/api/user/*' será primeiro validada.
+app.use("/api/user/progress", verifyToken, progressRoutes);
+// NOVO: Quando você criar as rotas para notas, versículos, etc., elas virão aqui:
+// app.use("/api/user/notes", verifyToken, notesRoutes);
+// app.use("/api/user/verses", verifyToken, versesRoutes);
+
+
+// --- SERVIR ARQUIVOS ESTÁTICOS E PÁGINAS HTML (deve vir por último) ---
+app.use(express.static(path.join(__dirname, "../www")));
+
 app.get("/cadastro", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/cadastro2.html"));
 });
@@ -131,8 +129,8 @@ app.get("/tl2-teologia", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/tl2-teologia.html"));
 });
 
-// Iniciar o servidor (sem alterações aqui)
+// --- INICIAR O SERVIDOR ---
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`Acesse: http://localhost:${PORT}`);
+    console.log(`Acesse: http://localhost:${PORT}` );
 });

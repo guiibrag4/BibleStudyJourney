@@ -13,6 +13,23 @@ CREATE TABLE app_biblia.usuario (
     ultimo_login TIMESTAMP WITH TIME ZONE
 );
 
+CREATE TABLE app_biblia.ProgressoVideos (
+    id_progresso SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    video_id VARCHAR(255) NOT NULL, -- ID do vídeo do YouTube, ex: "dQw4w9WgXcQ"
+    video_data JSONB NOT NULL, -- Usamos JSONB por ser mais eficiente para buscas
+    ultima_atualizacao TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Constraint que garante que cada usuário tenha apenas uma entrada por vídeo.
+    -- ESSENCIAL para a lógica de UPSERT (ON CONFLICT) funcionar.
+    UNIQUE (id_usuario, video_id)
+);
+
+-- Opcional: Melhora a performance de buscas filtrando apenas pelo usuário.
+CREATE INDEX idx_progressovideos_id_usuario ON app_biblia.ProgressoVideos(id_usuario);
+
+
+
 CREATE TABLE app_biblia.paginasalva (
     id_pagina_salva SERIAL PRIMARY KEY,
     id_usuario INTEGER REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
@@ -22,6 +39,7 @@ CREATE TABLE app_biblia.paginasalva (
     data_salvo TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (id_usuario, livro_abreviacao, capitulo, versao_biblia)
 );
+
 
 CREATE TABLE app_biblia.grifado (
     id_grifo SERIAL PRIMARY KEY,
