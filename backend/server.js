@@ -28,14 +28,35 @@ const allowedOrigins = [
 // --- NOVO: CONFIGURAÇÃO DE SEGURANÇA (CSP) ---
 // Coloque isso antes das suas rotas.
 app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            "frame-src": ["'self'", "https://www.youtube.com"], // Permite iframes do YouTube
-            "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com", "'unsafe-inline'"], // Permite scripts do YouTube
-            "connect-src": ["'self'", "https://www.google-analytics.com", "https://biblestudyjourney-v2.onrender.com"], // Permite conexões com sua própria API
-        },
-    })
+  helmet.contentSecurityPolicy({
+    directives: {
+      // Pega as diretivas padrão do helmet (como default-src 'self')
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      
+      // Permite iframes do YouTube
+      "frame-src": ["'self'", "https://www.youtube.com"],
+      
+      // Permite scripts do seu site, do YouTube e do CDN do Cloudflare (para o localforage )
+      "script-src": [
+        "'self'", 
+        "https://www.youtube.com", 
+        "https://s.ytimg.com", 
+        "https://cdnjs.cloudflare.com", 
+        "'unsafe-inline'"
+      ],
+      
+      // Permite conexões (fetch/XHR ) para seu site, Google Analytics e a API da Bíblia Digital
+      "connect-src": [
+        "'self'", 
+        "https://www.google-analytics.com", 
+        "https://biblestudyjourney-v2.onrender.com",
+        "https://www.abibliadigital.com.br"
+      ],
+
+      // Permite imagens do seu site, de data URIs e do servidor de imagens do YouTube
+      "img-src": ["'self'", "data:", "https://img.youtube.com"],
+    },
+  } )
 );
 // -------------------------------------------
 
