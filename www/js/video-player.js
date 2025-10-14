@@ -19,22 +19,22 @@ document.addEventListener('DOMContentLoaded', function () {
   // --- CORRIGIDO: Detecção automática de ambiente baseada no hostname ---
   function getApiBaseUrl() {
     const hostname = window.location.hostname;
-    
+
     // Se estiver em localhost, usa a API local
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'http://localhost:3000';
     }
-    
+
     // Se estiver no domínio do Render, usa a API do Render
     if (hostname.includes('onrender.com')) {
       return 'https://biblestudyjourney-v2.onrender.com';
     }
-    
+
     // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
     if (hostname.includes('duckdns.org')) {
       return 'https://biblestudyjourney.duckdns.org';
     }
-    
+
     // Fallback: tenta usar o mesmo protocolo e host da página atual
     return window.location.origin;
   }
@@ -99,20 +99,27 @@ document.addEventListener('DOMContentLoaded', function () {
     player = new YT.Player('videoFrame', { // 'videoFrame' é o ID do seu <iframe>
       videoId: videoId,
       playerVars: {
-        'autoplay': 1,
-        'rel': 0,
-        'modestbranding': 1,
-        'start': startTime,
+        autoplay: 1,
+        rel: 0,
+        modestbranding: 1,
+        start: startTime,
+        playsinline: 1, // Para iOS: toca no player embutido
+        mute: 1, // Começa mudo para evitar bloqueios de autoplay
+        origin: window.location.origin // Segurança adicional
       },
       events: {
-        'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+        onError: onPlayerError
       }
     });
   }
 
   // Função chamada quando o player está pronto
   function onPlayerReady(event) {
+    const iframe = player.getIframe();
+    if (iframe) iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; web-share');
+
     // Inicia o timer para salvar o progresso periodicamente
     startProgressTracking();
   }
@@ -125,6 +132,12 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log("Vídeo pausado ou finalizado. Salvando progresso final.");
       saveCurrentProgress();
     }
+  }
+
+  function onPlayerError(event) {
+    // 2, 5, 100, 101, 150 (101/150 = embed desativado)
+    console.error('YouTube Player error:', event.data);
+    handleError('Falha ao carregar o vídeo. Código: ' + event.data);
   }
 
   // FUNÇÃO DE RASTREAMENTO CORRIGIDA
@@ -179,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // CORRIGIDO: Usa a URL base detectada automaticamente
     const apiUrl = `${API_BASE_URL}/api/video-info?videoId=${videoId}`;
     console.log('Buscando informações do vídeo em:', apiUrl);
-    
+
     fetch(apiUrl)
       .then(response => {
         if (!response.ok) throw new Error(`Falha ao buscar dados do vídeo. Status: ${response.status}`);
