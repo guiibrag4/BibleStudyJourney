@@ -2,8 +2,18 @@
   "appId": "com.biblestudyjourney.app",
   "appName": "BibleStudyJourney",
   "webDir": "www",
-  "server"  {
+  "server":  {
     "androidScheme": "https",
     "hostname": "localhost"
+  },
+   "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#283A50",
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true
+    }
   }
 }
