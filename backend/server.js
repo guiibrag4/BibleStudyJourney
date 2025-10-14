@@ -28,45 +28,53 @@ const allowedOrigins = [
 // --- NOVO: CONFIGURAÇÃO DE SEGURANÇA (CSP) ---
 // Coloque isso antes das suas rotas.
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      // Pega as diretivas padrão do helmet (como default-src 'self')
-      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      
-      // Permite iframes do YouTube
-      "frame-src": ["'self'", "https://www.youtube.com"],
-      
-      // Permite scripts do seu site, do YouTube e do CDN do Cloudflare (para o localforage )
-      "script-src": [
-        "'self'", 
-        "https://www.youtube.com", 
-        "https://s.ytimg.com", 
-        "https://cdnjs.cloudflare.com", 
-        "'unsafe-inline'"
-      ],
-      
-      // CORRIGIDO: Permite conexões (fetch/XHR) para seu site, Google Analytics, a API da Bíblia Digital
-      // E ADICIONADO: biblestudyjourney.duckdns.org para permitir requisições ao seu domínio principal
-      "connect-src": [
-        "'self'", 
-        "https://www.google-analytics.com", 
-        "https://biblestudyjourney-v2.onrender.com",
-        "https://biblestudyjourney.duckdns.org",  // ADICIONADO
-        "https://www.abibliadigital.com.br",
-        "https://www.googleapis.com"  // ADICIONADO para API do YouTube
-      ],
+    helmet.contentSecurityPolicy({
+        directives: {
+            // Pega as diretivas padrão do helmet (como default-src 'self')
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
 
-      // Permite imagens do seu site, de data URIs e do servidor de imagens do YouTube
-      "img-src": ["'self'", "data:", "https://img.youtube.com"],
-    },
-  } )
+            // Permite iframes do YouTube
+            "frame-src": [
+                "'self'",
+                "https://www.youtube.com",
+                "https://www.youtube-nocookie.com" // ADICIONADO para modo nocookie
+            ],
+
+            // Permite scripts do seu site, do YouTube e do CDN do Cloudflare (para o localforage )
+            "script-src": [
+                "'self'",
+                "https://www.youtube.com",
+                "https://s.ytimg.com",
+                "https://cdnjs.cloudflare.com",
+                "'unsafe-inline'"
+            ],
+
+            // Conexões (fetch, XHR, WebSocket, etc) para seu site, Google Analytics e APIs
+            "connect-src": [
+                "'self'",
+                "https://www.google-analytics.com",
+                "https://biblestudyjourney-v2.onrender.com",
+                "https://biblestudyjourney.duckdns.org",  // ADICIONADO
+                "https://www.abibliadigital.com.br",
+                "https://www.googleapis.com"  // ADICIONADO para API do YouTube
+            ],
+
+            // Permite imagens do seu site, de data URIs e do servidor de imagens do YouTube
+            "img-src": [
+                "'self'",
+                "data:",
+                "https://i.ytimg.com",
+                "https://img.youtube.com"
+            ]
+        },
+    })
 );
 // -------------------------------------------
 
 // --- NOVO: CONFIGURAÇÃO DE PERMISSÕES DA PÁGINA ---
 app.use((req, res, next) => {
-  res.setHeader('Permissions-Policy', 'autoplay=(self "https://www.youtube.com" ), fullscreen=(self "https://www.youtube.com" ), picture-in-picture=(self "https://www.youtube.com" )');
-  next();
+    res.setHeader('Permissions-Policy', 'autoplay=(self "https://www.youtube.com" ), fullscreen=(self "https://www.youtube.com" ), picture-in-picture=(self "https://www.youtube.com" )');
+    next();
 });
 // -------------------------------------------------
 
