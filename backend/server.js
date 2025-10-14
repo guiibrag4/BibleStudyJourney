@@ -2,16 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/auth/auth.js");
+const verifyToken = require("./routes/auth/authMiddleware.js");
 const cors = require("cors");
 const fetch = require('node-fetch');
 const path = require("path");
 
 const app = express();
-
-app.use((req, res, next) => {
-    console.log('Origin recebido:', req.headers.origin);
-    next();
-});
 
 // Origens permitidas (sem alterações aqui)
 const allowedOrigins = [
@@ -26,21 +22,7 @@ const allowedOrigins = [
     "http://192.168.1.100:8100",
     "https://biblestudyjourney-v2.onrender.com",
     "https://biblestudyjourney.duckdns.org",
-    "http://127.0.0.1:5500"
 ];
-
-app.options('*', cors(corsOptions));
-
-
-
-/* Configuração CORS (sem alterações aqui, esse CORS é para todas as rotas, em ambiente de desenvolvimento */
-
-// app.use(cors({
-//     origin: true,
-//     credentials: true,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization']
-// }));
 
 /* Configuração CORS aprimorada para permitir apenas origens específicas, garantindo segurança em produção */
 const corsOptions = {
