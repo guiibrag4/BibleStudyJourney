@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+const helmet = require("helmet"); // NOVO: Importa o helmet
 const cors = require("cors");
 const fetch = require('node-fetch');
 const path = require("path");
@@ -16,7 +17,7 @@ const app = express();
 const allowedOrigins = [
     "capacitor://localhost",
     "ionic://localhost",
-   
+
     "http://localhost:3000",
 
     // Origens de produção
@@ -24,8 +25,22 @@ const allowedOrigins = [
     "https://biblestudyjourney.duckdns.org",
 ];
 
+// --- NOVO: CONFIGURAÇÃO DE SEGURANÇA (CSP) ---
+// Coloque isso antes das suas rotas.
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "frame-src": ["'self'", "https://www.youtube.com"], // Permite iframes do YouTube
+            "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com"], // Permite scripts do YouTube
+            "connect-src": ["'self'", "https://www.google-analytics.com", "https://biblestudyjourney-v2.onrender.com"], // Permite conexões com sua própria API
+        },
+    })
+);
+// -------------------------------------------
+
 const corsOptions = {
-    origin: function (origin, callback ) {
+    origin: function (origin, callback) {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
@@ -61,14 +76,14 @@ app.get('/api/video-info', async (req, res) => {
     const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${YOUTUBE_API_KEY}&part=snippet,contentDetails`;
 
     try {
-        const youtubeResponse = await fetch(url );
+        const youtubeResponse = await fetch(url);
         const data = await youtubeResponse.json();
 
         if (data.items && data.items.length > 0) {
             const item = data.items[0];
             const snippet = item.snippet;
             const durationFromAPI = item.contentDetails.duration;
-            
+
             // Função para converter a duração do YouTube para segundos
             function parseYoutubeDuration(duration) {
                 const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
@@ -132,5 +147,5 @@ app.get("/tl2-teologia", (req, res) => {
 // --- INICIAR O SERVIDOR ---
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`Acesse: http://localhost:${PORT}` );
+    console.log(`Acesse: http://localhost:${PORT}`);
 });
