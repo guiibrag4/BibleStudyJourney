@@ -11,12 +11,32 @@
 </head>
 
 <body>
-        <p>Bible Study</p>
-        <script>
-            setTimeout(function() {
-                window.location.href = "html/paginainicial.html";
-            }, 3000); // 4 segundos
-        </script>
+    <p>Bible Study</p>
+    <script src="/www/js/auth-guard.js"></script>
+
+    <script>
+        // Função que decide para onde o usuário deve ir
+        async function decideInitialRoute() {
+            // Usa a função do AuthManager para verificar se há um token válido
+            const isUserAuthenticated = await AuthManager.isAuthenticated();
+
+            if (isUserAuthenticated) {
+                // Se estiver autenticado, vai direto para a Bíblia
+                console.log("Usuário autenticado. Redirecionando para biblia.html...");
+                window.location.href = "html/biblia.html";
+            } else {
+                // Se NÃO estiver autenticado, vai para a tela de login
+                console.log("Nenhum usuário autenticado. Redirecionando para login2.html...");
+                window.location.href = "html/login2.html";
+            }
+        }
+
+        // Adiciona um pequeno delay para a tela de splash ser visível
+        // e depois executa a nossa função de decisão.
+        setTimeout(decideInitialRoute, 2500); // 2 segundos de tela de carregamento
+    </script>
+
+
 </body>
 
 </html>

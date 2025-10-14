@@ -29,6 +29,7 @@
     "@capacitor/core": "^7.4.0",
     "@capacitor/device": "^7.0.1",
     "@capacitor/keyboard": "^7.0.1",
+    "@capacitor/preferences": "^7.0.2",
     "@capacitor/splash-screen": "^7.0.1",
     "@capacitor/status-bar": "^7.0.1",
     "bcryptjs": "^3.0.2",
