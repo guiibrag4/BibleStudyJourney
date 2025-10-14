@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
       // Cria o player do YouTube com o tempo de início correto
-      // createPlayer(startTime);
+      createPlayer(startTime);
     });
   }
 
