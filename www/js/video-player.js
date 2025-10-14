@@ -68,8 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- SEÇÃO 5: Funções do Player e Rastreamento ---
 
-  const devOrigin = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
-
   function createPlayer(startTime) {
     player = new YT.Player('videoFrame', { // 'videoFrame' é o ID do seu <iframe>
       videoId: videoId,
@@ -78,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function () {
         'rel': 0,
         'modestbranding': 1,
         'start': startTime,
-        'origin': devOrigin
       },
       events: {
         'onReady': onPlayerReady,
