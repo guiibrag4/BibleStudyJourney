@@ -19,7 +19,7 @@
     production_render: "https://biblestudyjourney-v2.onrender.com"
   };
   // Para testar localmente, use 'development'. Mude para 'production' ao fazer o deploy.
-  const API_BASE_URL = API_CONFIG.development;
+  const API_BASE_URL = API_CONFIG.production_render;
 
   const API_ENDPOINT = `${API_BASE_URL}/api/user/progress`;
 

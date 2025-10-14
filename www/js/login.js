@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SIGNUP_PAGE: "cadastro2.html"
     };
     // const API_URL = API_CONFIG.production;
-    const API_URL = API_CONFIG.development;
+    const API_URL = API_CONFIG.production_render;
 
     const DEBUG = false; // Ative para logs detalhados (não em produção)
 
