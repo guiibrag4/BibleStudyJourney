@@ -10,18 +10,15 @@ if (!connectionString) {
   process.exit(1); // Encerra a aplicação se o banco não pode ser conectado
 }
 
+const sslOption =
+  process.env.DB_SSL === 'true'
+    ? { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'true' }
+    : false;
+
 const pool = new Pool({
   connectionString: connectionString,
-  ssl: { rejectUnauthorized: false } // importante para o Render
+  ssl: sslOption
 });
-
-// const pool = new Pool({
-//   user: process.env.DB_USER,
-//   host: process.env.DB_HOST,
-//   database: process.env.DB_NAME,
-//   password: process.env.DB_PASS,
-//   port: parseInt(process.env.DB_PORT),
-// });
 
 pool.connect()
   .then(() => console.log("📡 Conectado ao PostgreSQL!"))

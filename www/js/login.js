@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SIGNUP_PAGE: "cadastro2.html"
     };
     const API_URL = API_CONFIG.production; // Ou a lógica de ambiente que preferir
+    const DEBUG = false; // Ative para logs detalhados (não em produção)
 
     const UIManager = {
         elements: {},
@@ -43,10 +44,9 @@ document.addEventListener("DOMContentLoaded", function () {
             this.elements.signupLink?.addEventListener("click", () => this.redirectTo(CONFIG.SIGNUP_PAGE));
         },
 
-        // --- FUNÇÃO CORRIGIDA COM DEBUGS ---
-        async handleLoginSubmit(event) {
+                async handleLoginSubmit(event) {
             event.preventDefault();
-            console.log("Formulário de login enviado.");
+            if (DEBUG) console.log("Formulário de login enviado.");
 
             const email = this.elements.emailInput.value;
             const password = this.elements.passwordInput.value;
@@ -61,18 +61,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 const data = await response.json();
-                console.log("Log 1: Resposta completa do backend:", data);
+                if (DEBUG) console.log("Resposta do backend recebida (sem imprimir token).");
 
                 // A MÁGICA ACONTECE AQUI
                 if (response.ok && data.token) {
-                    console.log("Log 2: Token JWT encontrado:", data.token);
-                    
-                    // Entrega o token para o AuthManager do auth-guard.js
                     AuthManager.saveToken(data.token);
-
                     const savedToken = AuthManager.getToken();
-                    console.log("Log 3: Verificação do token salvo no localStorage:", savedToken);
-                    
+
+                    // Nunca logar o token em produção
+                    if (DEBUG) console.log("Token foi salvo com sucesso?", Boolean(savedToken));
+
                     if (savedToken) {
                         this.showSuccess("Login bem-sucedido!");
                         this.redirectTo(CONFIG.REDIRECT_PAGE);
@@ -85,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
             } catch (error) {
-                console.error("Erro no processo de login:", error);
+                if (DEBUG) console.error("Erro no processo de login:", error);
                 this.showError(error.message);
             }
         },
