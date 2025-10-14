@@ -45,12 +45,15 @@ app.use(
         "'unsafe-inline'"
       ],
       
-      // Permite conexões (fetch/XHR ) para seu site, Google Analytics e a API da Bíblia Digital
+      // CORRIGIDO: Permite conexões (fetch/XHR) para seu site, Google Analytics, a API da Bíblia Digital
+      // E ADICIONADO: biblestudyjourney.duckdns.org para permitir requisições ao seu domínio principal
       "connect-src": [
         "'self'", 
         "https://www.google-analytics.com", 
         "https://biblestudyjourney-v2.onrender.com",
-        "https://www.abibliadigital.com.br"
+        "https://biblestudyjourney.duckdns.org",  // ADICIONADO
+        "https://www.abibliadigital.com.br",
+        "https://www.googleapis.com"  // ADICIONADO para API do YouTube
       ],
 
       // Permite imagens do seu site, de data URIs e do servidor de imagens do YouTube
@@ -177,3 +180,4 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log(`Servidor rodando na porta ${PORT}`);
     console.log(`Acesse: http://localhost:${PORT}`);
 });
+

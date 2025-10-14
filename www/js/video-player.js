@@ -1,4 +1,4 @@
-// Arquivo: www/js/video-player.js (COM RASTREAMENTO PRECISO)
+// Arquivo: www/js/video-player.js (COM RASTREAMENTO PRECISO E DETECÇÃO DE AMBIENTE)
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -16,12 +16,31 @@ document.addEventListener('DOMContentLoaded', function () {
   const firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  // --- NOVO: Adicionar a configuração da API aqui ---
-  const API_CONFIG = {
-    development: "http://localhost:3000",
-    production: "https://biblestudyjourney.duckdns.org",
-    production_render: "https://biblestudyjourney-v2.onrender.com"
-  };
+  // --- CORRIGIDO: Detecção automática de ambiente baseada no hostname ---
+  function getApiBaseUrl() {
+    const hostname = window.location.hostname;
+    
+    // Se estiver em localhost, usa a API local
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:3000';
+    }
+    
+    // Se estiver no domínio do Render, usa a API do Render
+    if (hostname.includes('onrender.com')) {
+      return 'https://biblestudyjourney-v2.onrender.com';
+    }
+    
+    // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
+    if (hostname.includes('duckdns.org')) {
+      return 'https://biblestudyjourney.duckdns.org';
+    }
+    
+    // Fallback: tenta usar o mesmo protocolo e host da página atual
+    return window.location.origin;
+  }
+
+  const API_BASE_URL = getApiBaseUrl();
+  console.log('API Base URL detectada:', API_BASE_URL);
 
   // --- SEÇÃO 2: Referências do DOM e Variáveis Globais ---
   const videoTypeTitleEl = document.getElementById('videoTypeTitle');
@@ -157,7 +176,10 @@ document.addEventListener('DOMContentLoaded', function () {
   // --- SEÇÃO 6: Funções Auxiliares (Busca de API, UI) ---
 
   function fetchVideoInfo() {
-    const apiUrl = `${API_CONFIG.production_render}/api/video-info?videoId=${videoId}`; // Usando a mesma lógica de ambiente
+    // CORRIGIDO: Usa a URL base detectada automaticamente
+    const apiUrl = `${API_BASE_URL}/api/video-info?videoId=${videoId}`;
+    console.log('Buscando informações do vídeo em:', apiUrl);
+    
     fetch(apiUrl)
       .then(response => {
         if (!response.ok) throw new Error(`Falha ao buscar dados do vídeo. Status: ${response.status}`);
@@ -195,3 +217,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+

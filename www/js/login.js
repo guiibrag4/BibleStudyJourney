@@ -1,5 +1,5 @@
 /**
- * Módulo da página de login (CORRIGIDO)
+ * Módulo da página de login (CORRIGIDO COM DETECÇÃO DE AMBIENTE)
  * Captura o token JWT do backend e o salva usando o AuthManager.
  * Depende de 'auth-guard.js' para as funções do AuthManager.
  */
@@ -12,18 +12,36 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Configurações e constantes
-    const API_CONFIG = {
-        development: "http://localhost:3000",
-        production: "https://biblestudyjourney.duckdns.org",
-        production_render: "https://biblestudyjourney-v2.onrender.com"
-    };
+    // CORRIGIDO: Detecção automática de ambiente baseada no hostname
+    function getApiBaseUrl() {
+        const hostname = window.location.hostname;
+        
+        // Se estiver em localhost, usa a API local
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+        }
+        
+        // Se estiver no domínio do Render, usa a API do Render
+        if (hostname.includes('onrender.com')) {
+            return 'https://biblestudyjourney-v2.onrender.com';
+        }
+        
+        // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
+        if (hostname.includes('duckdns.org')) {
+            return 'https://biblestudyjourney.duckdns.org';
+        }
+        
+        // Fallback: tenta usar o mesmo protocolo e host da página atual
+        return window.location.origin;
+    }
+
+    const API_URL = getApiBaseUrl();
+    console.log('[login.js] API Base URL detectada:', API_URL);
+
     const CONFIG = {
         REDIRECT_PAGE: "biblia.html",
         SIGNUP_PAGE: "cadastro2.html"
     };
-    // const API_URL = API_CONFIG.production;
-    const API_URL = API_CONFIG.production_render;
 
     const DEBUG = false; // Ative para logs detalhados (não em produção)
 
@@ -49,56 +67,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
         async handleLoginSubmit(event) {
             event.preventDefault();
-            if (DEBUG) console.log("Formulário de login enviado.");
 
-            const email = this.elements.emailInput.value;
+            const email = this.elements.emailInput.value.trim();
             const password = this.elements.passwordInput.value;
 
             if (!this.validateInputs(email, password)) return;
 
+            this.showLoading(true);
+
             try {
                 const response = await fetch(`${API_URL}/auth/login`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                    body: JSON.stringify({ email, senha: password })
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
                 });
 
                 const data = await response.json();
-                if (DEBUG) console.log("Resposta do backend recebida (sem imprimir token).");
 
-                // A MÁGICA ACONTECE AQUI
                 if (response.ok && data.token) {
-                    AuthManager.saveToken(data.token);
-                    const savedToken = AuthManager.getToken();
-
-                    // Nunca logar o token em produção
-                    if (DEBUG) console.log("Token foi salvo com sucesso?", Boolean(savedToken));
-
-                    if (savedToken) {
-                        this.showSuccess("Login bem-sucedido!");
-                        this.redirectTo(CONFIG.REDIRECT_PAGE);
-                    } else {
-                        this.showError("Erro: O token foi recebido mas não pôde ser salvo.");
-                    }
+                    await AuthManager.saveToken(data.token);
+                    if (DEBUG) console.log("Login bem-sucedido! Token salvo.");
+                    this.redirectTo(CONFIG.REDIRECT_PAGE);
                 } else {
-                    // Se a resposta não for OK ou não tiver token
-                    throw new Error(data.error || "Credenciais inválidas.");
+                    this.showError(data.error || "Erro ao fazer login. Verifique suas credenciais.");
                 }
-
             } catch (error) {
-                if (DEBUG) console.error("Erro no processo de login:", error);
-                this.showError(error.message);
+                console.error("Erro na requisição de login:", error);
+                this.showError("Erro de conexão. Tente novamente mais tarde.");
+            } finally {
+                this.showLoading(false);
             }
         },
 
         validateInputs(email, password) {
-            if (!email || !password) { this.showError("Preencha todos os campos."); return false; }
+            if (!email || !password) {
+                this.showError("Por favor, preencha todos os campos.");
+                return false;
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                this.showError("Por favor, insira um e-mail válido.");
+                return false;
+            }
             return true;
         },
-        showSuccess(message) { alert(message); },
-        showError(message) { alert(message); },
-        redirectTo(page) { window.location.href = page; }
+
+        showError(message) {
+            alert(message);
+        },
+
+        showLoading(isLoading) {
+            const submitBtn = this.elements.loginForm?.querySelector("button[type='submit']");
+            if (submitBtn) {
+                submitBtn.disabled = isLoading;
+                submitBtn.textContent = isLoading ? "Entrando..." : "Entrar";
+            }
+        },
+
+        redirectTo(page) {
+            window.location.href = page;
+        }
     };
 
     UIManager.init();
 });
+
