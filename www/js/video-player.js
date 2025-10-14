@@ -1,18 +1,26 @@
 // Arquivo: www/js/video-player.js (COM RASTREAMENTO PRECISO)
 
 document.addEventListener('DOMContentLoaded', function () {
+
+  const backButton = document.getElementById('backButton');
+  if (backButton) {
+    backButton.addEventListener('click', () => {
+      window.history.back();
+    });
+  }
+
   // --- SEÇÃO 1: Carregar a API do Iframe do YouTube ---
   // Este código cria uma tag <script> e a insere na página para carregar a API.
   const tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
-  const firstScriptTag = document.getElementsByTagName('script' )[0];
+  const firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-   // --- NOVO: Adicionar a configuração da API aqui ---
+  // --- NOVO: Adicionar a configuração da API aqui ---
   const API_CONFIG = {
-      development: "http://localhost:3000",
-      production: "https://biblestudyjourney.duckdns.org",
-      production_render: "https://biblestudyjourney-v2.onrender.com"
+    development: "http://localhost:3000",
+    production: "https://biblestudyjourney.duckdns.org",
+    production_render: "https://biblestudyjourney-v2.onrender.com"
   };
 
   // --- SEÇÃO 2: Referências do DOM e Variáveis Globais ---

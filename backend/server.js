@@ -60,6 +60,13 @@ app.use(
 );
 // -------------------------------------------
 
+// --- NOVO: CONFIGURAÇÃO DE PERMISSÕES DA PÁGINA ---
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'autoplay=(self "https://www.youtube.com" ), fullscreen=(self "https://www.youtube.com" ), picture-in-picture=(self "https://www.youtube.com" )');
+  next();
+});
+// -------------------------------------------------
+
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
