@@ -32,7 +32,7 @@ app.use(
         directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
             "frame-src": ["'self'", "https://www.youtube.com"], // Permite iframes do YouTube
-            "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com", "'unsafe-inline"], // Permite scripts do YouTube
+            "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com", "'unsafe-inline"'], // Permite scripts do YouTube
             "connect-src": ["'self'", "https://www.google-analytics.com", "https://biblestudyjourney-v2.onrender.com"], // Permite conexões com sua própria API
         },
     })
