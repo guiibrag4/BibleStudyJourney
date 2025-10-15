@@ -53,6 +53,7 @@ app.use(
             "connect-src": [
                 "'self'",
                 "https://www.google-analytics.com",
+                "http://localhost:3000",
                 "https://biblestudyjourney-v2.onrender.com",
                 "https://biblestudyjourney.duckdns.org",  // ADICIONADO
                 "https://www.abibliadigital.com.br",

@@ -14,6 +14,56 @@ const CONFIG = {
   THUMBNAIL_QUALITY: 'mqdefault' // Qualidade da thumbnail do YouTube
 };
 
+/**
+ * Decodifica um token JWT para extrair o payload sem verificar a assinatura.
+ * @param {string} token - O token JWT.
+ * @returns {Object|null} - O payload decodificado ou null se o token for inválido.
+ */
+function decodeJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("Erro ao decodificar o token JWT:", e);
+    return null;
+  }
+}
+
+/**
+ * Módulo para gerenciar a saudação do usuário
+ */
+const UserManager = {
+  greetingElement: null,
+
+  init() {
+    this.greetingElement = document.getElementById('saudacao-usuario');
+    this.setGreeting();
+  },
+
+  async setGreeting() {
+    if (!this.greetingElement) return;
+
+    // Verifica se o AuthManager está disponível
+    if (window.AuthManager && await window.AuthManager.isAuthenticated()) {
+      const token = await window.AuthManager.getToken();
+      const userData = decodeJwt(token);
+      
+      // O seu token JWT tem o campo 'nome'? Se não, ajuste aqui.
+      // Supondo que o payload do token tenha { id_usuario, nome, email }
+      const userName = userData?.nome || 'Usuário'; 
+      
+      this.greetingElement.textContent = `Olá, ${userName}!`;
+    } else {
+      this.greetingElement.textContent = 'Olá!';
+    }
+  }
+};
+
 // =============================================================================
 // GERENCIAMENTO DOS CARDS DA JORNADA
 // =============================================================================
@@ -35,7 +85,7 @@ const JourneyManager = {
    */
   createCard(videoProgress) {
     // Validações básicas
-    if (!videoProgress.duration) return null;
+    if (!videoProgress.duration || !videoProgress.id) return null;
     
     const percentage = Math.floor((videoProgress.currentTime / videoProgress.duration) * 100);
     
@@ -47,19 +97,30 @@ const JourneyManager = {
     card.className = 'cartao-jornada';
     card.dataset.videoId = videoProgress.id;
     card.dataset.videoType = encodeURIComponent(videoProgress.topic);
+    card.style.animationDelay = `${this.container.childElementCount * 0.1}s`; // Adiciona delay de animação dinâmico
 
-    // Conteúdo do card
+    // Conteúdo do card (usando a estrutura do seu CSS extra)
     const thumbnailUrl = `https://img.youtube.com/vi/${videoProgress.id}/${CONFIG.THUMBNAIL_QUALITY}.jpg`;
+    
     card.innerHTML = `
-      <img src="${thumbnailUrl}" alt="${videoProgress.title}" />
-      <div class="legenda-cartao">${videoProgress.topic} - ${percentage}%</div>
+      <div class="card-thumbnail-wrapper">
+        <img src="${thumbnailUrl}" alt="Capa do vídeo ${videoProgress.title}" class="card-thumbnail">
+        <div class="card-progress-overlay">
+          <div class="card-progress-bar" style="width: ${percentage}%;"></div>
+        </div>
+      </div>
+      <div class="legenda-cartao">
+        <h4 class="card-title">${videoProgress.title}</h4>
+        <span class="card-percentage">${percentage}% concluído</span>
+      </div>
     `;
 
     // Event listener para navegação
-    card.addEventListener('click', this.handleCardClick.bind(this));
+    card.addEventListener('click', this.handleCardClick.bind(this ));
 
     return card;
   },
+
 
   /**
    * Manipula o clique em um card
@@ -225,6 +286,7 @@ const VerseManager = {
 // =============================================================================
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializa todos os módulos
+  UserManager.init();
   JourneyManager.init();
   VerseManager.init();
 });
