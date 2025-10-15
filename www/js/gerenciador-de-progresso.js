@@ -1,4 +1,4 @@
-// Arquivo: www/js/gerenciador-de-progresso.js (VERSÃO CORRIGIDA PARA AUTH ASSÍNCRONO)
+// Arquivo: www/js/gerenciador-de-progresso.js (VERSÃO CORRIGIDA COM DETECÇÃO DE AMBIENTE)
 /**
  * Gerencia progresso de vídeos, alternando entre API (usuário logado) e localForage (anônimo).
  * API pública: saveProgress, getProgress, getAllProgress, removeProgress, clearAll
@@ -12,18 +12,35 @@
      ========================= */
   const PROGRESS_KEY_LOCAL = 'videoProgress';
 
-  // ALTERAÇÃO CRÍTICA: Adicionando a mesma lógica de ambiente do login.js
-  const API_CONFIG = {
-    development: "http://localhost:3000",
-    production: "https://biblestudyjourney.duckdns.org",
-    production_render: "https://biblestudyjourney-v2.onrender.com"
-  };
-  // Para testar localmente, use 'development'. Mude para 'production' ao fazer o deploy.
-  const API_BASE_URL = API_CONFIG.development;
+  // CORRIGIDO: Detecção automática de ambiente baseada no hostname
+  function getApiBaseUrl() {
+    const hostname = window.location.hostname;
+    
+    // Se estiver em localhost, usa a API local
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:3000';
+    }
+    
+    // Se estiver no domínio do Render, usa a API do Render
+    if (hostname.includes('onrender.com')) {
+      return 'https://biblestudyjourney-v2.onrender.com';
+    }
+    
+    // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
+    if (hostname.includes('duckdns.org')) {
+      return 'https://biblestudyjourney.duckdns.org';
+    }
+    
+    // Fallback: tenta usar o mesmo protocolo e host da página atual
+    return window.location.origin;
+  }
 
+  const API_BASE_URL = getApiBaseUrl();
   const API_ENDPOINT = `${API_BASE_URL}/api/user/progress`;
 
   const DEBUG = true;
+
+  console.log('[progress-manager] API Base URL detectada:', API_BASE_URL);
 
   /* =========================
      UTILITÁRIOS INTERNOS
@@ -176,7 +193,6 @@
         };
 
         await writeStorage(normalized.id, dataToSave);
-        debugLog('Progresso salvo', normalized.id, dataToSave);
         return true;
       } catch (err) {
         console.error('Erro ao salvar o progresso:', err);
@@ -237,8 +253,8 @@
   };
 
   /* =========================
-       EXPORTAÇÃO GLOBAL (ALTERADA)
-       ========================= */
+      EXPORTAÇÃO GLOBAL (ALTERADA)
+      ========================= */
   // NOVO: Espera o DOM carregar antes de expor o progressManager globalmente.
   document.addEventListener("DOMContentLoaded", function () {
     try {
@@ -253,3 +269,4 @@
   });
 
 })(); // Fim da IIFE
+

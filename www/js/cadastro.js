@@ -1,6 +1,5 @@
-// ...existing code...
 /**
- * cadastro.js
+ * cadastro.js (CORRIGIDO COM DETECÇÃO DE AMBIENTE)
  * - Organização por seções: constantes, utilitários, cache DOM, UI helpers,
  *   validação, chamadas API, handlers e inicialização.
  * - Mantém comportamento existente, apenas estrutura mais clara.
@@ -11,18 +10,33 @@ document.addEventListener('DOMContentLoaded', () => {
   /* =========================
      1) CONSTANTES E CONFIG
      ========================= */
-  const API_CONFIG = {
-    development: "http://localhost:3000",
-    production: "https://biblestudyjourney.duckdns.org",
-    production_render: "https://biblestudyjourney-v2.onrender.com"
-  };
+  // CORRIGIDO: Detecção automática de ambiente baseada no hostname
+  function getApiBaseUrl() {
+    const hostname = window.location.hostname;
+    
+    // Se estiver em localhost, usa a API local
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:3000';
+    }
+    
+    // Se estiver no domínio do Render, usa a API do Render
+    if (hostname.includes('onrender.com')) {
+      return 'https://biblestudyjourney-v2.onrender.com';
+    }
+    
+    // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
+    if (hostname.includes('duckdns.org')) {
+      return 'https://biblestudyjourney.duckdns.org';
+    }
+    
+    // Fallback: tenta usar o mesmo protocolo e host da página atual
+    return window.location.origin;
+  }
+
+  const API_URL = getApiBaseUrl();
+  console.log('[cadastro.js] API Base URL detectada:', API_URL);
 
   const isCapacitor = window.Capacitor !== undefined;
-  // Força uso do servidor de produção (mantido do código original)
-  // const API_URL = API_CONFIG.production;
-  const API_URL = API_CONFIG.development;
-
-
   const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
   /* =========================
@@ -48,88 +62,73 @@ document.addEventListener('DOMContentLoaded', () => {
     registrationContainer: document.getElementById('registrationContainer'),
     successContainer: document.getElementById('successContainer'),
     iniciarSessaoBtn: document.querySelector('.iniciar-sessao'),
-    goToLoginButton: document.getElementById('goToLoginButton')
   };
 
   /* =========================
      3) UTILITÁRIOS
      ========================= */
-  function isCordova() {
-    return typeof window.cordova !== 'undefined';
+  function showError(element, message) {
+    if (element) {
+      element.textContent = message;
+      element.style.display = message ? 'block' : 'none';
+    }
   }
 
-  function log(...args) {
-    // pequeno wrapper para facilitar debug (remover se desejar)
-    console.log('[cadastro]', ...args);
-  }
-
-  /* =========================
-     4) UI HELPERS
-     ========================= */
-  function clearFieldErrors() {
-    if (!DOM.nameError) return;
-    DOM.nameError.textContent = '';
-    DOM.sobrenomeError.textContent = '';
-    DOM.emailError.textContent = '';
-    DOM.passwordError.textContent = '';
+  function clearErrors() {
+    showError(DOM.nameError, '');
+    showError(DOM.sobrenomeError, '');
+    showError(DOM.emailError, '');
+    showError(DOM.passwordError, '');
     if (DOM.errorContainer) DOM.errorContainer.style.display = 'none';
   }
 
-  function showBackendError(message) {
-    if (!DOM.errorContainer) return;
-    DOM.errorMessage.textContent = message || 'Erro ao cadastrar usuário';
-    DOM.errorContainer.style.display = 'block';
+  function displayGeneralError(message) {
+    if (DOM.errorMessage) DOM.errorMessage.textContent = message;
+    if (DOM.errorContainer) DOM.errorContainer.style.display = 'block';
   }
 
-  function setSubmitting(isSubmitting) {
-    if (!DOM.submitButton) return;
-    DOM.submitButton.disabled = isSubmitting;
-    DOM.submitButton.textContent = isSubmitting ? 'Enviando...' : 'Cadastrar';
-    if (isSubmitting) {
-      DOM.submitButton.setAttribute('aria-busy', 'true');
-    } else {
-      DOM.submitButton.removeAttribute('aria-busy');
+  function setLoading(isLoading) {
+    if (DOM.submitButton) {
+      DOM.submitButton.disabled = isLoading;
+      DOM.submitButton.textContent = isLoading ? 'Cadastrando...' : 'Cadastrar';
     }
-  }
-
-  function showSuccessAndRedirect() {
-    if (DOM.registrationContainer) DOM.registrationContainer.style.display = 'none';
-    if (DOM.successContainer) {
-      DOM.successContainer.style.display = 'flex';
-    }
-    if (DOM.goToLoginButton) DOM.goToLoginButton.focus();
   }
 
   /* =========================
-     5) VALIDAÇÃO DO FORMULÁRIO
+     4) VALIDAÇÃO
      ========================= */
   function validateForm() {
-    clearFieldErrors();
+    clearErrors();
     let isValid = true;
 
-    if (!DOM.name.value.trim()) {
-      DOM.nameError.textContent = 'Nome é obrigatório';
+    const name = DOM.name.value.trim();
+    const sobrenome = DOM.sobrenome.value.trim();
+    const email = DOM.email.value.trim();
+    const password = DOM.password.value;
+
+    if (!name) {
+      showError(DOM.nameError, 'Por favor, insira seu nome.');
       isValid = false;
     }
 
-    if (!DOM.sobrenome.value.trim()) {
-      DOM.sobrenomeError.textContent = 'Sobrenome é obrigatório';
+    if (!sobrenome) {
+      showError(DOM.sobrenomeError, 'Por favor, insira seu sobrenome.');
       isValid = false;
     }
 
-    if (!DOM.email.value.trim()) {
-      DOM.emailError.textContent = 'Email é obrigatório';
+    if (!email) {
+      showError(DOM.emailError, 'Por favor, insira seu e-mail.');
       isValid = false;
-    } else if (!emailRegex.test(DOM.email.value)) {
-      DOM.emailError.textContent = 'Email inválido';
+    } else if (!emailRegex.test(email)) {
+      showError(DOM.emailError, 'Por favor, insira um e-mail válido.');
       isValid = false;
     }
 
-    if (!DOM.password.value) {
-      DOM.passwordError.textContent = 'Senha é obrigatória';
+    if (!password) {
+      showError(DOM.passwordError, 'Por favor, insira uma senha.');
       isValid = false;
-    } else if (DOM.password.value.length < 6) {
-      DOM.passwordError.textContent = 'Senha deve ter pelo menos 6 caracteres';
+    } else if (password.length < 6) {
+      showError(DOM.passwordError, 'A senha deve ter pelo menos 6 caracteres.');
       isValid = false;
     }
 
@@ -137,88 +136,70 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* =========================
-     6) CHAMADAS À API
+     5) CHAMADAS API
      ========================= */
-  async function registerUser(payload) {
-    const url = `${API_URL}/auth/register`;
-    const opts = {
+  async function registerUser(userData) {
+    const response = await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    };
+      body: JSON.stringify(userData)
+    });
 
-    const res = await fetch(url, opts);
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data };
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Erro ao cadastrar usuário.');
+    }
+
+    return data;
   }
 
   /* =========================
-     7) HANDLERS DE EVENTOS
+     6) HANDLERS
      ========================= */
   async function handleSubmit(event) {
     event.preventDefault();
+
     if (!validateForm()) return;
 
-    setSubmitting(true);
-
-    const formData = {
-      nome: DOM.name.value.trim(),
+    const userData = {
+      name: DOM.name.value.trim(),
       sobrenome: DOM.sobrenome.value.trim(),
       email: DOM.email.value.trim(),
-      senha: DOM.password.value
+      password: DOM.password.value
     };
 
+    setLoading(true);
+
     try {
-      const result = await registerUser(formData);
+      await registerUser(userData);
 
-      if (result.ok) {
-        showSuccessAndRedirect();
-      } else {
-        const message = (result.data && result.data.error) || `Erro (${result.status}) ao cadastrar`;
-        showBackendError(message);
-      }
-    } catch (err) {
-      log('Erro ao conectar ao servidor:', err);
-      showBackendError('Erro ao conectar ao servidor. Tente novamente mais tarde.');
+      // Sucesso
+      if (DOM.registrationContainer) DOM.registrationContainer.style.display = 'none';
+      if (DOM.successContainer) DOM.successContainer.style.display = 'block';
+
+    } catch (error) {
+      console.error('Erro no cadastro:', error);
+      displayGeneralError(error.message);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   }
 
-  function bindEvents() {
-    if (DOM.form) DOM.form.addEventListener('submit', handleSubmit);
-    if (DOM.iniciarSessaoBtn) {
-      DOM.iniciarSessaoBtn.addEventListener('click', () => {
-        window.location.href = 'login2.html';
-      });
-    }
-  }
-  if (DOM.goToLoginButton) {
-    DOM.goToLoginButton.addEventListener('click', () => {
-      window.location.href = 'login2.html';
-    });
+  function handleIniciarSessao() {
+    window.location.href = 'login.html';
   }
 
   /* =========================
-     8) INICIALIZAÇÃO
+     7) INICIALIZAÇÃO
      ========================= */
-  function init() {
-    log('API URL utilizada no cadastro:', API_URL);
-
-    if (!DOM.form) {
-      log('Formulário não encontrado: registrationForm');
-      return;
-    }
-
-    bindEvents();
-
-    if (isCordova()) {
-      document.addEventListener('deviceready', () => log('Cordova initialized'), false);
-    } else {
-      log('Running in browser environment');
-    }
+  if (DOM.form) {
+    DOM.form.addEventListener('submit', handleSubmit);
   }
 
-  init();
+  if (DOM.iniciarSessaoBtn) {
+    DOM.iniciarSessaoBtn.addEventListener('click', handleIniciarSessao);
+  }
 
 });
+
