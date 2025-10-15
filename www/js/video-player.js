@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modestbranding: 1,
         start: startTime,
         playsinline: 1, // Para iOS: toca no player embutido
-        mute: 1, // Começa mudo para evitar bloqueios de autoplay
+        mute: 0, // Começa mudo para evitar bloqueios de autoplay
         origin: window.location.origin // Segurança adicional
       },
       events: {
@@ -113,6 +113,10 @@ document.addEventListener('DOMContentLoaded', function () {
         onError: onPlayerError
       }
     });
+  }
+
+  function onPlayerError() {
+    handleError("Não foi possível reprodizir este vídeo.")
   }
 
   // Função chamada quando o player está pronto
