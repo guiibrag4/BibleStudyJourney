@@ -163,10 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!validateForm()) return;
 
     const userData = {
-      name: DOM.name.value.trim(),
+      nome: DOM.name.value.trim(),
       sobrenome: DOM.sobrenome.value.trim(),
       email: DOM.email.value.trim(),
-      password: DOM.password.value
+      senha: DOM.password.value
     };
 
     setLoading(true);
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function handleIniciarSessao() {
-    window.location.href = 'login.html';
+    window.location.href = 'login2.html';
   }
 
   /* =========================
