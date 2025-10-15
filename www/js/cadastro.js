@@ -13,22 +13,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // CORRIGIDO: Detecção automática de ambiente baseada no hostname
   function getApiBaseUrl() {
     const hostname = window.location.hostname;
-    
+
     // Se estiver em localhost, usa a API local
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'http://localhost:3000';
     }
-    
+
     // Se estiver no domínio do Render, usa a API do Render
     if (hostname.includes('onrender.com')) {
       return 'https://biblestudyjourney-v2.onrender.com';
     }
-    
+
     // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
     if (hostname.includes('duckdns.org')) {
       return 'https://biblestudyjourney.duckdns.org';
     }
-    
+
     // Fallback: tenta usar o mesmo protocolo e host da página atual
     return window.location.origin;
   }
@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     registrationContainer: document.getElementById('registrationContainer'),
     successContainer: document.getElementById('successContainer'),
     iniciarSessaoBtn: document.querySelector('.iniciar-sessao'),
+    goToLoginButton: document.getElementById('goToLoginButton')
   };
 
   /* =========================
@@ -190,6 +191,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'login2.html';
   }
 
+  function handleGoToLogin() {
+    window.location.href = 'login2.html'; // caminho absoluto
+  }
+
   /* =========================
      7) INICIALIZAÇÃO
      ========================= */
@@ -200,6 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (DOM.iniciarSessaoBtn) {
     DOM.iniciarSessaoBtn.addEventListener('click', handleIniciarSessao);
   }
+
+  if (DOM.goToLoginButton) {
+    DOM.goToLoginButton.addEventListener('click', handleGoToLogin); // ADICIONADO
+  }
+
 
 });
 
