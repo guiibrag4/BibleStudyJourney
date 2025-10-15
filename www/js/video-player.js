@@ -134,12 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function onPlayerError(event) {
-    // 2, 5, 100, 101, 150 (101/150 = embed desativado)
-    console.error('YouTube Player error:', event.data);
-    handleError('Falha ao carregar o vídeo. Código: ' + event.data);
-  }
-
   // FUNÇÃO DE RASTREAMENTO CORRIGIDA
   function startProgressTracking() {
     // Limpa qualquer timer antigo para segurança
@@ -166,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function () {
     lastSavedTime = currentTime; // Atualiza o último tempo salvo
 
     if (window.progressManager && window.videoDuration) {
-      console.log(`Salvando progresso no tempo: ${Math.floor(currentTime)}s`);
       window.progressManager.saveProgress({
         id: videoId,
         title: videoLessonTitleEl.textContent,

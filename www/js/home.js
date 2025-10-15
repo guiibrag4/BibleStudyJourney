@@ -70,7 +70,6 @@ async function saveCurrentState() {
             verse: versoAtual,
         };
         await localforage.setItem('bibleAppState', state);
-        console.log("Estado salvo:", state);
     } catch (error) {
         console.error("Erro ao salvar o estado:", error);
     }
@@ -79,7 +78,6 @@ async function saveCurrentState() {
 async function loadInitialState() {
     try {
         const savedState = await localforage.getItem('bibleAppState');
-        console.log("Estado salvo encontrado:", savedState);
 
         if (savedState) {
             versaoAtual = savedState.version || "nvi";

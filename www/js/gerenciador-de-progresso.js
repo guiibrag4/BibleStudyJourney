@@ -193,7 +193,6 @@
         };
 
         await writeStorage(normalized.id, dataToSave);
-        debugLog('Progresso salvo', normalized.id, dataToSave);
         return true;
       } catch (err) {
         console.error('Erro ao salvar o progresso:', err);

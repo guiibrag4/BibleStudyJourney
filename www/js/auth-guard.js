@@ -11,10 +11,8 @@ window.AuthManager = {
     async saveToken(token) {
         if (Preferences) {
             await Preferences.set({ key: 'token-jwt', value: token });
-            console.log("Token salvo no armazenamento nativo (Capacitor).");
         } else {
             localStorage.setItem("token-jwt", token);
-            console.log("Token salvo no localStorage (fallback de navegador).");
         }
     },
 
@@ -37,21 +35,20 @@ window.AuthManager = {
 
     async isAuthenticated() {
         const token = await this.getToken();
-        console.log('AuthManager.isAuthenticated chamado. Token encontrado:', token ? 'Sim' : 'Não');
         return !!token;
     },
 
     async redirectToLogin() {
-        console.warn("Usuário não autenticado. Redirecionando...");
         await this.clearAuthData();
-        window.location.href = 'html/login2.html';
+        // sempre volta para a raiz corretamente
+        window.location.replace('/index.html');
     }
 };
 
 // A lógica do DOMContentLoaded pode permanecer, pois ainda é uma boa prática.
 document.addEventListener("DOMContentLoaded", function() {
     async function protectPage() {
-        const publicPages = ['login2.html', 'cadastro2.html', 'index.html'];
+        const publicPages = ['login2.html', 'cadastro2.html', 'index.html', 'paginainicial.html'];
         const currentPage = window.location.pathname.split('/').pop();
 
         // Agora ele usa o window.AuthManager que acabamos de definir.
