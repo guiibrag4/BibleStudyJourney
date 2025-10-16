@@ -1,376 +1,298 @@
-// Arquivo: www/js/home2.js (VERSÃO ATUALIZADA COM MELHORIAS)
+const API_URL = "https://www.abibliadigital.com.br/api";
+const API_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHIiOiJXZWQgQXByIDE2IDIwMjUgMTQ6MjU6MjkgR01UKzAwMDAuNjdmZmIwZWI1ZDA2ZjYwMDI4MzczZjlmIiwiaWF0IjoxNzQ0ODEzNTI5fQ.4SyoatsJ2L0lWPalu_2PsOA6-Somv-gDdDHSHR2OyfA";
 
-/**
- * Módulo principal da página Home
- * Gerencia cards da jornada e funcionalidades dos versículos
- */
+// ===== ESTADO GLOBAL =====
+let versaoAtual = "nvi";
+let livroAtual = "gn";
+let capituloAtual = 1;
+let versoAtual = 1;
 
-// =============================================================================
-// CONSTANTES E CONFIGURAÇÕES
-// =============================================================================
-const CONFIG = {
-  COMPLETION_THRESHOLD: 95, // Porcentagem para considerar vídeo completo
-  MAX_RECENT_VIDEOS: 5,     // Máximo de vídeos recentes a exibir
-  THUMBNAIL_QUALITY: 'mqdefault' // Qualidade da thumbnail do YouTube
-};
+// Variáveis temporárias para navegação fluida
+let tempLivro = null;
+let tempCapitulo = null;
 
-// =============================================================================
-// GERENCIAMENTO DE USUÁRIO
-// =============================================================================
-const UserManager = {
-  /**
-   * Inicializa o gerenciador de usuário
-   */
-  async init() {
-    await this.updateGreeting();
-  },
+// ===== ELEMENTOS DO DOM =====
+const versionSelector = document.getElementById('version-selector');
+const chapterSelector = document.getElementById('chapter-selector');
+const bibleContentEl = document.getElementById('bible-content');
+const versionDialog = document.getElementById('version-dialog');
+const bookDialog = document.getElementById('book-dialog');
+const chapterDialog = document.getElementById('chapter-dialog');
+const verseDialog = document.getElementById('verse-dialog');
+const overlay = document.getElementById('overlay');
+const versionSelect = document.getElementById('version-select');
 
-  /**
-   * Atualiza a saudação com o nome do usuário
-   */
-  async updateGreeting() {
-    const greetingElement = document.getElementById('saudacao-usuario');
-    if (!greetingElement) return;
-
-    try {
-      // Verifica se o usuário está logado
-      if (!window.AuthManager || !await window.AuthManager.isAuthenticated()) {
-        greetingElement.textContent = 'Olá, Visitante';
-        return;
-      }
-
-      // Busca informações do usuário (você pode implementar uma API para isso)
-      // Por enquanto, vamos usar um nome genérico
-      const userName = await this.getUserName();
-      greetingElement.textContent = `Olá, ${userName}`;
-    } catch (error) {
-      console.error('Erro ao atualizar saudação:', error);
-      greetingElement.textContent = 'Olá';
-    }
-  },
-
-  /**
-   * Obtém o nome do usuário
-   * TODO: Implementar chamada à API para buscar dados reais do usuário
-   */
-  async getUserName() {
-    // Por enquanto retorna um nome padrão
-    // Você pode implementar uma chamada à API aqui para buscar o nome real
-    return 'Estudante';
-  }
-};
-
-// =============================================================================
-// GERENCIAMENTO DOS CARDS DA JORNADA
-// =============================================================================
-const JourneyManager = {
-  container: null,
-
-  /**
-   * Inicializa o gerenciador da jornada
-   */
-  init() {
-    this.container = document.querySelector('.cartoes-jornada');
-    this.loadJourney();
-  },
-
-  /**
-   * Cria um card individual da jornada
-   * @param {Object} videoProgress - Dados do progresso do vídeo
-   * @returns {HTMLElement|null} - Elemento do card ou null se não deve ser exibido
-   */
-  createCard(videoProgress) {
-    // Validações básicas
-    if (!videoProgress.duration) return null;
-    
-    const percentage = Math.floor((videoProgress.currentTime / videoProgress.duration) * 100);
-    
-    // Não exibe vídeos já concluídos
-    if (percentage >= CONFIG.COMPLETION_THRESHOLD) return null;
-
-    // Criação do elemento
-    const card = document.createElement('article');
-    card.className = 'cartao-jornada';
-    card.dataset.videoId = videoProgress.id;
-    card.dataset.videoType = encodeURIComponent(videoProgress.topic);
-
-    // Conteúdo do card
-    const thumbnailUrl = `https://img.youtube.com/vi/${videoProgress.id}/${CONFIG.THUMBNAIL_QUALITY}.jpg`;
-    
-    // Trunca o título se for muito longo
-    const displayTitle = this.truncateTitle(videoProgress.title, 50);
-    
-    card.innerHTML = `
-      <div class="card-thumbnail-wrapper">
-        <img src="${thumbnailUrl}" alt="${videoProgress.title}" class="card-thumbnail" />
-        <div class="card-progress-overlay">
-          <div class="card-progress-bar" style="width: ${percentage}%"></div>
-        </div>
-      </div>
-      <div class="legenda-cartao">
-        <div class="card-topic">${videoProgress.topic}</div>
-        <div class="card-title">${displayTitle}</div>
-        <div class="card-percentage">${percentage}% completo</div>
-      </div>
-    `;
-
-    // Event listener para navegação
-    card.addEventListener('click', this.handleCardClick.bind(this));
-
-    return card;
-  },
-
-  /**
-   * Trunca o título se for muito longo
-   * @param {string} title - Título original
-   * @param {number} maxLength - Comprimento máximo
-   * @returns {string} - Título truncado
-   */
-  truncateTitle(title, maxLength) {
-    if (!title) return 'Sem título';
-    if (title.length <= maxLength) return title;
-    return title.substring(0, maxLength) + '...';
-  },
-
-  /**
-   * Manipula o clique em um card
-   * @param {Event} event - Evento de clique
-   */
-  handleCardClick(event) {
-    const card = event.currentTarget;
-    const videoId = card.dataset.videoId;
-    const type = card.dataset.videoType;
-    
-    // Adiciona um efeito visual de clique
-    card.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      card.style.transform = '';
-      window.location.href = `tl2-teologia.html?videoId=${videoId}&type=${type}`;
-    }, 150);
-  },
-
-  /**
-   * Carrega e exibe os cards da jornada
-   */
-  async loadJourney() {
-    if (!this.container) return;
-
-    try {
-      // Exibe estado de carregamento
-      this.showLoading();
-
-      // Aguarda o progressManager estar disponível
-      if (!window.progressManager) {
-        // Aguarda um pouco para o progressManager ser inicializado
-        await this.waitForProgressManager();
-      }
-
-      const allProgress = await window.progressManager.getAllProgress();
-      this.container.innerHTML = ''; // Limpa conteúdo anterior
-
-      const recentVideos = allProgress.slice(0, CONFIG.MAX_RECENT_VIDEOS);
-
-      // Verifica se há vídeos para exibir
-      if (recentVideos.length === 0) {
-        this.showEmptyState('Comece uma aula na trilha para ver seu progresso aqui!');
-        return;
-      }
-
-      // Cria e adiciona os cards
-      let cardsAdded = 0;
-      recentVideos.forEach(video => {
-        const card = this.createCard(video);
-        if (card) {
-          this.container.appendChild(card);
-          cardsAdded++;
-        }
-      });
-
-      // Verifica se algum card foi adicionado
-      if (cardsAdded === 0) {
-        this.showEmptyState('Parabéns! Você concluiu seus vídeos recentes. 🎉');
-      }
-
-    } catch (error) {
-      console.error('Erro ao carregar jornada:', error);
-      this.showError('Erro ao carregar progresso. Tente novamente mais tarde.');
-    }
-  },
-
-  /**
-   * Aguarda o progressManager estar disponível
-   * @returns {Promise<void>}
-   */
-  async waitForProgressManager() {
-    return new Promise((resolve) => {
-      const checkInterval = setInterval(() => {
-        if (window.progressManager) {
-          clearInterval(checkInterval);
-          resolve();
-        }
-      }, 100);
-
-      // Timeout após 5 segundos
-      setTimeout(() => {
-        clearInterval(checkInterval);
-        resolve();
-      }, 5000);
-    });
-  },
-
-  /**
-   * Exibe estado de carregamento
-   */
-  showLoading() {
-    this.container.innerHTML = `
-      <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>Carregando seu progresso...</p>
-      </div>
-    `;
-  },
-
-  /**
-   * Exibe mensagem de estado vazio
-   * @param {string} message - Mensagem a ser exibida
-   */
-  showEmptyState(message) {
-    this.container.innerHTML = `
-      <div class="empty-state">
-        <p class="jornada-vazia">${message}</p>
-      </div>
-    `;
-  },
-
-  /**
-   * Exibe mensagem de erro
-   * @param {string} message - Mensagem de erro
-   */
-  showError(message) {
-    this.container.innerHTML = `
-      <div class="error-state">
-        <p class="jornada-erro">${message}</p>
-      </div>
-    `;
-  }
-};
-
-// =============================================================================
-// GERENCIAMENTO DOS VERSÍCULOS
-// =============================================================================
-const VerseManager = {
-  elements: {},
-
-  /**
-   * Inicializa o gerenciador de versículos
-   */
-  init() {
-    this.cacheElements();
-    this.setupEventListeners();
-  },
-
-  /**
-   * Faz cache dos elementos DOM necessários
-   */
-  cacheElements() {
-    this.elements = {
-      copyButton: document.getElementById('botao-copiar-versiculo'),
-      shareButton: document.getElementById('botao-compartilhar-versiculo'),
-      verseText: document.querySelector('.texto-versiculo'),
-      verseReference: document.querySelector('.referencia-versiculo')
+// ===== UTILITÁRIOS =====
+function capitalizeBookName(book) {
+    const bookNames = {
+        gn: "Gênesis", ex: "Êxodo", lv: "Levítico", nm: "Números", dt: "Deuteronômio",
+        js: "Josué", jz: "Juízes", rt: "Rute", "1sm": "1 Samuel", "2sm": "2 Samuel",
+        "1rs": "1 Reis", "2rs": "2 Reis", "1cr": "1 Crônicas", "2cr": "2 Crônicas",
+        ed: "Esdras", ne: "Neemias", et: "Ester", jó: "Jó", sl: "Salmos",
+        pv: "Provérbios", ec: "Eclesiastes", ct: "Cantares", is: "Isaías",
+        jr: "Jeremias", lm: "Lamentações", ez: "Ezequiel", dn: "Daniel",
+        os: "Oséias", jl: "Joel", am: "Amós", ob: "Obadias", jn: "Jonas",
+        mq: "Miquéias", na: "Naum", hb: "Habacuque", sf: "Sofonias",
+        ag: "Ageu", zc: "Zacarias", ml: "Malaquias", mt: "Mateus",
+        mc: "Marcos", lc: "Lucas", jo: "João", at: "Atos", rm: "Romanos",
+        "1co": "1 Coríntios", "2co": "2 Coríntios", gl: "Gálatas",
+        ef: "Efésios", fp: "Filipenses", cl: "Colossenses",
+        "1ts": "1 Tessalonicenses", "2ts": "2 Tessalonicenses",
+        "1tm": "1 Timóteo", "2tm": "2 Timóteo", tt: "Tito", fl: "Filemom",
+        hb: "Hebreus", tg: "Tiago", "1pe": "1 Pedro", "2pe": "2 Pedro",
+        "1jo": "1 João", "2jo": "2 João", "3jo": "3 João", jd: "Judas",
+        ap: "Apocalipse"
     };
-  },
+    return bookNames[book] || book;
+}
 
-  /**
-   * Configura os event listeners dos botões
-   */
-  setupEventListeners() {
-    if (!this.elements.verseText) return;
-
-    const fullText = this.getFullVerseText();
-
-    if (this.elements.copyButton) {
-      this.elements.copyButton.addEventListener('click', () => this.copyVerse(fullText));
+function updateChapterSelectorStyle() {
+    if (livroAtual === "1ts" || livroAtual === "2ts") {
+        chapterSelector.classList.add("tessalonicenses");
+    } else {
+        chapterSelector.classList.remove("tessalonicenses");
     }
+}
 
-    if (this.elements.shareButton) {
-      this.elements.shareButton.addEventListener('click', () => this.shareVerse(fullText));
-    }
-  },
+function updateUI() {
+    chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
+    versionSelector.textContent = versaoAtual.toUpperCase();
+    updateChapterSelectorStyle();
+}
 
-  /**
-   * Obtém o texto completo do versículo (texto + referência)
-   * @returns {string} - Texto completo formatado
-   */
-  getFullVerseText() {
-    const verseText = this.elements.verseText.innerText.trim();
-    const reference = this.elements.verseReference?.innerText.trim() || '';
-    return `${verseText}\n\n${reference}`;
-  },
-
-  /**
-   * Copia o versículo para a área de transferência
-   * @param {string} text - Texto a ser copiado
-   */
-  async copyVerse(text) {
+// ===== GERENCIAMENTO DE ESTADO =====
+async function saveCurrentState() {
     try {
-      await navigator.clipboard.writeText(text);
-      this.showCopyFeedback();
+        const state = {
+            version: versaoAtual,
+            book: livroAtual,
+            chapter: capituloAtual,
+            verse: versoAtual,
+        };
+        await localforage.setItem('bibleAppState', state);
     } catch (error) {
-      console.error('Erro ao copiar:', error);
-      alert('Não foi possível copiar.');
+        console.error("Erro ao salvar o estado:", error);
     }
-  },
+}
 
-  /**
-   * Exibe feedback visual de cópia bem-sucedida
-   */
-  showCopyFeedback() {
-    const button = this.elements.copyButton;
-    const originalHTML = button.innerHTML;
-    
-    button.innerHTML = '✓';
-    button.style.backgroundColor = '#4CAF50';
-    
-    setTimeout(() => {
-      button.innerHTML = originalHTML;
-      button.style.backgroundColor = '';
-    }, 2000);
-  },
-
-  /**
-   * Compartilha o versículo usando a Web Share API
-   * @param {string} text - Texto a ser compartilhado
-   */
-  async shareVerse(text) {
+async function loadInitialState() {
     try {
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Versículo do dia',
-          text: text
+        const savedState = await localforage.getItem('bibleAppState');
+
+        if (savedState) {
+            versaoAtual = savedState.version || "nvi";
+            livroAtual = savedState.book || "gn";
+            capituloAtual = savedState.chapter || 1;
+            versoAtual = savedState.verse || 1;
+        }
+
+        updateUI();
+        await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+    } catch (error) {
+        console.error("Erro ao carregar o estado inicial:", error);
+    }
+}
+
+// ===== GERENCIAMENTO DE MODAIS =====
+function openDialog(dialog) {
+    dialog.classList.add('open');
+    overlay.classList.add('open');
+}
+
+function closeDialog(dialog) {
+    dialog.classList.remove('open');
+    overlay.classList.remove('open');
+}
+
+function closeAllModals() {
+    const modals = document.querySelectorAll('.dialog');
+    modals.forEach(modal => modal.classList.remove('open'));
+    overlay.classList.remove('open');
+}
+
+// ===== API CALLS =====
+async function fetchBibleContent(version, book, chapter) {
+    try {
+        const response = await fetch(`${API_URL}/verses/${version}/${book}/${chapter}`, {
+            headers: { Authorization: `Bearer ${API_TOKEN}` },
         });
-      } else {
-        // Fallback: copia para área de transferência
-        await this.copyVerse(text);
-        alert('Versículo copiado! Cole onde desejar.');
-      }
+        const data = await response.json();
+        console.log("Conteúdo da Bíblia:", data);
+        renderBibleContent(data.verses);
     } catch (error) {
-      console.error('Erro ao compartilhar:', error);
+        console.error("Erro ao buscar conteúdo da Bíblia:", error);
     }
-  }
-};
+}
 
-// =============================================================================
-// INICIALIZAÇÃO DA APLICAÇÃO
-// =============================================================================
-document.addEventListener('DOMContentLoaded', async function() {
-  console.log('[home2.js] Inicializando aplicação...');
-  
-  // Inicializa todos os módulos
-  await UserManager.init();
-  JourneyManager.init();
-  VerseManager.init();
-  
-  console.log('[home2.js] Aplicação inicializada com sucesso!');
+async function fetchChapters(book) {
+    try {
+        const response = await fetch(`${API_URL}/books/${book}`, {
+            headers: { Authorization: `Bearer ${API_TOKEN}` },
+        });
+        const data = await response.json();
+        const chapters = Array.from({ length: data.chapters }, (_, i) => i + 1);
+
+        const chapterGrid = document.getElementById('chapter-grid');
+        chapterGrid.innerHTML = chapters
+            .map(chapter => `<button class="chapter-item" data-chapter="${chapter}">${chapter}</button>`)
+            .join('');
+
+        return data.chapters;
+    } catch (error) {
+        console.error("Erro ao buscar capítulos:", error);
+        return [];
+    }
+}
+
+async function fetchVerses(version, book, chapter) {
+    try {
+        const response = await fetch(`${API_URL}/verses/${version}/${book}/${chapter}`, {
+            headers: { Authorization: `Bearer ${API_TOKEN}` },
+        });
+        const data = await response.json();
+
+        if (data.verses && data.verses.length > 0) {
+            const verses = data.verses.map((_, i) => i + 1);
+            const verseGrid = document.getElementById('verse-grid');
+            verseGrid.innerHTML = verses
+                .map(verse => `<button class="verse-item" data-verse="${verse}">${verse}</button>`)
+                .join('');
+        }
+    } catch (error) {
+        console.error("Erro ao buscar versículos:", error);
+    }
+}
+
+function renderBibleContent(verses) {
+    bibleContentEl.innerHTML = '';
+    verses.forEach((verse) => {
+        const verseElement = document.createElement('p');
+        verseElement.id = `verse-${verse.number}`;
+        verseElement.innerHTML = `<span style="color: blue;">${verse.number}</span> ${verse.text}`;
+        bibleContentEl.appendChild(verseElement);
+    });
+}
+
+// ===== NAVEGAÇÃO FLUIDA =====
+function scrollToVerse(verseNumber) {
+    const verseElement = document.getElementById(`verse-${verseNumber}`);
+    if (verseElement) {
+        verseElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+}
+
+function highlightVerse(verseNumber) {
+    const verseElement = document.getElementById(`verse-${verseNumber}`);
+    if (verseElement) {
+        verseElement.classList.add('highlight');
+        setTimeout(() => verseElement.classList.add('fade-out'), 1000);
+        setTimeout(() => verseElement.classList.remove('highlight', 'fade-out'), 1600);
+    }
+}
+
+// ===== EVENT LISTENERS =====
+function setupEventListeners() {
+    // Seletor de versão - atualiza imediatamente
+    if (versionSelector) {
+        versionSelector.addEventListener('click', () => openDialog(versionDialog));
+    }
+
+    if (versionSelect) {
+        versionSelect.addEventListener('change', async (event) => {
+            versaoAtual = event.target.value.toLowerCase();
+            updateUI();
+            await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+            await saveCurrentState();
+            closeAllModals();
+        });
+    }
+
+    // Seletor de livro/capítulo - abre navegação fluida
+    if (chapterSelector) {
+        chapterSelector.addEventListener('click', () => openDialog(bookDialog));
+    }
+
+    // Seleção de livro - apenas carrega capítulos, não atualiza conteúdo
+    document.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('book-item')) {
+            tempLivro = event.target.dataset.book;
+            await fetchChapters(tempLivro);
+            closeDialog(bookDialog);
+            openDialog(chapterDialog);
+        }
+    });
+
+    // Seleção de capítulo - atualiza o conteúdo e vai para versículos
+    document.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('chapter-item')) {
+            tempCapitulo = parseInt(event.target.dataset.chapter);
+            
+            // Aqui é onde atualizamos o estado e o conteúdo
+            livroAtual = tempLivro;
+            capituloAtual = tempCapitulo;
+            
+            updateUI();
+            await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+            await fetchVerses(versaoAtual, livroAtual, capituloAtual);
+            await saveCurrentState();
+            
+            closeDialog(chapterDialog);
+            openDialog(verseDialog);
+        }
+    });
+
+    // Seleção de versículo - apenas navega para o versículo
+    document.addEventListener('click', (event) => {
+        if (event.target.classList.contains('verse-item')) {
+            versoAtual = parseInt(event.target.dataset.verse);
+            scrollToVerse(versoAtual);
+            highlightVerse(versoAtual);
+            closeAllModals();
+            saveCurrentState();
+        }
+    });
+
+    // Botões de fechar
+    document.querySelectorAll('.close-button').forEach(button => {
+        button.addEventListener('click', closeAllModals);
+    });
+
+    // Fechar ao clicar fora ou no overlay
+    document.querySelectorAll('.dialog').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeAllModals();
+        });
+    });
+
+    if (overlay) {
+        overlay.addEventListener('click', closeAllModals);
+    }
+
+    // Tecla ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllModals();
+    });
+
+    // Temas
+    const themeOptions = document.getElementById('theme-options');
+    if (themeOptions) {
+        themeOptions.addEventListener('click', (event) => {
+            if (event.target.classList.contains('theme-option-btn')) {
+                const selectedTheme = event.target.dataset.theme;
+                if (window.themeManager) {
+                    window.themeManager.applyTheme(selectedTheme);
+                    window.themeManager.saveTheme(selectedTheme);
+                }
+                closeAllModals();
+            }
+        });
+    }
+}
+
+// ===== INICIALIZAÇÃO =====
+window.addEventListener('beforeunload', saveCurrentState);
+
+document.addEventListener('DOMContentLoaded', async () => {
+    setupEventListeners();
+    await loadInitialState();
 });
-
