@@ -99,6 +99,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  setTimeout(() => {
+  const iframe = document.querySelector('#videoFrame iframe');
+  if (iframe) {
+    iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
+  }
+}, 1000);
+
   function onPlayerError(event) {
     console.error("Erro do Player do YouTube:", event.data);
     handleError("Não foi possível reproduzir este vídeo. Tente recarregar a página.");
