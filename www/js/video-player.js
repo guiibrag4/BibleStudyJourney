@@ -1,46 +1,33 @@
-// Arquivo: www/js/video-player.js (COM RASTREAMENTO PRECISO E DETECÇÃO DE AMBIENTE)
+// Arquivo: www/js/video-player.js (VERSÃO FINAL OTIMIZADA)
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  // Listener já passivo, como na versão anterior.
   const backButton = document.getElementById('backButton');
   if (backButton) {
     backButton.addEventListener('click', () => {
       window.history.back();
-    });
+    }, { passive: true });
   }
 
   // --- SEÇÃO 1: Carregar a API do Iframe do YouTube ---
-  // Este código cria uma tag <script> e a insere na página para carregar a API.
   const tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
-  const firstScriptTag = document.getElementsByTagName('script')[0];
+  const firstScriptTag = document.getElementsByTagName('script' )[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-  // --- CORRIGIDO: Detecção automática de ambiente baseada no hostname ---
+  // --- LÓGICA DE DETECÇÃO DE AMBIENTE ---
+  const isProduction = window.location.hostname.includes('onrender.com') || window.location.hostname.includes('duckdns.org');
+  
   function getApiBaseUrl() {
-    const hostname = window.location.hostname;
-
-    // Se estiver em localhost, usa a API local
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:3000';
+    if (isProduction) {
+      return window.location.origin;
     }
-
-    // Se estiver no domínio do Render, usa a API do Render
-    if (hostname.includes('onrender.com')) {
-      return 'https://biblestudyjourney-v2.onrender.com';
-    }
-
-    // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
-    if (hostname.includes('duckdns.org')) {
-      return 'https://biblestudyjourney.duckdns.org';
-    }
-
-    // Fallback: tenta usar o mesmo protocolo e host da página atual
-    return window.location.origin;
+    return 'http://localhost:3000';
   }
 
-  const API_BASE_URL = getApiBaseUrl();
-  console.log('API Base URL detectada:', API_BASE_URL);
+  const API_BASE_URL = getApiBaseUrl( );
+  console.log(`[video-player] Ambiente: ${isProduction ? 'Produção' : 'Desenvolvimento'}. API URL: ${API_BASE_URL}`);
 
   // --- SEÇÃO 2: Referências do DOM e Variáveis Globais ---
   const videoTypeTitleEl = document.getElementById('videoTypeTitle');
@@ -52,13 +39,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const videoId = urlParams.get('videoId');
   const typeTitleFromUrl = urlParams.get('type');
 
-  let player; // Variável para guardar o objeto do player do YouTube
-  let progressTimer; // Variável para o nosso setInterval
-  let lastSavedTime = -1; // Para evitar salvamentos repetidos com o mesmo tempo
+  let player;
+  let progressTimer;
+  let lastSavedTime = -1;
 
-  // --- SEÇÃO 3: Função Global de Callback da API ---
-  // A API do YouTube procurará por esta função global. Quando a API estiver pronta,
-  // ela chamará esta função, que então criará nosso player.
+  // --- SEÇÃO 3: Callback da API do YouTube ---
   window.onYouTubeIframeAPIReady = function () {
     if (videoId) {
       initializePage();
@@ -69,15 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- SEÇÃO 4: Lógica Principal de Inicialização ---
   function initializePage() {
-    // Preenche o título do tópico
     if (typeTitleFromUrl && videoTypeTitleEl) {
       videoTypeTitleEl.textContent = decodeURIComponent(typeTitleFromUrl);
     }
-
-    // Busca os dados do nosso backend (título, descrição, etc.)
     fetchVideoInfo();
-
-    // Lógica de "Continuar Assistindo"
     window.progressManager?.getProgress(videoId).then(savedProgress => {
       let startTime = 0;
       if (savedProgress && savedProgress.currentTime > 10) {
@@ -88,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function () {
           }
         }
       }
-      // Cria o player do YouTube com o tempo de início correto
       createPlayer(startTime);
     });
   }
@@ -96,72 +75,63 @@ document.addEventListener('DOMContentLoaded', function () {
   // --- SEÇÃO 5: Funções do Player e Rastreamento ---
 
   function createPlayer(startTime) {
-    player = new YT.Player('videoFrame', { // 'videoFrame' é o ID do seu <iframe>
+    const playerVars = {
+      autoplay: 1,
+      rel: 0,
+      modestbranding: 1,
+      start: startTime,
+      playsinline: 1,
+    };
+
+    if (isProduction) {
+      playerVars.origin = window.location.origin;
+    }
+
+    player = new YT.Player('videoFrame', {
+      host: 'https://www.youtube-nocookie.com',
       videoId: videoId,
-      playerVars: {
-        autoplay: 1,
-        rel: 0,
-        modestbranding: 1,
-        start: startTime,
-        playsinline: 1, // Para iOS: toca no player embutido
-        mute: 0, // Começa mudo para evitar bloqueios de autoplay
-        origin: window.location.origin // Segurança adicional
-      },
+      playerVars: playerVars,
       events: {
-        onReady: onPlayerReady,
-        onStateChange: onPlayerStateChange,
-        onError: onPlayerError
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange,
+        'onError': onPlayerError
       }
     });
   }
 
-  function onPlayerError() {
-    handleError("Não foi possível reprodizir este vídeo.")
+  function onPlayerError(event) {
+    console.error("Erro do Player do YouTube:", event.data);
+    handleError("Não foi possível reproduzir este vídeo. Tente recarregar a página.");
   }
 
-  // Função chamada quando o player está pronto
   function onPlayerReady(event) {
-    const iframe = player.getIframe();
-    if (iframe) iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; web-share');
-
-    // Inicia o timer para salvar o progresso periodicamente
+    event.target.playVideo();
     startProgressTracking();
   }
 
-  // Função chamada sempre que o estado do player muda (play, pause, fim, etc.)
   function onPlayerStateChange(event) {
-    // Se o vídeo for pausado (state 2) ou terminar (state 0),
-    // fazemos um salvamento final para garantir que o último segundo seja registrado.
     if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-      console.log("Vídeo pausado ou finalizado. Salvando progresso final.");
       saveCurrentProgress();
     }
   }
 
-  // FUNÇÃO DE RASTREAMENTO CORRIGIDA
   function startProgressTracking() {
-    // Limpa qualquer timer antigo para segurança
     if (progressTimer) clearInterval(progressTimer);
-
     progressTimer = setInterval(() => {
-      // Só executa se o player existir e o vídeo estiver tocando (state 1)
-      if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+      if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
         saveCurrentProgress();
       }
-    }, 5000); // Verifica a cada 5 segundos
+    }, 5000);
   }
 
-  // FUNÇÃO DE SALVAMENTO CENTRALIZADA
   function saveCurrentProgress() {
-    // Pega o tempo ATUAL e REAL do player
+    if (!player || typeof player.getCurrentTime !== 'function') return;
+    
     const currentTime = player.getCurrentTime();
-
-    // Condição para evitar salvamentos desnecessários se o tempo não mudou
     if (Math.abs(currentTime - lastSavedTime) < 1) {
       return;
     }
-
-    lastSavedTime = currentTime; // Atualiza o último tempo salvo
+    lastSavedTime = currentTime;
 
     if (window.progressManager && window.videoDuration) {
       window.progressManager.saveProgress({
@@ -174,25 +144,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Limpa o timer ao sair da página
   window.addEventListener('beforeunload', () => {
     if (progressTimer) clearInterval(progressTimer);
-    // Salva uma última vez ao fechar a aba/janela, se o vídeo estiver tocando
-    if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+    if (player && typeof player.getPlayerState === 'function' && player.getPlayerState() === YT.PlayerState.PLAYING) {
       saveCurrentProgress();
     }
   });
 
-  // --- SEÇÃO 6: Funções Auxiliares (Busca de API, UI) ---
+  // --- SEÇÃO 6: Funções Auxiliares ---
 
   function fetchVideoInfo() {
-    // CORRIGIDO: Usa a URL base detectada automaticamente
     const apiUrl = `${API_BASE_URL}/api/video-info?videoId=${videoId}`;
-    console.log('Buscando informações do vídeo em:', apiUrl);
-
     fetch(apiUrl)
       .then(response => {
-        if (!response.ok) throw new Error(`Falha ao buscar dados do vídeo. Status: ${response.status}`);
+        if (!response.ok) throw new Error(`Falha ao buscar dados do vídeo: ${response.statusText}`);
         return response.json();
       })
       .then(data => {
@@ -201,11 +166,23 @@ document.addEventListener('DOMContentLoaded', function () {
         videoDescriptionTextEl.innerHTML = `<p>${formattedDescription}</p>`;
         window.videoDuration = data.durationInSeconds || 3600;
 
-        setTimeout(() => {
-          if (videoDescriptionTextEl.scrollHeight > videoDescriptionTextEl.clientHeight) {
-            readMoreButton.style.display = 'inline-block';
+        // **SOLUÇÃO DEFINITIVA PARA O 'setTimeout'**
+        // Usa ResizeObserver para mostrar o botão "Ler mais" de forma eficiente.
+        const observer = new ResizeObserver(entries => {
+          for (let entry of entries) {
+            const contentEl = entry.target;
+            if (contentEl.scrollHeight > contentEl.clientHeight) {
+              readMoreButton.style.display = 'inline-block';
+            } else {
+              readMoreButton.style.display = 'none';
+            }
           }
-        }, 200);
+          // Uma vez que o botão é mostrado, não precisamos mais observar.
+          observer.disconnect();
+        });
+        
+        // Começa a observar o elemento da descrição.
+        observer.observe(videoDescriptionTextEl);
       })
       .catch(error => {
         handleError("Não foi possível carregar a descrição.", error);
@@ -218,13 +195,11 @@ document.addEventListener('DOMContentLoaded', function () {
     videoDescriptionTextEl.innerHTML = `<p>${message}</p>`;
   }
 
-  // Lógica do botão "Ler mais" (sem alterações)
   if (readMoreButton) {
     readMoreButton.addEventListener('click', function () {
       videoDescriptionTextEl.classList.toggle('expanded');
       this.textContent = videoDescriptionTextEl.classList.contains('expanded') ? 'Ler menos' : 'Ler mais...';
       videoDescriptionTextEl.style.maxHeight = videoDescriptionTextEl.classList.contains('expanded') ? videoDescriptionTextEl.scrollHeight + 'px' : '100px';
-    });
+    }, { passive: true });
   }
 });
-
