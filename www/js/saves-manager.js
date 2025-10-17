@@ -333,6 +333,7 @@
           if (!response.ok) throw new Error(`Erro na API: ${response.statusText}`);
           
           const data = await response.json();
+          debugLog('Notas recebidas da API:', data.notes);
           return Object.values(data.notes || {});
         } else {
           debugLog('Buscando notas do localStorage');
@@ -347,6 +348,16 @@
 
     async save(note) {
       try {
+        // Garantir que a nota tenha todos os campos necessários
+        if (!note.reference || !note.version || note.text === undefined) {
+          throw new Error('Dados incompletos da nota');
+        }
+        
+        // Se não tiver texto, considerar como remoção
+        if (!note.text || note.text.trim() === '') {
+          return this.remove(note.reference);
+        }
+        
         if (await isUserLoggedIn()) {
           debugLog('Salvando nota na API', note.reference);
           const token = await getAuthToken();
@@ -358,11 +369,17 @@
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(note)
+            body: JSON.stringify({
+              reference: note.reference,
+              version: note.version,
+              text: note.text
+            })
           });
 
           if (!response.ok) throw new Error(`Erro na API: ${response.statusText}`);
-          return await response.json();
+          const result = await response.json();
+          debugLog('Resposta da API ao salvar nota:', result);
+          return result;
         } else {
           debugLog('Salvando nota no localStorage', note.reference);
           const data = readLocalStorage();
@@ -371,22 +388,21 @@
           // Remover nota existente com mesma referência
           data.notas = data.notas.filter(n => n.reference !== note.reference);
           
-          // Adicionar nova nota (se não estiver vazia)
-          if (note.text && note.text.trim()) {
-            data.notas.push({
-              id: note.id || `n${Date.now()}`,
-              reference: note.reference,
-              version: note.version,
-              text: note.text,
-              date: note.date || new Date().toLocaleDateString('pt-BR')
-            });
-          }
+          // Adicionar nova nota
+          data.notas.push({
+            id: note.id || `n${Date.now()}`,
+            reference: note.reference,
+            version: note.version,
+            text: note.text,
+            date: note.date || new Date().toLocaleDateString('pt-BR')
+          });
           
-          return writeLocalStorage(data);
+          const success = writeLocalStorage(data);
+          return { success, note: data.notas.find(n => n.reference === note.reference) };
         }
       } catch (error) {
         console.error('Erro ao salvar nota:', error);
-        return false;
+        return { success: false, error: error.message };
       }
     },
 
@@ -421,8 +437,11 @@
 
     async getByReference(reference) {
       try {
+        debugLog('Buscando nota por referência:', reference);
         const allNotes = await this.getAll();
-        return allNotes.find(n => n.reference === reference);
+        const note = allNotes.find(n => n.reference === reference);
+        debugLog('Nota encontrada:', note);
+        return note;
       } catch (error) {
         console.error('Erro ao buscar nota por referência:', error);
         return null;
@@ -433,6 +452,16 @@
   /* =========================
      EXPORTAÇÃO GLOBAL
      ========================= */
+  // Exportar imediatamente para que esteja disponível para outros scripts
+  window.savesManager = {
+    highlights: highlightsManager,
+    chapters: chaptersManager,
+    notes: notesManager
+  };
+  
+  debugLog('savesManager inicializado e exposto globalmente');
+  
+  // E também garantir após DOMContentLoaded (abordagem de cinturão e suspensórios)
   document.addEventListener("DOMContentLoaded", function () {
     try {
       window.savesManager = Object.freeze({
@@ -440,16 +469,10 @@
         chapters: chaptersManager,
         notes: notesManager
       });
-      debugLog('savesManager inicializado e exposto após DOMContentLoaded.');
+      debugLog('savesManager atualizado após DOMContentLoaded');
     } catch (err) {
-      window.savesManager = {
-        highlights: highlightsManager,
-        chapters: chaptersManager,
-        notes: notesManager
-      };
       console.warn('Não foi possível congelar savesManager:', err);
     }
   });
 
 })(); // Fim da IIFE
-

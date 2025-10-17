@@ -77,6 +77,12 @@ class BibleHighlighter {
     }
 
     createNoteModal() {
+        // Remove any existing modal to prevent duplicates
+        const existingModal = document.getElementById("note-modal");
+        if (existingModal) {
+            existingModal.remove();
+        }
+
         const modal = document.createElement("div");
         modal.id = "note-modal";
         modal.className = "note-modal";
@@ -102,6 +108,112 @@ class BibleHighlighter {
         `;
         
         document.body.appendChild(modal);
+
+        // Adicionar estilos CSS inline para garantir que o modal funcione
+        const style = document.createElement('style');
+        style.textContent = `
+            .note-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+            }
+            .note-modal-content {
+                background-color: var(--background-color, #fff);
+                color: var(--text-color, #333);
+                border-radius: 8px;
+                padding: 0;
+                width: 90%;
+                max-width: 500px;
+                max-height: 80vh;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }
+            .note-modal-header {
+                padding: 16px;
+                border-bottom: 1px solid var(--border-color, #eaeaea);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .note-modal-header h3 {
+                margin: 0;
+                font-size: 18px;
+            }
+            .note-modal-close {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: var(--text-color, #333);
+            }
+            .note-modal-body {
+                padding: 16px;
+                flex-grow: 1;
+                overflow-y: auto;
+            }
+            .verse-info {
+                margin-bottom: 12px;
+                font-weight: bold;
+                color: var(--accent-color, #2196f3);
+            }
+            #note-text {
+                width: 100%;
+                border: 1px solid var(--border-color, #eaeaea);
+                background-color: var(--input-background, #fff);
+                color: var(--text-color, #333);
+                border-radius: 4px;
+                padding: 10px;
+                font-size: 16px;
+                resize: vertical;
+                min-height: 120px;
+                font-family: inherit;
+            }
+            .note-modal-footer {
+                padding: 16px;
+                border-top: 1px solid var(--border-color, #eaeaea);
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+            }
+            .note-save-btn, .note-cancel-btn {
+                padding: 8px 16px;
+                border-radius: 4px;
+                border: none;
+                cursor: pointer;
+                font-weight: 500;
+                transition: background-color 0.2s;
+            }
+            .note-save-btn {
+                background-color: var(--accent-color, #2196f3);
+                color: white;
+            }
+            .note-cancel-btn {
+                background-color: var(--button-secondary, #e0e0e0);
+                color: var(--text-color, #333);
+            }
+            .note-save-btn:hover {
+                background-color: var(--accent-dark-color, #1976d2);
+            }
+            .note-cancel-btn:hover {
+                background-color: var(--button-secondary-hover, #d0d0d0);
+            }
+            .note-indicator {
+                display: inline-block;
+                margin-left: 5px;
+                cursor: pointer;
+                color: var(--accent-color, #2196f3);
+                font-size: 16px;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     setupEventListeners() {
@@ -111,9 +223,18 @@ class BibleHighlighter {
             if (verse && !e.target.closest(".color-palette") && !e.target.closest(".note-modal")) {
                 this.showColorPalette(verse, e);
             }
+
+            // Adicionar handler para clicar no indicador de nota
+            if (e.target.closest(".note-indicator")) {
+                const verse = e.target.closest("p[id^='verse-']");
+                if (verse) {
+                    this.currentVerse = verse;
+                    this.showNoteModal();
+                }
+            }
         });
 
-  document.addEventListener("click", (e) => {
+        document.addEventListener("click", (e) => {
             const colorBtn = e.target.closest(".color-option");
             if (colorBtn) {
                 const color = colorBtn.dataset.color;
@@ -140,7 +261,8 @@ class BibleHighlighter {
             }
         });
 
-         document.addEventListener("click", async (e) => {
+        // Manipuladores para o modal de nota
+        document.addEventListener("click", async (e) => {
             const closeBtn = e.target.closest(".note-modal-close");
             const cancelBtn = e.target.closest(".note-cancel-btn");
             const saveBtn = e.target.closest(".note-save-btn");
@@ -177,6 +299,22 @@ class BibleHighlighter {
                 this.hideColorPalette();
             }
         });
+
+        // Fechar modal ao clicar fora
+        document.addEventListener("click", (e) => {
+            const modal = document.getElementById("note-modal");
+            if (modal && e.target === modal) {
+                this.hideNoteModal();
+            }
+        });
+
+        // Tecla ESC para fechar modal
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                this.hideNoteModal();
+                this.hideColorPalette();
+            }
+        });
     }
 
     showColorPalette(verse, event) {
@@ -196,13 +334,18 @@ class BibleHighlighter {
 
     hideColorPalette() {
         document.getElementById("color-palette").style.display = "none";
-        this.currentVerse = null;
     }
 
     async showNoteModal() {
         if (!this.currentVerse) return;
         
         const modal = document.getElementById("note-modal");
+        if (!modal) {
+            this.createNoteModal();
+            setTimeout(() => this.showNoteModal(), 100);
+            return;
+        }
+        
         const verseRef = document.getElementById("note-verse-ref");
         const noteText = document.getElementById("note-text");
         
@@ -219,7 +362,10 @@ class BibleHighlighter {
     }
 
     hideNoteModal() {
-        document.getElementById("note-modal").style.display = "none";
+        const modal = document.getElementById("note-modal");
+        if (modal) {
+            modal.style.display = "none";
+        }
     }
 
     async applyHighlight(color) {
@@ -258,43 +404,70 @@ class BibleHighlighter {
         this.showNotification("Grifo removido!");
     }
 
-  async saveNote() {
-        if (!this.currentVerse) return;
+    async saveNote() {
+        if (!this.currentVerse) return false;
         
         const noteText = document.getElementById("note-text").value.trim();
         const reference = this.getVerseReference(this.currentVerse);
+        const version = document.getElementById("version-selector")?.textContent || "NVI";
         
-        // Adicionar ou remover indicador de nota
-        if (noteText) {
-            this.addNoteIndicator(this.currentVerse);
-        } else {
-            this.removeNoteIndicator(this.currentVerse);
+        try {
+            // Salvar usando saves-manager
+            if (noteText) {
+                // Criando objeto de nota no formato esperado pelo backend
+                const note = {
+                    reference: reference.api,
+                    version,
+                    text: noteText,
+                    date: new Date().toLocaleDateString('pt-BR')
+                };
+
+                const result = await window.savesManager.notes.save(note);
+                
+                // Adicionar indicador visual
+                this.addNoteIndicator(this.currentVerse);
+                
+                this.hideNoteModal();
+                this.showNotification("Nota salva com sucesso!", "success");
+                return true;
+            } else {
+                // Se o texto estiver vazio, remove a nota existente
+                await window.savesManager.notes.remove(reference.api);
+                this.removeNoteIndicator(this.currentVerse);
+                
+                this.hideNoteModal();
+                this.showNotification("Nota removida", "info");
+                return true;
+            }
+        } catch (error) {
+            console.error('Erro ao salvar nota:', error);
+            this.showNotification("Erro ao salvar nota", "error");
+            return false;
         }
-        
-        // Salvar usando saves-manager
-        await this.saveNoteToStorage(reference.api, noteText);
-        
-        this.hideNoteModal();
-        this.showNotification(noteText ? "Nota salva!" : "Nota removida!");
     }
 
     addNoteIndicator(verse) {
-        // Remover indicador existente
-        let existingIndicator = verse.querySelector(".note-indicator");
-        if (!existingIndicator) {
-            existingIndicator = document.createElement("span");
-            existingIndicator.className = "note-indicator";
-            existingIndicator.innerHTML = "📝";
-            existingIndicator.title = "Este versículo possui uma nota";
-            verse.appendChild(existingIndicator);
-        }
+        if (!verse) return;
+        
+        // Remover indicador existente para evitar duplicação
+        this.removeNoteIndicator(verse);
+        
+        // Criar e adicionar indicador de nota
+        const noteIndicator = document.createElement('span');
+        noteIndicator.className = 'note-indicator';
+        noteIndicator.innerHTML = '📝';
+        noteIndicator.title = 'Este versículo tem uma nota';
+        
+        verse.appendChild(noteIndicator);
     }
 
     removeNoteIndicator(verse) {
-        const existingIndicator = verse.querySelector(".note-indicator");
-        if (existingIndicator) {
-            existingIndicator.remove();
-        }
+        if (!verse) return;
+        
+        const indicators = verse.querySelectorAll('.note-indicator');
+        indicators.forEach(indicator => {
+            indicator.remove();
+        });
     }
 
     getVerseReference(verse) {
@@ -339,7 +512,7 @@ class BibleHighlighter {
         try {
             if (!window.savesManager) {
                 console.warn('savesManager não disponível ainda');
-                return;
+                return false;
             }
 
             const reference = this.getVerseReference(verse);
@@ -353,15 +526,18 @@ class BibleHighlighter {
                 color
             });
 
-            await window.savesManager.highlights.save({
+            const result = await window.savesManager.highlights.save({
                 reference: reference.api,
                 version,
                 text,
                 color
             });
+
+            return !!result;
         } catch (error) {
             console.error('Erro ao salvar grifo:', error);
             this.showNotification('Erro ao salvar grifo', 'error');
+            return false;
         }
     }
 
@@ -369,13 +545,15 @@ class BibleHighlighter {
         try {
             if (!window.savesManager) {
                 console.warn('savesManager não disponível ainda');
-                return;
+                return false;
             }
 
             const reference = this.getVerseReference(verse);
-            await window.savesManager.highlights.remove(reference.api);
+            const result = await window.savesManager.highlights.remove(reference.api);
+            return result;
         } catch (error) {
             console.error('Erro ao remover grifo:', error);
+            return false;
         }
     }
 
@@ -383,23 +561,26 @@ class BibleHighlighter {
         try {
             if (!window.savesManager) {
                 console.warn('savesManager não disponível ainda');
-                return;
+                return false;
             }
 
             const version = document.getElementById("version-selector")?.textContent || "NVI";
 
             if (noteText) {
-                await window.savesManager.notes.save({
+                const result = await window.savesManager.notes.save({
                     reference,
                     version,
                     text: noteText
                 });
+                return result;
             } else {
                 // Se texto vazio, remover a nota
-                await window.savesManager.notes.remove(reference);
+                const result = await window.savesManager.notes.remove(reference);
+                return result;
             }
         } catch (error) {
             console.error('Erro ao salvar nota:', error);
+            return false;
         }
     }
 
@@ -652,4 +833,3 @@ document.addEventListener("DOMContentLoaded", () => {
     window.bibleHighlighter = new BibleHighlighter();
     window.pageSaver = new PageSaver();
 });
-
