@@ -23,6 +23,8 @@ const allowedOrigins = [
     "capacitor://localhost",
     "ionic://localhost",
     "http://localhost:3000",
+    "https://localhost",
+    
     // Origens de produção
     "https://biblestudyjourney-v2.onrender.com",
     "https://biblestudyjourney.duckdns.org",

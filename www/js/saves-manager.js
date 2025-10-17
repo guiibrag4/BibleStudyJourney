@@ -8,27 +8,45 @@
 (function () {
   'use strict';
 
-  /* =========================
-     CONFIGURAÇÃO / CONSTANTES
-     ========================= */
   const STORAGE_KEY = 'bibleStudySaves';
 
-  // Detecção automática de ambiente
+  // FUNÇÃO CORRIGIDA: getApiBaseUrl
   function getApiBaseUrl() {
+    // O Capacitor injeta o objeto global 'Capacitor' quando o app está rodando nativamente.
+    // A propriedade 'isNativePlatform' nos diz se estamos no iOS ou Android.
+    const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
+
+    // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
+    if (isNativeApp) {
+      console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
+      // Escolha aqui o seu servidor de produção principal.
+      // return 'https://biblestudyjourney.duckdns.org';
+      Ou: return 'https://biblestudyjourney-v2.onrender.com';
+    }
+
+    // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
     const hostname = window.location.hostname;
-    
+    const protocol = window.location.protocol;
+
+    console.log(`[getApiBaseUrl] Detectado ambiente web: ${protocol}//${hostname}`);
+
+    // Ambiente de desenvolvimento local no navegador
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
       return 'http://localhost:3000';
     }
-    
-    if (hostname.includes('onrender.com')) {
-      return 'https://biblestudyjourney-v2.onrender.com';
+
+    // Ambiente de produção no navegador (Render, DuckDNS, etc. )
+    if (protocol === 'https:') {
+      if (hostname.includes('onrender.com')) {
+        return 'https://biblestudyjourney-v2.onrender.com';
+      }
+      if (hostname.includes('duckdns.org')) {
+        return 'https://biblestudyjourney.duckdns.org';
+      }
     }
-    
-    if (hostname.includes('duckdns.org')) {
-      return 'https://biblestudyjourney.duckdns.org';
-    }
-    
+
+    // Fallback final: usa a origem da página.
+    // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
     return window.location.origin;
   }
 
@@ -42,7 +60,6 @@
   const DEBUG = true;
 
   console.log('[saves-manager] API Base URL detectada:', API_BASE_URL);
-
   /* =========================
      UTILITÁRIOS INTERNOS
      ========================= */
@@ -110,7 +127,7 @@
           });
 
           if (!response.ok) throw new Error(`Erro na API: ${response.statusText}`);
-          
+
           const data = await response.json();
           // Converter objeto para array
           return Object.values(data.highlights || {});
@@ -147,10 +164,10 @@
           debugLog('Salvando grifo no localStorage', highlight.reference);
           const data = readLocalStorage();
           if (!data.versiculos) data.versiculos = [];
-          
+
           // Remover grifo existente com mesma referência
           data.versiculos = data.versiculos.filter(v => v.reference !== highlight.reference);
-          
+
           // Adicionar novo grifo
           data.versiculos.push({
             id: highlight.id || `v${Date.now()}`,
@@ -160,7 +177,7 @@
             color: highlight.color,
             date: highlight.date || new Date().toLocaleDateString('pt-BR')
           });
-          
+
           return writeLocalStorage(data);
         }
       } catch (error) {
@@ -219,7 +236,7 @@
           });
 
           if (!response.ok) throw new Error(`Erro na API: ${response.statusText}`);
-          
+
           const data = await response.json();
           return Object.values(data.chapters || {});
         } else {
@@ -255,13 +272,13 @@
           debugLog('Salvando capítulo no localStorage', chapter.title);
           const data = readLocalStorage();
           if (!data.capitulos) data.capitulos = [];
-          
+
           // Verificar se já existe
           const exists = data.capitulos.find(c => c.title === chapter.title);
           if (exists) {
             return { success: false, message: 'Capítulo já salvo' };
           }
-          
+
           data.capitulos.push({
             id: chapter.id || `c${Date.now()}`,
             title: chapter.title,
@@ -272,7 +289,7 @@
             capitulo: chapter.capitulo,
             versao: chapter.versao
           });
-          
+
           return writeLocalStorage(data) ? { success: true } : { success: false };
         }
       } catch (error) {
@@ -331,7 +348,7 @@
           });
 
           if (!response.ok) throw new Error(`Erro na API: ${response.statusText}`);
-          
+
           const data = await response.json();
           debugLog('Notas recebidas da API:', data.notes);
           return Object.values(data.notes || {});
@@ -352,12 +369,12 @@
         if (!note.reference || !note.version || note.text === undefined) {
           throw new Error('Dados incompletos da nota');
         }
-        
+
         // Se não tiver texto, considerar como remoção
         if (!note.text || note.text.trim() === '') {
           return this.remove(note.reference);
         }
-        
+
         if (await isUserLoggedIn()) {
           debugLog('Salvando nota na API', note.reference);
           const token = await getAuthToken();
@@ -384,10 +401,10 @@
           debugLog('Salvando nota no localStorage', note.reference);
           const data = readLocalStorage();
           if (!data.notas) data.notas = [];
-          
+
           // Remover nota existente com mesma referência
           data.notas = data.notas.filter(n => n.reference !== note.reference);
-          
+
           // Adicionar nova nota
           data.notas.push({
             id: note.id || `n${Date.now()}`,
@@ -396,7 +413,7 @@
             text: note.text,
             date: note.date || new Date().toLocaleDateString('pt-BR')
           });
-          
+
           const success = writeLocalStorage(data);
           return { success, note: data.notas.find(n => n.reference === note.reference) };
         }
@@ -458,9 +475,9 @@
     chapters: chaptersManager,
     notes: notesManager
   };
-  
+
   debugLog('savesManager inicializado e exposto globalmente');
-  
+
   // E também garantir após DOMContentLoaded (abordagem de cinturão e suspensórios)
   document.addEventListener("DOMContentLoaded", function () {
     try {
