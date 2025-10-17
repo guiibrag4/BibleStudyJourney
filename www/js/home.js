@@ -171,6 +171,7 @@ function renderBibleContent(verses) {
         verseElement.innerHTML = `<span style="color: blue;">${verse.number}</span> ${verse.text}`;
         bibleContentEl.appendChild(verseElement);
     });
+    window.dispatchEvent(new Event('chapterChanged'));
 }
 
 // ===== NAVEGAÇÃO FLUIDA =====

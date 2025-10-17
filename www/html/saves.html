@@ -8,7 +8,7 @@
     <title>Salvos - Bible Study Journey</title>
     <link rel="stylesheet" href="../css/saves.css">
     <link rel="stylesheet" href="../css/themes.css">
-      <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/menu.css">
 </head>
 
 <body>
@@ -34,27 +34,27 @@
     </header>
 
     <nav class="bottom-nav">
-    <a href="home2.html" class="nav-item">
-      <img src="../img/home-menu.svg" alt="Home" class="nav-icon">
-      <span>Início</span>
-    </a>
-    <a href="biblia.html" class="nav-item">
-      <img src="../img/book-menu.svg" alt="Bíblia" class="nav-icon">
-      <span>Bíblia</span>
-    </a>
-    <a href="tl1-teologia.html" class="nav-item">
-      <img src="../img/graduation-menu.svg" alt="Teologia" class="nav-icon teologia-img">
-      <span>Trilha</span>
-    </a>
-    <a href="saves.html" class="nav-item">
-      <img src="../img/bookmark-menu.svg" alt="Salvos" class="nav-icon">
-      <span>Salvos</span>
-    </a>
-    <a href="#" class="nav-item">
-      <img src="../img/options-menu.svg" alt="Mais" class="nav-icon">
-      <span>Opções</span>
-    </a>
-  </nav>
+        <a href="home2.html" class="nav-item">
+            <img src="../img/home-menu.svg" alt="Home" class="nav-icon">
+            <span>Início</span>
+        </a>
+        <a href="biblia.html" class="nav-item">
+            <img src="../img/book-menu.svg" alt="Bíblia" class="nav-icon">
+            <span>Bíblia</span>
+        </a>
+        <a href="tl1-teologia.html" class="nav-item">
+            <img src="../img/graduation-menu.svg" alt="Teologia" class="nav-icon teologia-img">
+            <span>Trilha</span>
+        </a>
+        <a href="saves.html" class="nav-item">
+            <img src="../img/bookmark-menu.svg" alt="Salvos" class="nav-icon">
+            <span>Salvos</span>
+        </a>
+        <a href="#" class="nav-item">
+            <img src="../img/options-menu.svg" alt="Mais" class="nav-icon">
+            <span>Opções</span>
+        </a>
+    </nav>
 
     <nav class="saves-menu" role="tablist">
         <button class="menu-btn active" data-tab="versiculos" role="tab" aria-selected="true">
@@ -126,9 +126,12 @@
             <div id="modal-text" class="modal-text"></div>
         </div>
     </div>
-
-    <script src="../js/saves.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/saves-manager.js"></script>
+    <script src="../js/saves.js"></script>
+
     <script src="../js/theme-manager.js" defer></script>
 </body>
 

@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const helmet = require("helmet"); // NOVO: Importa o helmet
+const helmet = require("helmet");
 const cors = require("cors");
 const fetch = require('node-fetch');
 const path = require("path");
@@ -9,7 +9,12 @@ const path = require("path");
 // --- ARQUIVOS DE ROTAS ---
 const authRoutes = require("./routes/auth/auth.js");
 const verifyToken = require("./routes/auth/authMiddleware.js");
-const progressRoutes = require("./routes/progressRoutes.js"); // NOVO: Importa as rotas de progresso
+const progressRoutes = require("./routes/progressRoutes.js");
+
+// NOVO: Importar as rotas de saves
+const highlightsRoutes = require("./routes/highlightsRoutes.js");
+const chaptersRoutes = require("./routes/chaptersRoutes.js");
+const notesRoutes = require("./routes/notesRoutes.js");
 
 const app = express();
 
@@ -17,67 +22,47 @@ const app = express();
 const allowedOrigins = [
     "capacitor://localhost",
     "ionic://localhost",
-
     "http://localhost:3000",
-
     // Origens de produção
     "https://biblestudyjourney-v2.onrender.com",
     "https://biblestudyjourney.duckdns.org",
 ];
 
-// --- NOVO: CONFIGURAÇÃO DE SEGURANÇA (CSP) ---
-// Coloque isso antes das suas rotas.
+// --- CONFIGURAÇÃO DE SEGURANÇA (CSP) ---
 app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            // Pega as diretivas padrão do helmet (como default-src 'self')
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+  helmet.contentSecurityPolicy({
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      
+      "frame-src": ["'self'", "https://www.youtube.com"],
+      
+      "script-src": [
+        "'self'", 
+        "https://www.youtube.com", 
+        "https://s.ytimg.com", 
+        "https://cdnjs.cloudflare.com", 
+        "'unsafe-inline'"
+      ],
+      
+      "connect-src": [
+        "'self'", 
+        "https://www.google-analytics.com", 
+        "https://biblestudyjourney-v2.onrender.com",
+        "https://biblestudyjourney.duckdns.org",
+        "https://www.abibliadigital.com.br",
+        "https://www.googleapis.com"
+      ],
 
-            // Permite iframes do YouTube
-            "frame-src": [
-                "'self'",
-                "https://www.youtube.com",
-                "https://www.youtube-nocookie.com" // ADICIONADO para modo nocookie
-            ],
-
-            // Permite scripts do seu site, do YouTube e do CDN do Cloudflare (para o localforage )
-            "script-src": [
-                "'self'",
-                "https://www.youtube.com",
-                "https://s.ytimg.com",
-                "https://cdnjs.cloudflare.com",
-                "'unsafe-inline'"
-            ],
-
-            // Conexões (fetch, XHR, WebSocket, etc) para seu site, Google Analytics e APIs
-            "connect-src": [
-                "'self'",
-                "https://www.google-analytics.com",
-                "http://localhost:3000",
-                "https://biblestudyjourney-v2.onrender.com",
-                "https://biblestudyjourney.duckdns.org",  // ADICIONADO
-                "https://www.abibliadigital.com.br",
-                "https://www.googleapis.com"  // ADICIONADO para API do YouTube
-            ],
-
-            // Permite imagens do seu site, de data URIs e do servidor de imagens do YouTube
-            "img-src": [
-                "'self'",
-                "data:",
-                "https://i.ytimg.com",
-                "https://img.youtube.com"
-            ]
-        },
-    })
+      "img-src": ["'self'", "data:", "https://img.youtube.com"],
+    },
+  })
 );
-// -------------------------------------------
 
-// --- NOVO: CONFIGURAÇÃO DE PERMISSÕES DA PÁGINA ---
+// --- CONFIGURAÇÃO DE PERMISSÕES DA PÁGINA ---
 app.use((req, res, next) => {
-    res.setHeader('Permissions-Policy', 'autoplay=(self "https://www.youtube.com" ), fullscreen=(self "https://www.youtube.com" ), picture-in-picture=(self "https://www.youtube.com" )');
-    next();
+  res.setHeader('Permissions-Policy', 'autoplay=(self "https://www.youtube.com"), fullscreen=(self "https://www.youtube.com"), picture-in-picture=(self "https://www.youtube.com")');
+  next();
 });
-// -------------------------------------------------
 
 const corsOptions = {
     origin: function (origin, callback) {
@@ -101,7 +86,6 @@ const PORT = process.env.PORT || 3000;
 
 // Rota pública para informações de vídeo (não requer login)
 app.get('/api/video-info', async (req, res) => {
-    // ... (seu código da API do YouTube permanece inalterado aqui)
     const videoId = req.query.videoId;
     const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 
@@ -124,7 +108,6 @@ app.get('/api/video-info', async (req, res) => {
             const snippet = item.snippet;
             const durationFromAPI = item.contentDetails.duration;
 
-            // Função para converter a duração do YouTube para segundos
             function parseYoutubeDuration(duration) {
                 const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
                 const matches = duration.match(regex);
@@ -153,13 +136,16 @@ app.get('/api/video-info', async (req, res) => {
 app.use("/auth", authRoutes);
 
 // --- ROTAS PROTEGIDAS ---
-// ALTERADO: Todas as rotas abaixo desta linha usarão o middleware 'verifyToken'.
-// Qualquer requisição para '/api/user/*' será primeiro validada.
-app.use("/api/user/progress", verifyToken, progressRoutes);
-// NOVO: Quando você criar as rotas para notas, versículos, etc., elas virão aqui:
-// app.use("/api/user/notes", verifyToken, notesRoutes);
-// app.use("/api/user/verses", verifyToken, versesRoutes);
+// IMPORTANTE: Todas as rotas abaixo usam o middleware 'verifyToken'
+// Qualquer requisição para '/api/user/*' será primeiro validada
 
+// Progresso de vídeos
+app.use("/api/user/progress", verifyToken, progressRoutes);
+
+// NOVO: Rotas de saves (grifos, capítulos, notas)
+app.use("/api/user/highlights", verifyToken, highlightsRoutes);
+app.use("/api/user/chapters", verifyToken, chaptersRoutes);
+app.use("/api/user/notes", verifyToken, notesRoutes);
 
 // --- SERVIR ARQUIVOS ESTÁTICOS E PÁGINAS HTML (deve vir por último) ---
 app.use(express.static(path.join(__dirname, "../www")));
