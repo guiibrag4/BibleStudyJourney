@@ -55,7 +55,7 @@ app.use(
         "https://www.googleapis.com"
       ],
 
-      "img-src": ["'self'", "data:", "https://img.youtube.com"],
+      "img-src": ["'self'", "data:", "https://img.youtube.com", "https://i.ytimg.com"],
     },
   })
 );
