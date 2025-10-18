@@ -20,7 +20,8 @@
 
  body {
      font-family: 'Merriweather', Arial, sans-serif;
-     background: linear-gradient(137deg, #283A50, #5B84B6);
+     /* background: linear-gradient(137deg, #283A50, #5B84B6); */
+     background: radial-gradient(ellipse at top, #3a5a80, #1c2e42);
      color: white;
      height: 100vh;
      overflow: hidden;
