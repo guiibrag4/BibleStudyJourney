@@ -44,6 +44,7 @@ body {
 .conteudo-principal {
   padding: clamp(24px, 5vw, 48px) clamp(16px, 5vw, 24px) 120px;
   max-width: 800px;
+  
   /* Largura padrão para mobile */
   margin: 0 auto;
   width: 100%;
@@ -316,7 +317,7 @@ body {
 }
 
 .conteudo-leitura .texto-suave {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.55rem;
   font-size: clamp(0.875rem, 3.5vw, 1rem);
 }
 
@@ -324,7 +325,7 @@ body {
   background: var(--botao);
   border: none;
   color: white;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 50px;
   font-weight: 700;
   font-size: clamp(0.875rem, 3.5vw, 0.9rem);
@@ -355,9 +356,16 @@ body {
   font-style: italic;
 }
 
+.referencia-e-acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+
 .referencia-versiculo {
   opacity: 0.9;
-  margin-bottom: 1rem;
   font-size: clamp(0.875rem, 3.5vw, 0.9rem);
   font-weight: 600;
   text-align: right;
