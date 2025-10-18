@@ -19,6 +19,9 @@
         <div class="chapter-selector" id="chapter-selector">Gênesis 1</div>
       </div>
       <div class="actions">
+        <button aria-label="SavePageButton" class="save-page" title="Salvar capítulo">
+          <img src="../img/bookmark-menu.svg" alt="Salvar capítulo" />
+        </button>
         <button aria-label="FontSizeButton" class="font-size-button">
           <img src="../img/Font-size.svg" alt="FontSizeButton" />
         </button>
@@ -101,6 +104,7 @@
             <button class="book-item" data-book="dn">Daniel</button>
           </div>
         </div>
+
         <div class="book-category">
           <h3>Profetas Menores</h3>
           <div class="book-list">
@@ -109,9 +113,9 @@
             <button class="book-item" data-book="am">Amós</button>
             <button class="book-item" data-book="ob">Obadias</button>
             <button class="book-item" data-book="jn">Jonas</button>
-            <button class="book-item" data-book="mq">Miqueias</button>
+            <button class="book-item" data-book="mq">Miquéias</button>
             <button class="book-item" data-book="na">Naum</button>
-            <button class="book-item" data-book="hc">Habacuque</button>
+            <button class="book-item" data-book="hb">Habacuque</button>
             <button class="book-item" data-book="sf">Sofonias</button>
             <button class="book-item" data-book="ag">Ageu</button>
             <button class="book-item" data-book="zc">Zacarias</button>
@@ -130,7 +134,7 @@
         </div>
 
         <div class="book-category">
-          <h3>Histórico do NT</h3>
+          <h3>História</h3>
           <div class="book-list">
             <button class="book-item" data-book="at">Atos</button>
           </div>
@@ -170,7 +174,7 @@
         </div>
 
         <div class="book-category">
-          <h3>Profético</h3>
+          <h3>Profecia</h3>
           <div class="book-list">
             <button class="book-item" data-book="ap">Apocalipse</button>
           </div>
@@ -244,11 +248,22 @@
     </a>
   </nav>
 
-  <script src="../js/auth-guard.js" defer></script>
+  <!-- ORDEM CORRETA DOS SCRIPTS -->
+  <!-- 1. LocalForage PRIMEIRO (usado por home.js) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+  <!-- 2. Auth Guard (cria window.AuthManager) -->
+  <script src="../js/auth-guard.js"></script>
+
+  <!-- 3. Saves Manager (usa AuthManager, cria window.savesManager) -->
+  <script src="../js/saves-manager.js"></script>
+
+  <!-- 4. Highlighter (usa savesManager) -->
+  <script src="../js/highlighter.js"></script>
+
+  <!-- 5. Outros scripts -->
   <script src="../js/theme-manager.js" defer></script>
   <script src="../js/home.js" defer></script>
-  <script src="../js/highlighter.js" defer></script>
   <script src="../js/modal-handler.js" defer></script>
 </body>
 

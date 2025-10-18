@@ -1,4 +1,8 @@
+// Arquivo: www/js/saves.js
 // Sistema de Salvos para Bible Study Journey
+// ATUALIZADO: Usa saves-manager.js para sincronizar com API/localStorage
+// SEM ONCLICK INLINE (usa event delegation para compatibilidade com CSP)
+
 class SavesManager {
     constructor() {
         this.currentTab = 'versiculos';
@@ -10,19 +14,36 @@ class SavesManager {
         this.init();
     }
 
-    init() {
-        this.loadSaves();
+    async init() {
+        await this.loadSaves();
         this.setupEventListeners();
         this.renderCurrentTab();
         this.updateCounts();
     }
 
-    loadSaves() {
+    async loadSaves() {
         try {
-            const savedData = localStorage.getItem("bibleStudySaves");
-            if (savedData) {
-                this.saves = { ...this.saves, ...JSON.parse(savedData) };
+            // Aguardar saves-manager estar disponível
+            if (!window.savesManager) {
+                console.warn('savesManager não disponível, tentando novamente em 500ms');
+                setTimeout(() => this.init(), 500);
+                return;
             }
+
+            // Carregar todos os saves usando saves-manager
+            const [highlights, chapters, notes] = await Promise.all([
+                window.savesManager.highlights.getAll(),
+                window.savesManager.chapters.getAll(),
+                window.savesManager.notes.getAll()
+            ]);
+
+            this.saves = {
+                versiculos: highlights || [],
+                capitulos: chapters || [],
+                notas: notes || []
+            };
+
+            console.log('[saves.js] Saves carregados:', this.saves);
         } catch (error) {
             console.error("Erro ao carregar salvos:", error);
         }
@@ -58,6 +79,65 @@ class SavesManager {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal?.style.display !== 'none') {
                 modal.style.display = 'none';
+            }
+        });
+
+        // EVENT DELEGATION para botões dos cards (evita onclick inline)
+        document.addEventListener('click', (e) => {
+            // Botão de editar grifo
+            if (e.target.closest('.edit-highlight-btn')) {
+                const btn = e.target.closest('.edit-highlight-btn');
+                const id = btn.dataset.id;
+                this.editHighlight(id);
+            }
+
+            // Botão de excluir versículo
+            if (e.target.closest('.delete-versiculo-btn')) {
+                const btn = e.target.closest('.delete-versiculo-btn');
+                const id = btn.dataset.id;
+                this.deleteItem('versiculos', id);
+            }
+
+            // Botão de expandir versículo
+            if (e.target.closest('.expand-versiculo-btn')) {
+                const btn = e.target.closest('.expand-versiculo-btn');
+                const id = btn.dataset.id;
+                this.showFullContent('versiculo', id);
+            }
+
+            // Botão de ler capítulo
+            if (e.target.closest('.read-chapter-btn')) {
+                const btn = e.target.closest('.read-chapter-btn');
+                const id = btn.dataset.id;
+                this.readChapter(id);
+            }
+
+            // Botão de excluir capítulo
+            if (e.target.closest('.delete-capitulo-btn')) {
+                const btn = e.target.closest('.delete-capitulo-btn');
+                const id = btn.dataset.id;
+                this.deleteItem('capitulos', id);
+            }
+
+            // Botão de editar nota
+            if (e.target.closest('.edit-note-btn')) {
+                const btn = e.target.closest('.edit-note-btn');
+                const id = btn.dataset.id;
+                this.editNote(id);
+            }
+
+            // Botão de excluir nota
+            if (e.target.closest('.delete-nota-btn')) {
+                const btn = e.target.closest('.delete-nota-btn');
+                const id = btn.dataset.id;
+                this.deleteItem('notas', id);
+            }
+
+            // Botão de expandir nota
+            if (e.target.closest('.expand-nota-btn')) {
+                const btn = e.target.closest('.expand-nota-btn');
+                const id = btn.dataset.id;
+                this.showFullContent('nota', id);
             }
         });
     }
@@ -120,13 +200,13 @@ class SavesManager {
                 <div class="card-header">
                     <h3 class="card-title">${versiculo.reference}</h3>
                     <div class="card-actions">
-                        <button class="action-btn edit-btn" onclick="savesManager.editHighlight('${versiculo.id}')" title="Editar grifo">
+                        <button class="action-btn edit-highlight-btn" data-id="${versiculo.id}" title="Editar grifo">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
                         </button>
-                        <button class="action-btn delete-btn" onclick="savesManager.deleteItem('versiculos', '${versiculo.id}')" title="Excluir versículo">
+                        <button class="action-btn delete-versiculo-btn" data-id="${versiculo.id}" title="Excluir versículo">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                             </svg>
@@ -151,7 +231,7 @@ class SavesManager {
                         </span>
                     </div>
                 </div>
-                <button class="card-expand" onclick="savesManager.showFullContent('versiculo', '${versiculo.id}')" title="Ver completo">
+                <button class="card-expand expand-versiculo-btn" data-id="${versiculo.id}" title="Ver completo">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
                     </svg>
@@ -177,13 +257,13 @@ class SavesManager {
                 <div class="card-header">
                     <h3 class="card-title">${capitulo.title}</h3>
                     <div class="card-actions">
-                        <button class="action-btn read-btn" onclick="savesManager.readChapter('${capitulo.id}')" title="Ler capítulo">
+                        <button class="action-btn read-chapter-btn" data-id="${capitulo.id}" title="Ler capítulo">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
                                 <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                             </svg>
                         </button>
-                        <button class="action-btn delete-btn" onclick="savesManager.deleteItem('capitulos', '${capitulo.id}')" title="Remover dos salvos">
+                        <button class="action-btn delete-capitulo-btn" data-id="${capitulo.id}" title="Remover dos salvos">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                             </svg>
@@ -210,7 +290,7 @@ class SavesManager {
                                 <line x1="16" y1="17" x2="8" y2="17"/>
                                 <polyline points="10,9 9,9 8,9"/>
                             </svg>
-                            ${capitulo.verseCount} versículos
+                            ${capitulo.verseCount || 0} versículos
                         </span>
                     </div>
                 </div>
@@ -235,13 +315,13 @@ class SavesManager {
                 <div class="card-header">
                     <h3 class="card-title">${nota.reference}</h3>
                     <div class="card-actions">
-                        <button class="action-btn edit-btn" onclick="savesManager.editNote('${nota.id}')" title="Editar nota">
+                        <button class="action-btn edit-note-btn" data-id="${nota.id}" title="Editar nota">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
                         </button>
-                        <button class="action-btn delete-btn" onclick="savesManager.deleteItem('notas', '${nota.id}')" title="Excluir nota">
+                        <button class="action-btn delete-nota-btn" data-id="${nota.id}" title="Excluir nota">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                             </svg>
@@ -272,7 +352,7 @@ class SavesManager {
                         </span>
                     </div>
                 </div>
-                <button class="card-expand" onclick="savesManager.showFullContent('nota', '${nota.id}')" title="Ver completo">
+                <button class="card-expand expand-nota-btn" data-id="${nota.id}" title="Ver completo">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
                     </svg>
@@ -287,10 +367,15 @@ class SavesManager {
         const notasCount = this.saves.notas?.length || 0;
         const totalCount = versiculosCount + capitulosCount + notasCount;
 
-        document.getElementById('versiculos-count').textContent = versiculosCount;
-        document.getElementById('capitulos-count').textContent = capitulosCount;
-        document.getElementById('notas-count').textContent = notasCount;
-        document.getElementById('total-items').textContent = totalCount;
+        const versiculosCountEl = document.getElementById('versiculos-count');
+        const capitulosCountEl = document.getElementById('capitulos-count');
+        const notasCountEl = document.getElementById('notas-count');
+        const totalItemsEl = document.getElementById('total-items');
+
+        if (versiculosCountEl) versiculosCountEl.textContent = versiculosCount;
+        if (capitulosCountEl) capitulosCountEl.textContent = capitulosCount;
+        if (notasCountEl) notasCountEl.textContent = notasCount;
+        if (totalItemsEl) totalItemsEl.textContent = totalCount;
     }
 
     truncateText(text, maxLength) {
@@ -351,17 +436,39 @@ class SavesManager {
         }
     }
 
-    deleteItem(type, id) {
+    async deleteItem(type, id) {
         if (!confirm('Tem certeza que deseja excluir este item?')) {
             return;
         }
 
-        if (this.saves[type]) {
-            this.saves[type] = this.saves[type].filter(item => item.id !== id);
-            localStorage.setItem("bibleStudySaves", JSON.stringify(this.saves));
-            this.renderCurrentTab();
-            this.updateCounts();
-            this.showNotification('Item excluído com sucesso!', 'success');
+        try {
+            let success = false;
+            
+            if (type === 'versiculos') {
+                const item = this.saves.versiculos.find(v => v.id === id);
+                if (item) {
+                    success = await window.savesManager.highlights.remove(item.reference);
+                }
+            } else if (type === 'capitulos') {
+                success = await window.savesManager.chapters.remove(id);
+            } else if (type === 'notas') {
+                const item = this.saves.notas.find(n => n.id === id);
+                if (item) {
+                    success = await window.savesManager.notes.remove(item.reference);
+                }
+            }
+
+            if (success) {
+                await this.loadSaves();
+                this.renderCurrentTab();
+                this.updateCounts();
+                this.showNotification('Item excluído com sucesso!', 'success');
+            } else {
+                this.showNotification('Erro ao excluir item', 'error');
+            }
+        } catch (error) {
+            console.error('Erro ao excluir item:', error);
+            this.showNotification('Erro ao excluir item', 'error');
         }
     }
 
@@ -378,9 +485,9 @@ class SavesManager {
     readChapter(id) {
         // Implementar navegação para o capítulo
         this.showNotification('Redirecionando para o capítulo...', 'info');
-        // Aqui você pode implementar a navegação de volta para home.html com o capítulo específico
+        // Aqui você pode implementar a navegação de volta para biblia.html com o capítulo específico
         setTimeout(() => {
-            window.location.href = 'home.html';
+            window.location.href = 'biblia.html';
         }, 1000);
     }
 
@@ -430,15 +537,15 @@ class SavesManager {
 
 // Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', () => {
-    window.savesManager = new SavesManager();
+    window.savesManagerUI = new SavesManager();
 });
 
 // Atualizar dados quando a página ganhar foco (caso o usuário volte de outra aba)
-window.addEventListener('focus', () => {
-    if (window.savesManager) {
-        window.savesManager.loadSaves();
-        window.savesManager.renderCurrentTab();
-        window.savesManager.updateCounts();
+window.addEventListener('focus', async () => {
+    if (window.savesManagerUI) {
+        await window.savesManagerUI.loadSaves();
+        window.savesManagerUI.renderCurrentTab();
+        window.savesManagerUI.updateCounts();
     }
 });
 

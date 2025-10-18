@@ -1,5 +1,0 @@
-npm start -> Roda o servidor
-npx serve -> Roda o frontend para desenvolvimento web
-npx cap run android -> Instala no android quando conectado no pc
-
-onde está meus ambientes de produção/desenvolvimento -> login.js // cadastro.js // gerenciador.js // 

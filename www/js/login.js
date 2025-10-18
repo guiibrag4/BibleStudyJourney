@@ -14,29 +14,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // CORRIGIDO: Detecção automática de ambiente baseada no hostname
     function getApiBaseUrl() {
+        // O Capacitor injeta o objeto global 'Capacitor' quando o app está rodando nativamente.
+        // A propriedade 'isNativePlatform' nos diz se estamos no iOS ou Android.
+        const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
+
+        // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
+        if (isNativeApp) {
+            console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
+            // Escolha aqui o seu servidor de produção principal.
+            // return 'https://biblestudyjourney.duckdns.org';
+            Ou: return 'https://biblestudyjourney-v2.onrender.com';
+        }
+
+        // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
         const hostname = window.location.hostname;
-        
-        // Se estiver em localhost, usa a API local
+        const protocol = window.location.protocol;
+
+        console.log(`[getApiBaseUrl] Detectado ambiente web: ${protocol}//${hostname}`);
+
+        // Ambiente de desenvolvimento local no navegador
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'http://localhost:3000';
         }
-        
-        // Se estiver no domínio do Render, usa a API do Render
-        if (hostname.includes('onrender.com')) {
-            return 'https://biblestudyjourney-v2.onrender.com';
+
+        // Ambiente de produção no navegador (Render, DuckDNS, etc. )
+        if (protocol === 'https:') {
+            if (hostname.includes('onrender.com')) {
+                return 'https://biblestudyjourney-v2.onrender.com';
+            }
+            if (hostname.includes('duckdns.org')) {
+                return 'https://biblestudyjourney.duckdns.org';
+            }
         }
-        
-        // Se estiver no domínio principal (duckdns.org), usa a API do domínio principal
-        if (hostname.includes('duckdns.org')) {
-            return 'https://biblestudyjourney.duckdns.org';
-        }
-        
-        // Fallback: tenta usar o mesmo protocolo e host da página atual
+
+        // Fallback final: usa a origem da página.
+        // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
         return window.location.origin;
     }
 
-    const API_URL = getApiBaseUrl();
-    console.log('[login.js] API Base URL detectada:', API_URL);
+    const API_BASE_URL = getApiBaseUrl();
+    console.log('[login.js] API Base URL detectada:', API_BASE_URL);
 
     const CONFIG = {
         REDIRECT_PAGE: "biblia.html",
@@ -76,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
             this.showLoading(true);
 
             try {
-                const response = await fetch(`${API_URL}/auth/login`, {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, senha: password })

@@ -25,3 +25,9 @@ node_modules/
 /plugins/
 /platforms/
 /backend/.env
+/backend/model.sql
+
+/notes.md
+/professores.md
+/ideias.md
+
