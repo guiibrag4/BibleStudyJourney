@@ -22,8 +22,8 @@
     if (isNativeApp) {
       console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
       // Escolha aqui o seu servidor de produção principal.
-      // return 'https://biblestudyjourney.duckdns.org';
-      Ou: return 'https://biblestudyjourney-v2.onrender.com';
+      return 'https://biblestudyjourney.duckdns.org';
+      // Ou: return 'https://biblestudyjourney-v2.onrender.com';
     }
 
     // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
