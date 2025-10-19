@@ -7,6 +7,7 @@
   <title>Bible Reader</title>
   <link rel="stylesheet" href="../css/biblia.css" />
   <link rel="stylesheet" href="../css/themes.css" />
+  <link rel="stylesheet" href="../css/modals.css">
   <link rel="stylesheet" href="../css/highlighter.css" />
   <link rel="stylesheet" href="../css/menu.css">
 </head>
@@ -29,6 +30,37 @@
     </header>
 
     <article class="bible-content" id="bible-content"></article>
+  </div>
+
+  <!-- NOVO: Modal de Configurações de Leitura -->
+  <div id="reading-settings-modal" class="dialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Configurações de Leitura</h2>
+        <button class="close-button" data-modal-id="reading-settings-modal">×</button>
+      </div>
+      <div class="dialog-body">
+        <!-- Tamanho da Fonte -->
+        <div class="setting-control">
+          <label>Tamanho da Fonte</label>
+          <div class="font-size-control">
+            <button id="decrease-font">A-</button>
+            <span id="font-size-preview">Aa</span>
+            <button id="increase-font">A+</button>
+          </div>
+        </div>
+        <!-- Espaçamento -->
+        <div class="setting-control">
+          <label for="line-height-slider">Espaçamento entre Linhas</label>
+          <input type="range" id="line-height-slider" min="1.4" max="2.6" step="0.2">
+        </div>
+        <!-- Brilho -->
+        <div class="setting-control">
+          <label for="brightness-slider">Brilho da Tela</label>
+          <input type="range" id="brightness-slider" min="0.5" max="1.0" step="0.05">
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Version Dialog -->
@@ -256,6 +288,8 @@
 
   <!-- 5. Outros scripts -->
   <script src="../js/theme-manager.js" defer></script>
+  <script src="../js/reading-settings-manager.js"></script>
+
   <script src="../js/home.js" defer></script>
   <script src="../js/modal-handler.js" defer></script>
 </body>

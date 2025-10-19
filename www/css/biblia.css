@@ -1,3 +1,9 @@
+:root {
+  /* Valores padrão que serão sobrescritos pelo JS */
+  --reading-font-size-multiplier: 1.0;
+  --reading-line-height: 1.6;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -133,10 +139,12 @@ body {
 }
 
 .bible-content p {
-  font-size: 17px;
-  line-height: 1.0;
+  font-size: calc(16px * var(--reading-font-size-multiplier));
+  line-height: var(--reading-line-height);
+  /* Aplica o espaçamento */
   margin-bottom: 7px;
-  color: black;
+  color: var(--text-color); /* Mantém a cor do tema */
+  color: var(--text-color); /* Mantém a cor do tema */
 }
 
 .dialog {

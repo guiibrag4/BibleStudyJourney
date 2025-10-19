@@ -1,0 +1,210 @@
+/* Salve como: css/modals.css */
+
+/* --- ESTILOS GLOBAIS PARA MODAIS (DIALOGS) --- */
+
+/* O container principal do modal, que o centraliza na tela */
+.dialog {
+    display: none; /* Começa oculto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fundo escurecido */
+    
+    /* Centralização com Flexbox */
+    align-items: center;
+    justify-content: center;
+    
+    padding: 16px; /* Evita que o modal cole nas bordas */
+    box-sizing: border-box;
+}
+
+/* Classe que torna o modal visível */
+.dialog.open {
+    display: flex;
+}
+
+/* O conteúdo branco/card do modal */
+.dialog-content {
+    background-color: var(--card-background-color);
+    padding: 24px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    
+    /* Animação de entrada */
+    animation: fadeInScale 0.3s ease-out;
+}
+
+/* Animação para o modal aparecer */
+@keyframes fadeInScale {
+    from { 
+        opacity: 0; 
+        transform: scale(0.95); 
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1); 
+    }
+}
+
+/* Cabeçalho do modal (Título e botão de fechar) */
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.dialog-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Botão de fechar (X) */
+.close-button {
+    background: var(--hover-color);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.close-button:hover {
+    background-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Corpo do modal, onde o conteúdo principal fica */
+.dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Overlay (fundo escuro semi-transparente) */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.overlay.open {
+    display: block;
+}
+
+
+/* --- ESTILOS ESPECÍFICOS PARA OS MODAIS DE CONFIGURAÇÃO --- */
+
+/* Estilos para o modal de escolha de tema */
+#theme-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.theme-option-btn {
+    padding: 12px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    flex-grow: 1;
+    background-color: transparent;
+    color: var(--text-color);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.theme-option-btn:hover {
+    background-color: var(--hover-color);
+    border-color: var(--primary-color);
+}
+
+/* Estilos para o modal de configurações de leitura */
+.setting-control {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.setting-control label {
+    font-weight: 500;
+    color: var(--text-secondary-color);
+}
+
+.font-size-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--background-color);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.font-size-control button {
+    background: var(--hover-color);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+#font-size-preview {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Estilização dos sliders (input[type="range"]) */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 5px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
