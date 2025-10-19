@@ -4,7 +4,7 @@
   --cor-fundo-secundario: #ffffff;
   --cor-texto-principal: #000000;
   --cor-texto-secundario: #555;
-  /* --cor-header: #283A50/ */
+  /* --cor-header: #283A50; */
   --cor-texto-header: #ffffff;
   --cor-borda: #b4b4b4;
   --cor-destaque: #19819b;
@@ -49,6 +49,19 @@ body {
 .header-title, .menu-topo h1, .close-menu {
     color: var(--cor-texto-header) !important;
 }
+
+.bible-content {
+  background-color: var(--cor-fundo-principal);
+  color: var(--cor-texto-principal);
+  min-height: calc(100vh - 60px);
+}
+
+/* .bible-header {
+  background-color: var(--cor-fundo-secundario);
+  border-bottom: 1px solid var(--cor-borda);
+} */
+
+/* Arrumar essa linha acima depois do cabeçalho */
 
 .bible-content p, .topic-title, .session-title, .subtitle {
   color: var(--cor-texto-principal);

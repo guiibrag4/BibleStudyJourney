@@ -242,23 +242,16 @@
       <img src="../img/bookmark-menu.svg" alt="Salvos" class="nav-icon">
       <span>Salvos</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="opcoes.html" class="nav-item">
       <img src="../img/options-menu.svg" alt="Mais" class="nav-icon">
       <span>Opções</span>
     </a>
   </nav>
 
   <!-- ORDEM CORRETA DOS SCRIPTS -->
-  <!-- 1. LocalForage PRIMEIRO (usado por home.js) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-
-  <!-- 2. Auth Guard (cria window.AuthManager) -->
   <script src="../js/auth-guard.js"></script>
-
-  <!-- 3. Saves Manager (usa AuthManager, cria window.savesManager) -->
   <script src="../js/saves-manager.js"></script>
-
-  <!-- 4. Highlighter (usa savesManager) -->
   <script src="../js/highlighter.js"></script>
 
   <!-- 5. Outros scripts -->
