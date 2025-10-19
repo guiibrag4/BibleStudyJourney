@@ -27,6 +27,7 @@ body {
 .page-header h1 {
     font-size: 22px;
     font-weight: 700;
+    color: var(--text-color);
 }
 
 .back-button {
@@ -103,6 +104,7 @@ body {
 .teacher-name {
     font-size: 18px;
     font-weight: 600;
+    color: var(--text-color);
 }
 
 .teacher-title {
@@ -120,19 +122,22 @@ body {
     color: var(--text-secondary-color);
     text-align: left;
     margin-bottom: 8px;
-    
+
     /* Trunca o texto em 2 linhas */
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Número de linhas */
+    -webkit-line-clamp: 2;
+    /* Número de linhas */
     -webkit-box-orient: vertical;
-    transition: -webkit-line-clamp 0.3s ease; /* Anima a transição */
+    transition: -webkit-line-clamp 0.3s ease;
+    /* Anima a transição */
 }
 
 /* Quando o card estiver expandido, remove o limite de linhas */
 .teacher-card.expanded .teacher-bio {
-    -webkit-line-clamp: unset; /* Remove o limite */
+    -webkit-line-clamp: unset;
+    /* Remove o limite */
 }
 
 .read-more-btn {
@@ -145,6 +150,7 @@ body {
     padding: 0;
     margin-bottom: 12px;
 }
+
 /* --- FIM DA LÓGICA --- */
 
 .social-link {
@@ -178,7 +184,8 @@ body {
         align-items: center;
     }
 
-    .teacher-info, .teacher-bio {
+    .teacher-info,
+    .teacher-bio {
         text-align: center;
         align-items: center;
     }

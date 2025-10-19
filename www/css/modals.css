@@ -1,32 +1,24 @@
-/* Salve como: css/modals.css */
+/* Arquivo: modals.css (Otimizado) */
 
-/* --- ESTILOS GLOBAIS PARA MODAIS (DIALOGS) --- */
-
-/* O container principal do modal, que o centraliza na tela */
 .dialog {
-    display: none; /* Começa oculto */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Fundo escurecido */
-    
-    /* Centralização com Flexbox */
+    background-color: rgba(0, 0, 0, 0.6);
     align-items: center;
     justify-content: center;
-    
-    padding: 16px; /* Evita que o modal cole nas bordas */
+    padding: 16px;
     box-sizing: border-box;
 }
 
-/* Classe que torna o modal visível */
 .dialog.open {
     display: flex;
 }
 
-/* O conteúdo branco/card do modal */
 .dialog-content {
     background-color: var(--card-background-color);
     padding: 24px;
@@ -34,24 +26,14 @@
     width: 100%;
     max-width: 400px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    
-    /* Animação de entrada */
     animation: fadeInScale 0.3s ease-out;
 }
 
-/* Animação para o modal aparecer */
 @keyframes fadeInScale {
-    from { 
-        opacity: 0; 
-        transform: scale(0.95); 
-    }
-    to { 
-        opacity: 1; 
-        transform: scale(1); 
-    }
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
-/* Cabeçalho do modal (Título e botão de fechar) */
 .dialog-header {
     display: flex;
     justify-content: space-between;
@@ -66,7 +48,6 @@
     color: var(--text-color);
 }
 
-/* Botão de fechar (X) */
 .close-button {
     background: var(--hover-color);
     border: none;
@@ -87,14 +68,14 @@
     color: var(--text-color);
 }
 
-/* Corpo do modal, onde o conteúdo principal fica */
 .dialog-body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
 }
 
-/* Overlay (fundo escuro semi-transparente) */
 .overlay {
     display: none;
     position: fixed;
@@ -110,10 +91,7 @@
     display: block;
 }
 
-
-/* --- ESTILOS ESPECÍFICOS PARA OS MODAIS DE CONFIGURAÇÃO --- */
-
-/* Estilos para o modal de escolha de tema */
+/* Estilos específicos para os modais de configuração */
 #theme-options {
     display: flex;
     justify-content: space-between;
@@ -138,7 +116,6 @@
     border-color: var(--primary-color);
 }
 
-/* Estilos para o modal de configurações de leitura */
 .setting-control {
     display: flex;
     flex-direction: column;
@@ -157,6 +134,7 @@
     background-color: var(--background-color);
     border-radius: 12px;
     padding: 8px;
+    border: 1px solid var(--border-color);
 }
 
 .font-size-control button {
@@ -177,7 +155,6 @@
     color: var(--text-color);
 }
 
-/* Estilização dos sliders (input[type="range"]) */
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
@@ -186,7 +163,6 @@ input[type="range"] {
     background: var(--border-color);
     border-radius: 5px;
     outline: none;
-    transition: background 0.2s;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -197,7 +173,6 @@ input[type="range"]::-webkit-slider-thumb {
     background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
-    transition: background 0.2s;
 }
 
 input[type="range"]::-moz-range-thumb {
@@ -206,5 +181,4 @@ input[type="range"]::-moz-range-thumb {
     background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
-    transition: background 0.2s;
 }

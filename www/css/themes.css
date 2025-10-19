@@ -1,203 +1,89 @@
+/* Arquivo: themes.css (Versão Otimizada com Variáveis) */
+
 /* :root define as variáveis para o tema padrão (light-mode) */
 :root {
-    --primary-color: #19819b;
-    --background-color: #F2F2F2;
-    --card-background-color: #FFFFFF;
-    --text-color: #0D0D0D;
-    --text-secondary-color: #6C757D;
-    --border-color: #E0E0E0;
-    --hover-color: #F8F9FA;
-    --icon-filter: none; /* Ícones na cor original */
+    --primary-color: #4a90e2; /* Azul principal para botões e links */
+    --background-color: #f8f9fa; /* Fundo principal da página */
+    --card-background-color: #ffffff; /* Fundo de cards, modais e seções */
+    --text-color: #212529; /* Cor do texto principal */
+    --text-secondary-color: #6c757d; /* Cor de texto secundário e placeholders */
+    --border-color: #e9ecef; /* Cor das bordas e divisores */
+    --hover-color: #f1f3f5; /* Cor de fundo para hover em itens */
+    --menu-bg: #ffffff; /* Fundo do menu de navegação */
+    --menu-text: #6c757d; /* Texto do menu de navegação */
+    --accent-color: #4a90e2; /* Cor de destaque para itens ativos no menu */
+    --icon-filter: none; /* Filtro para ícones (nenhum no modo claro) */
+
+    /* Variáveis específicas para a tela da Bíblia */
+    --reading-font-size-multiplier: 1.0;
+    --reading-line-height: 1.6;
+
+    /* Cores de grifo */
+    --highlight-yellow: #fff9c4;
+    --highlight-green: #c8e6c9;
+    --highlight-blue: #bbdefb;
+    --highlight-red: #ffcdd2;
+    --highlight-purple: #e1bee7;
+    --highlight-orange: #ffe0b2;
+    --highlight-pink: #f8bbd9;
+    --highlight-cyan: #b2ebf2;
 }
 
 body.dark-mode {
-    --primary-color: #5cb85c;
-    --background-color: #121212; /* Fundo mais escuro para maior contraste */
-    --card-background-color: #1E1E1E; /* Cor dos cards e modais */
-    --text-color: #E0E0E0;
-    --text-secondary-color: #A0A0A0;
-    --border-color: #333333;
-    --hover-color: #2a2a2a;
-    --icon-filter: invert(90%) sepia(13%) saturate(65%) hue-rotate(175deg) brightness(96%) contrast(94%); /* Inverte ícones para branco */
+    --primary-color: #58a6ff; /* Azul mais brilhante para contraste */
+    --background-color: #0d1117; /* Fundo principal */
+    --card-background-color: #161b22; /* Fundo de cards e modais */
+    --text-color: #c9d1d9; /* Texto principal */
+    --text-secondary-color: #8b949e; /* Texto secundário */
+    --border-color: #30363d; /* Bordas */
+    --hover-color: #1f242c; /* Hover */
+    --menu-bg: #161b22;
+    --menu-text: #8b949e;
+    --accent-color: #58a6ff;
+    --icon-filter: brightness(0) saturate(100%) invert(69%) sepia(8%) saturate(755%) hue-rotate(179deg) brightness(95%) contrast(89%);
+
+    /* Cores de grifo para modo escuro */
+    --highlight-yellow: rgba(229, 192, 58, 0.2);
+    --highlight-green: rgba(67, 160, 71, 0.2);
+    --highlight-blue: rgba(41, 121, 255, 0.2);
+    --highlight-red: rgba(211, 71, 71, 0.2);
+    --highlight-purple: rgba(140, 82, 255, 0.2);
+    --highlight-orange: rgba(245, 130, 49, 0.2);
+    --highlight-pink: rgba(214, 51, 132, 0.2);
+    --highlight-cyan: rgba(34, 184, 207, 0.2);
 }
 
 body.sepia-mode {
-    --primary-color: #8a6d53;
-    --background-color: #f3ecd7;
-    --card-background-color: #f6efe3;
+    --primary-color: #8a5a44;
+    --background-color: #f4f0e8;
+    --card-background-color: #f9f6f0;
     --text-color: #5b4636;
-    --text-secondary-color: #8a6d53;
+    --text-secondary-color: #7d6b5a;
     --border-color: #dcd0b9;
     --hover-color: #ede4d4;
-    --icon-filter: none; /* Ícones na cor original */
+    --menu-bg: #f9f6f0;
+    --menu-text: #7d6b5a;
+    --accent-color: #8a5a44;
+    --icon-filter: none;
+
+    /* Cores de grifo para modo sépia */
+    --highlight-yellow: #fdeeb3;
+    --highlight-green: #d1e7d2;
+    --highlight-blue: #cde1f4;
+    --highlight-red: #f5d4d6;
+    --highlight-purple: #e9d8ed;
+    --highlight-orange: #ffe8d1;
+    --highlight-pink: #fbe0ea;
+    --highlight-cyan: #d4f1f4;
+}
+
+/* Transições suaves para a troca de tema */
+body, body * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Estilos gerais que usam as variáveis */
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Garante que os ícones do menu de navegação também mudem de cor */
-.nav-icon {
-    filter: var(--icon-filter);
-    transition: filter 0.3s;
-}
-
-.bible-header, .header, .video-page-header, .menu-topo {
-  background-color: var(--cor-header);
-  color: var(--cor-texto-header);
-}
-
-.header-title, .menu-topo h1, .close-menu {
-    color: var(--cor-texto-header) !important;
-}
-
-.bible-content {
-  background-color: var(--cor-fundo-principal);
-  color: var(--cor-texto-principal);
-  min-height: calc(100vh - 60px);
-}
-
-/* .bible-header {
-  background-color: var(--cor-fundo-secundario);
-  border-bottom: 1px solid var(--cor-borda);
-} */
-
-/* Arrumar essa linha acima depois do cabeçalho */
-
-.bible-content p, .topic-title, .session-title, .subtitle {
-  color: var(--cor-texto-principal);
-}
-
-.bible-content span {
-    color: var(--cor-destaque) !important;
-}
-
-.topic-item, .dialog-content, .menu-lateral, .video-description, .versiculo-card, .nota-card, .capitulo-card, .saves-menu {
-  background-color: var(--cor-fundo-secundario);
-  border-color: var(--cor-borda);
-  color: var(--cor-texto-principal);
-}
-
-.topic-item {
-    border: 2px solid var(--cor-borda);
-}
-
-/* Estilo para o modal de tema */
-#theme-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding: 20px;
-}
-
-.theme-option-btn {
-    padding: 15px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: 1px solid var(--cor-borda);
-    background-color: var(--cor-fundo-principal);
-    color: var(--cor-texto-principal);
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
-}
-
-.theme-option-btn:hover {
-    transform: scale(1.03);
-    border-color: var(--cor-destaque);
-}
-
-/* Ícones do menu lateral brancos no modo escuro */
-body.dark-mode .menu-itens img {
-    filter: brightness(0) invert(0.75);
-}
-
-/* Containers de vídeos escuros no modo dark */
-body.dark-mode .videos-list,
-body.dark-mode .video-item {
-    background-color: var(--cor-fundo-secundario) !important;
-    color: var(--cor-texto-principal) !important;
-}
-
-/* Menu lateral: texto e ícones menos agressivos no dark */
-body.dark-mode .menu-itens li,
-body.dark-mode .menu-itens li * {
-  color: #e0e0e0 !important;
-}
-
-/* Garante contraste para títulos e textos dos vídeos */
-body.dark-mode .video-title,
-body.dark-mode .video-item span,
-body.dark-mode .videos-list .coming-soon-text,
-body.dark-mode .videos-list .coming-soon-subtext {
-  color: #e0e0e0 !important;
-}
-
-body.dark-mode .coming-soon-container {
-  background-color: var(--cor-fundo-card) !important;
-  color: var(--cor-texto-principal) !important;
-}
-
-/* Ajuste das cores de grifo no modo escuro */
-body.dark-mode .highlight-yellow,
-body.dark-mode #bible-content p.highlight-yellow {
-    border-left-color: #bfa600; /* Amarelo mais suave */
-    background: linear-gradient(135deg, rgba(191, 166, 0, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .highlight-green,
-body.dark-mode #bible-content p.highlight-green {
-  
-    border-left-color: #3a7d3a; /* Verde mais suave */
-    background: linear-gradient(135deg, rgba(58, 125, 58, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .highlight-blue,
-body.dark-mode #bible-content p.highlight-blue {
-    border-left-color: #2a6da8; /* Azul mais suave */
-    background: linear-gradient(135deg, rgba(42, 109, 168, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .highlight-red,
-body.dark-mode #bible-content p.highlight-red {
-    border-left-color: #a83232; /* Vermelho mais suave */
-    background: linear-gradient(135deg, rgba(168, 50, 50, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .highlight-purple,
-body.dark-mode #bible-content p.highlight-purple {
-    border-left-color: #6a3a8c; /* Roxo mais suave */
-    background: linear-gradient(135deg, rgba(106, 58, 140, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .highlight-orange,
-body.dark-mode #bible-content p.highlight-orange {
-    border-left-color: #a86032; /* Laranja mais suave */
-    background: linear-gradient(135deg, rgba(168, 96, 50, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .versiculo-card.highlight-pink,
-body.dark-mode #bible-content p.highlight-pink {
-    border-left-color: #a8326a; /* Rosa mais suave */
-    background: linear-gradient(135deg, rgba(168, 50, 106, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.dark-mode .highlight-cyan,
-body.dark-mode #bible-content p.highlight-cyan {
-    border-left-color: #2aa8a8; /* Ciano mais suave */
-    background: linear-gradient(135deg, rgba(42, 168, 168, 0.2) 0%, var(--cor-fundo-card) 100%);
-}
-
-body.sepia-mode .coming-soon-container {
-  background-color: var(--cor-fundo-card) !important;
-}
-
-body.sepia-mode .coming-soon-text {
-  color: var(--cor-texto-principal) !important;
-}
-
-body.light-mode .coming-soon-container {
-  background-color: var(--cor-fundo-card) !important;
 }
