@@ -1,9 +1,7 @@
-/* Estilos para a página de opções (opcoes.css ) */
+/* Estilos para a página de opções (opcoes.css) */
 
 /* Garante que o tema seja aplicado corretamente */
 body {
-    background-color: var(--background-color);
-    color: var(--text-color);
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
@@ -46,7 +44,7 @@ body {
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 12px;
-    background-color: var(--secondary-color); /* Cor de fundo para a imagem */
+    background-color: var(--text-secondary-color);
 }
 
 .profile-picture img {
@@ -130,7 +128,7 @@ body {
 .option-icon img {
     width: 100%;
     height: 100%;
-    filter: var(--icon-filter); /* Permite mudar a cor do ícone com o tema */
+    filter: var(--icon-filter);
 }
 
 .option-label {
@@ -149,7 +147,7 @@ body {
 }
 
 .option-item.logout {
-    color: #E53935; /* Cor vermelha para perigo */
+    color: #E53935;
     background-color: var(--card-background-color);
     border-radius: 16px;
     border: none;
@@ -159,7 +157,8 @@ body {
     font-weight: 600;
 }
 
-/* Estilos para o modal de tema (reutilizados) */
+/* --- ESTILOS DO MODAL --- */
+
 .dialog {
     display: none;
     position: fixed;
@@ -168,9 +167,11 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0, 0, 0, 0.6);
-    align-items: flex-end; /* Posiciona no final */
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .dialog.open {
@@ -179,56 +180,152 @@ body {
 
 .dialog-content {
     background-color: var(--card-background-color);
-    margin: auto auto 0 auto; /* Centraliza na parte inferior */
-    padding: 20px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    padding: 24px;
+    border-radius: 16px;
     width: 100%;
-    max-width: 500px;
-    animation: slideUp 0.3s ease-out;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: fadeInScale 0.3s ease-out;
 }
 
-@keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .dialog-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .dialog-header h2 {
     margin: 0;
-}
-
-.close-button {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
+    font-size: 20px;
+    font-weight: 600;
     color: var(--text-color);
 }
 
+.close-button {
+    background: var(--hover-color);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.close-button:hover {
+    background-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Modal de Temas */
 #theme-options {
     display: flex;
-    justify-content: space-around;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 .theme-option-btn {
     padding: 12px 20px;
     border: 2px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: 500;
     flex-grow: 1;
+    background-color: transparent;
+    color: var(--text-color);
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.theme-option-btn:hover {
+    background-color: var(--hover-color);
+    border-color: var(--primary-color);
+}
+
+/* Modal de Configurações de Leitura */
+.setting-control {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.setting-control label {
+    font-weight: 500;
+    color: var(--text-secondary-color);
+}
+
+.font-size-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: var(--background-color);
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.font-size-control button {
+    background: var(--hover-color);
+    border: none;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
     color: var(--text-color);
 }
 
+#font-size-preview {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 5px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Overlay */
 .overlay {
     display: none;
     position: fixed;
