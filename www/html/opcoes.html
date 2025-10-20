@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <title>Opções - Bible Study</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/modals.css">
+    <link rel="stylesheet" href="../css/opcoes.css">
+</head>
+
+<body>
+
+    <script>
+        (function () {
+            const theme = localStorage.getItem('selectedTheme') || 'light-mode';
+            document.body.classList.add(theme);
+        })();
+    </script>
+
+    <main class="options-container">
+        <!-- Cabeçalho da Página -->
+        <header class="options-header">
+            <h1>Opções</h1>
+        </header>
+
+        <!-- Seção do Perfil do Usuário -->
+        <section class="profile-section">
+            <div class="profile-picture">
+                <img src="../img/user-placeholder.svg" alt="Foto do Usuário" id="user-photo">
+            </div>
+            <h2 id="user-name">Carregando...</h2>
+            <p id="user-email">email@exemplo.com</p>
+        </section>
+
+        <!-- Menu de Opções -->
+        <div class="options-menu">
+            <!-- Grupo: Conta -->
+            <div class="options-group">
+                <h3 class="group-title">Conta</h3>
+                <a href="#" class="option-item">
+                    <div class="option-icon"><img src="../img/stats-icon.svg" alt=""></div>
+                    <span class="option-label">Estatísticas de Estudo</span>
+                    <div class="option-chevron">›</div>
+                </a>
+            </div>
+
+            <!-- Grupo: Aparência -->
+            <div class="options-group">
+                <h3 class="group-title">Aparência</h3>
+                <a href="#" id="theme-changer-button" class="option-item">
+                    <div class="option-icon"><img src="../img/theme-icon.svg" alt=""></div>
+                    <span class="option-label">Mudar Tema</span>
+                    <div class="option-chevron">›</div>
+                </a>
+                <a href="#" id="reading-settings-button" class="option-item">
+                    <div class="option-icon"><img src="../img/font-size-icon.svg" alt=""></div>
+                    <span class="option-label">Configurações de Leitura</span>
+                    <div class="option-chevron">›</div>
+                </a>
+            </div>
+
+            <!-- Grupo: Sobre -->
+            <div class="options-group">
+                <h3 class="group-title">Sobre</h3>
+                <!-- Altere o href="#" para href="professores.html" -->
+                <a href="professores.html" class="option-item">
+                    <div class="option-icon"><img src="../img/teacher-icon.svg" alt=""></div>
+                    <span class="option-label">Professores</span>
+                    <div class="option-chevron">›</div>
+                </a>
+                <a href="#" class="option-item">
+                    <div class="option-icon"><img src="../img/info-icon.svg" alt=""></div>
+                    <span class="option-label">Sobre o App</span>
+                    <div class="option-chevron">›</div>
+                </a>
+            </div>
+
+            <!-- Ação de Logout -->
+            <div class="logout-section">
+                <button id="logout-button" class="option-item logout">
+                    <div class="option-icon"><img src="../img/logout-icon.svg" alt=""></div>
+                    <span class="option-label">Sair</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Overlay para os modais -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Modal de Temas -->
+    <div id="theme-modal" class="dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h2>Escolha um Tema</h2>
+                <button class="close-button" data-modal-id="theme-modal">×</button>
+            </div>
+            <div class="dialog-body" id="theme-options">
+                <button class="theme-option-btn" data-theme="light-mode">Claro</button>
+                <button class="theme-option-btn" data-theme="dark-mode">Escuro</button>
+                <button class="theme-option-btn" data-theme="sepia-mode">Sépia</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVO: Modal de Configurações de Leitura -->
+    <div id="reading-settings-modal" class="dialog">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h2>Configurações de Leitura</h2>
+                <button class="close-button" data-modal-id="reading-settings-modal">×</button>
+            </div>
+            <div class="dialog-body">
+                <!-- Tamanho da Fonte -->
+                <div class="setting-control">
+                    <label>Tamanho da Fonte</label>
+                    <div class="font-size-control">
+                        <button id="decrease-font">A-</button>
+                        <span id="font-size-preview">Aa</span>
+                        <button id="increase-font">A+</button>
+                    </div>
+                </div>
+                <!-- Espaçamento -->
+                <div class="setting-control">
+                    <label for="line-height-slider">Espaçamento entre Linhas</label>
+                    <input type="range" id="line-height-slider" min="1.4" max="2.6" step="0.2">
+                </div>
+                <!-- Brilho -->
+                <div class="setting-control">
+                    <label for="brightness-slider">Brilho da Tela</label>
+                    <input type="range" id="brightness-slider" min="0.5" max="1.0" step="0.05">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Navegação Inferior -->
+    <nav class="bottom-nav">
+        <a href="home2.html" class="nav-item">
+            <img src="../img/home-menu.svg" alt="Home" class="nav-icon">
+            <span>Início</span>
+        </a>
+        <a href="biblia.html" class="nav-item">
+            <img src="../img/book-menu.svg" alt="Bíblia" class="nav-icon">
+            <span>Bíblia</span>
+        </a>
+        <a href="tl1-teologia.html" class="nav-item">
+            <img src="../img/graduation-menu.svg" alt="Teologia" class="nav-icon teologia-img">
+            <span>Trilha</span>
+        </a>
+        <a href="saves.html" class="nav-item">
+            <img src="../img/bookmark-menu.svg" alt="Salvos" class="nav-icon">
+            <span>Salvos</span>
+        </a>
+        <a href="opcoes.html" class="nav-item active">
+            <img src="../img/options-menu.svg" alt="Mais" class="nav-icon">
+            <span>Opções</span>
+        </a>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <!-- <script src="../js/auth-guard.js"></script> -->
+    <script src="../js/theme-manager.js" defer></script>
+    <script src="../js/reading-settings-manager.js"></script>
+    <script src="../js/opcoes.js"></script>
+</body>
+
+</html>

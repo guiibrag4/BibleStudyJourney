@@ -13,6 +13,14 @@
 </head>
 
 <body>
+
+  <script>
+    (function() {
+      const theme = localStorage.getItem('selectedTheme') || 'light-mode';
+      document.body.classList.add(theme);
+    })();
+  </script>
+
   <header class="video-page-header">
     <button id="backButton" class="back-button">
       <img src="../img/setinhaVoltando.svg" alt="Ícone voltar" class="back-icon back-text" /> Voltar
@@ -36,7 +44,7 @@
       <img src="../img/bookmark-menu.svg" alt="Salvos" class="nav-icon">
       <span>Salvos</span>
     </a>
-    <a href="#" class="nav-item">
+    <a href="opcoes.html" class="nav-item">
       <img src="../img/options-menu.svg" alt="Mais" class="nav-icon">
       <span>Opções</span>
     </a>
@@ -45,7 +53,7 @@
   <main class="video-content-area">
     <h1 id="videoTypeTitle" class="video-type-title">A Bíblia</h1>
     <h2 id="videoLessonTitle" class="video-lesson-title">Carregando aula...</h2>
-    
+
     <div class="video-player-container">
       <div id="videoFrame"></div>
     </div>
@@ -63,7 +71,7 @@
   <script src="../js/gerenciador-de-progresso.js"></script>
   <script src="../js/video-player.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-  <script src="../js/theme-manager.js"></script>
+  <script src="../js/theme-manager.js" defer></script>
 </body>
 
 </html>

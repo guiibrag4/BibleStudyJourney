@@ -1,37 +1,80 @@
-// www/frontend/js/theme-manager.js
 const themeManager = {
-    async saveTheme(theme) {
+    // Chave consistente para localStorage
+    THEME_KEY: 'selectedTheme',
+
+    // Salvar tema (síncrono)
+    saveTheme(theme) {
         try {
-            await localforage.setItem('userTheme', theme);
-            console.log('Tema salvo:', theme);
+            localStorage.setItem(this.THEME_KEY, theme);
+            console.log('✅ Tema salvo:', theme);
         } catch (err) {
-            console.error('Erro ao salvar o tema:', err);
+            console.error('❌ Erro ao salvar tema:', err);
         }
     },
 
-    async getTheme() {
+    // Obter tema salvo
+    getTheme() {
         try {
-            return await localforage.getItem('userTheme') || 'light-mode'; // Padrão é light-mode
+            return localStorage.getItem(this.THEME_KEY) || 'light-mode';
         } catch (err) {
-            console.error('Erro ao obter o tema:', err);
+            console.error('❌ Erro ao obter tema:', err);
             return 'light-mode';
         }
     },
 
+    // Aplicar tema ao body
     applyTheme(theme) {
-        document.body.className = ''; // Limpa classes existentes
+        // Remove todos os temas existentes
+        document.body.classList.remove('light-mode', 'dark-mode', 'sepia-mode');
+        
+        // Adiciona o novo tema
         document.body.classList.add(theme);
-        console.log('Tema aplicado:', theme);
+        
+        console.log('🎨 Tema aplicado:', theme);
     },
 
-    async init() {
-        const savedTheme = await this.getTheme();
+    // Trocar tema e salvar
+    setTheme(theme) {
+        this.applyTheme(theme);
+        this.saveTheme(theme);
+    },
+
+    // Inicializar tema
+    init() {
+        const savedTheme = this.getTheme();
         this.applyTheme(savedTheme);
+        
+        // Configurar botões de tema
+        this.setupThemeButtons();
+    },
+
+    // Configurar event listeners
+    setupThemeButtons() {
+        const themeButtons = document.querySelectorAll('[data-theme]');
+        
+        themeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const selectedTheme = e.target.dataset.theme;
+                this.setTheme(selectedTheme);
+                
+                // Fechar modais se existirem
+                this.closeModals();
+            });
+        });
+    },
+
+    // Fechar modais de tema
+    closeModals() {
+        const overlay = document.getElementById('overlay');
+        const themeModal = document.getElementById('theme-modal');
+        
+        if (overlay) overlay.classList.remove('active');
+        if (themeModal) themeModal.classList.remove('active');
     }
 };
 
-// Anexa ao objeto window para ser acessível globalmente
+// Disponibiliza globalmente
 window.themeManager = themeManager;
 
-// Inicializa o tema assim que o script for carregado
+// Inicializa automaticamente
 window.themeManager.init();

@@ -6,10 +6,16 @@
 }
 
 body {
-  background-color: var(--cor-fundo-principal);
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    
+    /* CORREÇÃO: Adiciona padding para a safe area e para o bottom-nav */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: 90px; /* Espaço crucial para o bottom-nav não cobrir o conteúdo */
 }
 
 .app {
@@ -32,6 +38,10 @@ body {
 .menu-icon {
   width: 34px;
   height: 30px;
+}
+
+.session-title, .subtitle, .topic-title {
+  color: var(--text-color); /* Usa variável */
 }
 
 .header-title {
@@ -64,7 +74,6 @@ body {
 }
 
 .session-title {
-  color: var(--cor-texto-principal);
   padding-top: 24px;
   text-align: center;
   font-size: 24px;
@@ -78,13 +87,12 @@ body {
 .divider {
   width: 60%;
   height: 1px;
-  background-color: #464646;
+   background-color: var(--border-color);
   box-shadow: 1px 0px 4px 0px rgba(196, 167, 0, 0.25);
   margin: -5px auto;
 }
 
 .subtitle {
-  color: var(--cor-texto-principal);
   font-size: 18px;
   text-align: center;
   margin-top: 10px;
@@ -104,9 +112,9 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: var(--cor-fundo-secundario);
+  background-color: var(--card-background-color);
   border-radius: 5px;
-  border: 2px solid var(--cor-borda);
+  border: 2px solid var(--border-color);
   cursor: pointer;
   position: relative;
   transition: box-shadow 0.3s;
@@ -141,7 +149,6 @@ body {
 
 .topic-title {
   flex: 1;
-  color: var(--cor-texto-principal);
   font-size: 20px;
   text-align: left;
   margin-left: 10px;
@@ -150,6 +157,10 @@ body {
 
 .topic-title.bold {
   font-weight: bold;
+}
+
+.icon-container img, .chevron-container img {
+    filter: var(--icon-filter);
 }
 
 .chevron-container {
@@ -169,14 +180,23 @@ body {
 
 /* Linha divisória moderna entre vídeos */
 .videos-list .video-item:not(:last-child) {
-  border-bottom: 1.5px solid var(--cor-borda);
+  border-bottom: 1.5px solid var(--border-color);
   margin-bottom: 0px;
   padding-bottom: 10px;
 }
 
 .videos-list .video-item:first-child {
-  border-top: 1.5px solid var(--cor-borda);
+  border-top: 1.5px solid var(--border-color);
   padding-top: 10px;
+}
+
+.video-item {
+  background: var(--card-background-color); 
+  color: var(--text-color); 
+}
+
+.video-title {
+  color: var(--text-color);
 }
 
 /* Responsive adjustments */
@@ -388,8 +408,6 @@ body {
 .video-item {
   display: flex;
   align-items: center;
-  background: var(--cor-fundo-card);
-  color: var(--cor-texto-principal);
   border-radius: 6px;
   padding: 6px 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -407,7 +425,6 @@ body {
 .video-title {
   flex: 1;
   font-size: 20px;
-  color: #222;
 }
 
 .video-checkbox {
@@ -419,45 +436,27 @@ body {
 .coming-soon-container {
   display: flex;
   flex-direction: column;
-  /* Empilha o texto principal e o subtexto */
   align-items: center;
-  /* Centraliza horizontalmente */
   justify-content: center;
-  /* Centraliza verticalmente */
   text-align: center;
-  /* Garante que o texto dentro esteja centralizado */
   padding: 20px 15px;
-  /* Espaçamento interno */
   margin-top: 10px;
-  /* Espaço acima da mensagem, se houver outros itens */
-  background-color: #f0f0f0;
-  /* Um fundo suave para destacar */
+  background-color: var(--hover-color);
+  border: 1px dashed var(--border-color);
   border-radius: 8px;
-  /* Bordas arredondadas */
-  border: 1px dashed #ccc;
-  /* Uma borda tracejada sutil */
   width: 100%;
-  /* Ocupa a largura disponível dentro do videos-list */
   box-sizing: border-box;
-  /* Garante que padding e border não aumentem a largura total */
 }
 
 .coming-soon-text {
   font-size: 22px;
-  /* Tamanho de fonte maior para o texto principal */
   font-weight: 600;
-  /* Negrito */
-  color: #333;
-  /* Cor escura para boa legibilidade */
+  color: var(--text-color);
   margin-bottom: 8px;
-  /* Espaço entre o texto principal e o subtexto */
 }
 
 .coming-soon-subtext {
   font-size: 14px;
-  /* Tamanho de fonte menor para o subtexto */
-  color: #555;
-  /* Cor um pouco mais clara */
+   color: var(--text-secondary-color);
   line-height: 1.5;
-  /* Melhor espaçamento entre linhas para o subtexto */
 }
