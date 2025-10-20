@@ -1,4 +1,4 @@
-/* Arquivo: modals.css (Otimizado) */
+/* Arquivo: modals.css (Versão Corrigida com Estilos do Slider) */
 
 .dialog {
     display: none;
@@ -155,30 +155,42 @@
     color: var(--text-color);
 }
 
+/* --- ESTILOS DO SLIDER (input[type="range"]) --- */
+
+/* 1. Estilo da Barra (Track) */
 input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
+    -webkit-appearance: none; /* Remove o estilo padrão do WebKit (Chrome, Safari) */
+    appearance: none;         /* Remove o estilo padrão geral */
     width: 100%;
     height: 8px;
-    background: var(--border-color);
+    background: var(--hover-color); /* Cor da barra de fundo */
+    border: 1px solid var(--border-color); /* Borda sutil */
     border-radius: 5px;
     outline: none;
+    cursor: pointer; /* Indica que é interativo */
 }
 
+/* 2. Estilo do Manipulador/Bolinha (Thumb) para Chrome, Safari, Edge */
 input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
+    -webkit-appearance: none; /* Remove o estilo padrão do thumb */
     appearance: none;
-    width: 20px;
-    height: 20px;
-    background: var(--primary-color);
+    width: 22px;  /* Largura da bolinha */
+    height: 22px; /* Altura da bolinha */
+    background: var(--accent-color); /* Cor principal do tema */
+    border-radius: 50%; /* Deixa completamente redondo */
+    border: 3px solid var(--card-background-color); /* Cria um efeito de borda interna */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2); /* Sombra sutil para dar profundidade */
+    margin-top: -8px; /* Centraliza verticalmente o thumb na track (metade da altura do thumb - metade da altura da track) */
+}
+
+/* 3. Estilo do Manipulador/Bolinha (Thumb) para Firefox */
+input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: var(--accent-color);
     border-radius: 50%;
+    border: 3px solid var(--card-background-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     cursor: pointer;
 }
 
-input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    cursor: pointer;
-}

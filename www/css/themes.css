@@ -2,7 +2,6 @@
 
 /* :root define as variáveis para o tema padrão (light-mode) */
 :root {
-    --primary-color: #4a90e2; /* Azul principal para botões e links */
     --background-color: #f8f9fa; /* Fundo principal da página (cinza muito claro) */
     --card-background-color: #ffffff; /* Fundo de cards e modais (branco puro) */
     --text-color: #212529; /* Cor do texto principal */
@@ -12,6 +11,13 @@
     --menu-bg: #ffffff; /* Fundo do menu de navegação (branco, se destaca do fundo cinza) */
     --menu-text: #6c757d; /* Texto do menu de navegação */
     --accent-color: #4a90e2; /* Cor de destaque para itens ativos no menu */
+
+    /* NOVAS VARIÁVEIS PARA BOTÕES */
+    --button-bg: #4a90e2; /* Fundo do botão primário */
+    --button-text: #ffffff; /* Texto do botão primário (branco) */
+    --button-hover-bg: #3a7bc8; /* Fundo ao passar o mouse */
+    --button-secondary-bg: #6c757d; /* Botão secundário */
+    --button-secondary-text: #ffffff;
     
     /* CORREÇÃO: Filtro para tornar ícones escuros (pretos) no modo claro */
     --icon-filter: brightness(0) saturate(100%) invert(13%) sepia(21%) saturate(415%) hue-rotate(176deg) brightness(95%) contrast(84%);
@@ -32,7 +38,6 @@
 }
 
 body.dark-mode {
-    --primary-color: #58a6ff; /* Azul mais brilhante para contraste */
     --background-color: #0d1117; /* Fundo principal */
     --card-background-color: #161b22; /* Fundo de cards e modais */
     --text-color: #c9d1d9; /* Texto principal */
@@ -42,6 +47,13 @@ body.dark-mode {
     --menu-bg: #161b22;
     --menu-text: #8b949e;
     --accent-color: #58a6ff;
+
+    /* BOTÕES NO MODO ESCURO */
+    --button-bg: #58a6ff;
+    --button-text: #0d1117; /* Texto escuro em botão azul claro */
+    --button-hover-bg: #79b8ff;
+    --button-secondary-bg: #21262d;
+    --button-secondary-text: #c9d1d9;
 
     /* CORREÇÃO: Filtro para tornar ícones claros (cinza-claro) no modo escuro */
     --icon-filter: brightness(0) saturate(100%) invert(69%) sepia(8%) saturate(755%) hue-rotate(179deg) brightness(95%) contrast(89%);
@@ -58,16 +70,22 @@ body.dark-mode {
 }
 
 body.sepia-mode {
-    --primary-color: #8a5a44;
     --background-color: #f4f0e8;
     --card-background-color: #f9f6f0;
     --text-color: #5b4636;
     --text-secondary-color: #7d6b5a;
-    --border-color: #dcd0b9;
+    --border-color: #837253;
     --hover-color: #ede4d4;
     --menu-bg: #f9f6f0;
     --menu-text: #7d6b5a;
     --accent-color: #8a5a44;
+
+    /* BOTÕES NO MODO SÉPIA */
+    --button-bg: #8a5a44;
+    --button-text: #f9f6f0; /* Texto claro em botão marrom */
+    --button-hover-bg: #6f4835;
+    --button-secondary-bg: #d4c4b0;
+    --button-secondary-text: #5b4636;
     
     /* CORREÇÃO: Filtro para tornar ícones escuros (cor de texto sépia) no modo sépia */
     --icon-filter: brightness(0) saturate(100%) invert(29%) sepia(18%) saturate(1221%) hue-rotate(349deg) brightness(93%) contrast(88%);
