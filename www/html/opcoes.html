@@ -13,6 +13,14 @@
 </head>
 
 <body>
+
+    <script>
+        (function () {
+            const theme = localStorage.getItem('selectedTheme') || 'light-mode';
+            document.body.classList.add(theme);
+        })();
+    </script>
+
     <main class="options-container">
         <!-- Cabeçalho da Página -->
         <header class="options-header">
@@ -156,7 +164,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script src="../js/auth-guard.js"></script>
-    <script src="../js/theme-manager.js"></script>
+    <script src="../js/theme-manager.js" defer></script>
     <script src="../js/reading-settings-manager.js"></script>
     <script src="../js/opcoes.js"></script>
 </body>

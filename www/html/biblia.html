@@ -13,6 +13,14 @@
 </head>
 
 <body>
+
+ <script>
+    (function() {
+      const theme = localStorage.getItem('selectedTheme') || 'light-mode';
+      document.body.classList.add(theme);
+    })();
+  </script>
+
   <div id="bible-reader">
     <header class="bible-header">
       <div class="selectors">
@@ -282,7 +290,7 @@
 
   <!-- ORDEM CORRETA DOS SCRIPTS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-  <script src="../js/auth-guard.js"></script>
+  <!-- <script src="../js/auth-guard.js"></script> -->
   <script src="../js/saves-manager.js"></script>
   <script src="../js/highlighter.js"></script>
 

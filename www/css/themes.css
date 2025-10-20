@@ -1,18 +1,20 @@
-/* Arquivo: themes.css (Versão Otimizada com Variáveis) */
+/* Arquivo: themes.css (Versão Final Corrigida e Refinada) */
 
 /* :root define as variáveis para o tema padrão (light-mode) */
 :root {
     --primary-color: #4a90e2; /* Azul principal para botões e links */
-    --background-color: #f8f9fa; /* Fundo principal da página */
-    --card-background-color: #ffffff; /* Fundo de cards, modais e seções */
+    --background-color: #f8f9fa; /* Fundo principal da página (cinza muito claro) */
+    --card-background-color: #ffffff; /* Fundo de cards e modais (branco puro) */
     --text-color: #212529; /* Cor do texto principal */
     --text-secondary-color: #6c757d; /* Cor de texto secundário e placeholders */
-    --border-color: #e9ecef; /* Cor das bordas e divisores */
+    --border-color: #5f5f5f; /* Cor das bordas e divisores (mais escura e visível) */
     --hover-color: #f1f3f5; /* Cor de fundo para hover em itens */
-    --menu-bg: #ffffff; /* Fundo do menu de navegação */
+    --menu-bg: #ffffff; /* Fundo do menu de navegação (branco, se destaca do fundo cinza) */
     --menu-text: #6c757d; /* Texto do menu de navegação */
     --accent-color: #4a90e2; /* Cor de destaque para itens ativos no menu */
-    --icon-filter: none; /* Filtro para ícones (nenhum no modo claro) */
+    
+    /* CORREÇÃO: Filtro para tornar ícones escuros (pretos) no modo claro */
+    --icon-filter: brightness(0) saturate(100%) invert(13%) sepia(21%) saturate(415%) hue-rotate(176deg) brightness(95%) contrast(84%);
 
     /* Variáveis específicas para a tela da Bíblia */
     --reading-font-size-multiplier: 1.0;
@@ -40,6 +42,8 @@ body.dark-mode {
     --menu-bg: #161b22;
     --menu-text: #8b949e;
     --accent-color: #58a6ff;
+
+    /* CORREÇÃO: Filtro para tornar ícones claros (cinza-claro) no modo escuro */
     --icon-filter: brightness(0) saturate(100%) invert(69%) sepia(8%) saturate(755%) hue-rotate(179deg) brightness(95%) contrast(89%);
 
     /* Cores de grifo para modo escuro */
@@ -64,7 +68,9 @@ body.sepia-mode {
     --menu-bg: #f9f6f0;
     --menu-text: #7d6b5a;
     --accent-color: #8a5a44;
-    --icon-filter: none;
+    
+    /* CORREÇÃO: Filtro para tornar ícones escuros (cor de texto sépia) no modo sépia */
+    --icon-filter: brightness(0) saturate(100%) invert(29%) sepia(18%) saturate(1221%) hue-rotate(349deg) brightness(93%) contrast(88%);
 
     /* Cores de grifo para modo sépia */
     --highlight-yellow: #fdeeb3;
@@ -79,7 +85,7 @@ body.sepia-mode {
 
 /* Transições suaves para a troca de tema */
 body, body * {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, filter 0.3s ease;
 }
 
 /* Estilos gerais que usam as variáveis */
@@ -87,3 +93,4 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
 }
+

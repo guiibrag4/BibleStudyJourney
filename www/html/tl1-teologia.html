@@ -12,7 +12,15 @@
 </head>
 
 <body>
-    <nav class="bottom-nav">
+
+   <script>
+    (function() {
+      const theme = localStorage.getItem('selectedTheme') || 'light-mode';
+      document.body.classList.add(theme);
+    })();
+  </script>
+
+  <nav class="bottom-nav">
     <a href="home2.html" class="nav-item">
       <img src="../img/home-menu.svg" alt="Home" class="nav-icon">
       <span>Início</span>
