@@ -1,41 +1,50 @@
-/* Arquivo: menu.css (Otimizado) */
+/* Arquivo: menu.css (VERSÃO FINAL PADRONIZADA) */
 
 .bottom-nav {
-  position: fixed;
+  position: fixed !important;
   bottom: 0;
   left: 0;
+  right: 0;
   width: 100%;
-  min-height: calc(64px + env(safe-area-inset-bottom));
-  background: var(--menu-bg); /* Usa variável */
+  min-height: 64px; /* Altura mínima consistente */
+  transform: none !important;
+  translate: none;
+
+
+  background: var(--menu-bg);
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
   padding-top: 8px;
   padding-bottom: env(safe-area-inset-bottom);
-  border-top: 1px solid var(--border-color); /* Usa variável */
-  z-index: 1000;
+  border-top: 1px solid var(--border-color);
+  z-index: 10000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Sombra sutil para destacar */
 }
 
 .nav-item {
-  color: var(--menu-text); /* Usa variável */
+  color: var(--menu-text);
   text-decoration: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 12px; /* Tamanho de fonte padrão para todos */
   transition: color 0.2s ease;
-  font-family: 'Poppins', sans-serif;
+  /* CORREÇÃO: Remove a fonte específica para usar a padrão do app */
+  font-family: inherit;
+  width: 65px; /* Largura fixa para evitar quebra de linha no texto */
+  text-align: center;
 }
 
 .nav-item:hover,
 .nav-item.active {
-  color: var(--accent-color); /* Usa variável */
+  color: var(--accent-color);
 }
 
 .nav-icon, .teologia-img {
   width: 24px;
   height: 24px;
   margin-bottom: 4px;
-  filter: var(--icon-filter); /* Usa variável para inverter cores no modo escuro */
+  filter: var(--icon-filter);
 }
