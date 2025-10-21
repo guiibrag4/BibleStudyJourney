@@ -1,0 +1,241 @@
+/* Arquivo: css/sobre.css */
+/* Estilos para a página "Sobre o App" */
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    padding: 0 0 80px 0; /* Espaço para a barra de navegação */
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Cabeçalho da Página */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 16px;
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.back-button {
+    position: absolute;
+    left: 16px;
+    font-size: 32px;
+    color: var(--text-color);
+    text-decoration: none;
+    line-height: 1;
+    transition: opacity 0.2s;
+}
+
+.back-button:active {
+    opacity: 0.6;
+}
+
+.page-header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Conteúdo Principal */
+.about-content {
+    padding: 0 16px 20px 16px;
+}
+
+/* Seção Hero */
+.hero-section {
+    text-align: center;
+    padding: 40px 0 32px 0;
+}
+
+.app-icon-container {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 16px auto;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.app-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.app-name {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+}
+
+.app-tagline {
+    font-size: 16px;
+    color: var(--text-secondary-color);
+    margin: 0;
+}
+
+/* Seções de Conteúdo */
+.content-section {
+    margin-bottom: 32px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    color: var(--text-color);
+}
+
+.section-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-color);
+    margin: 0 0 12px 0;
+}
+
+.section-text:last-child {
+    margin-bottom: 0;
+}
+
+/* Seção Destacada */
+.highlight-section {
+    background-color: var(--card-background-color);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.quote {
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent-color);
+    margin: 0 0 16px 0;
+    padding-left: 16px;
+    border-left: 4px solid var(--accent-color);
+}
+
+/* Grid de Features */
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+@media (min-width: 600px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.feature-card {
+    background-color: var(--card-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.feature-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.feature-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+}
+
+.feature-description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-secondary-color);
+    margin: 0;
+}
+
+/* Lista de Valores */
+.values-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.value-item {
+    display: flex;
+    gap: 16px;
+    background-color: var(--card-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+}
+
+.value-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.value-content {
+    flex: 1;
+}
+
+.value-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    color: var(--text-color);
+}
+
+.value-description {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-secondary-color);
+    margin: 0;
+}
+
+/* Seção de Versão */
+.version-section {
+    text-align: center;
+    padding: 32px 0 16px 0;
+    border-top: 1px solid var(--border-color);
+    margin-top: 40px;
+}
+
+.version-info {
+    font-size: 14px;
+    color: var(--text-secondary-color);
+    margin: 0 0 4px 0;
+}
+
+.copyright {
+    font-size: 12px;
+    color: var(--text-secondary-color);
+    margin: 0;
+}
+
+/* Ajustes para temas específicos */
+[data-theme="dark-mode"] .app-icon-container {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="sepia-mode"] .app-icon-container {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
