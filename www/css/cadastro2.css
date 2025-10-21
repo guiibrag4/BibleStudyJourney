@@ -29,9 +29,8 @@
      display: flex;
      flex-direction: column;
      align-items: stretch;
-     /* padrão */
      justify-content: flex-start;
-     /* garante alinhamento no topo */
+     padding-top: env(safe-area-inset-top);
  }
 
  .cabecalho-titulo {

@@ -159,7 +159,11 @@ app.get("/cadastro", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/cadastro2.html"));
 });
 
-app.get("/home", (req, res) => {
+app.get("/home2", (req, res) => {
+    res.sendFile(path.join(__dirname, "../www/html/home2.html"));
+});
+
+app.get("/biblia", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/biblia.html"));
 });
 
