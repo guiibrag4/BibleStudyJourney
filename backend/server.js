@@ -15,6 +15,8 @@ const progressRoutes = require("./routes/progressRoutes.js");
 const highlightsRoutes = require("./routes/highlightsRoutes.js");
 const chaptersRoutes = require("./routes/chaptersRoutes.js");
 const notesRoutes = require("./routes/notesRoutes.js");
+const statsRoutes = require("./routes/statsRoutes.js");
+
 
 const app = express();
 
@@ -148,6 +150,7 @@ app.use("/api/user/progress", verifyToken, progressRoutes);
 app.use("/api/user/highlights", verifyToken, highlightsRoutes);
 app.use("/api/user/chapters", verifyToken, chaptersRoutes);
 app.use("/api/user/notes", verifyToken, notesRoutes);
+app.use("/api/user/stats", verifyToken, statsRoutes);
 
 // --- SERVIR ARQUIVOS ESTÁTICOS E PÁGINAS HTML (deve vir por último) ---
 app.use(express.static(path.join(__dirname, "../www")));

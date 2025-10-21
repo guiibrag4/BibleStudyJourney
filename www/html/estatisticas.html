@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatísticas - Bible Study</title>
+    <link rel="stylesheet" href="../css/themes.css" />
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/estatisticas.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <header class="page-header">
+            <a href="opcoes.html" class="back-button">‹</a>
+            <h1>Estatísticas de Uso</h1>
+        </header>
+
+        <main id="stats-content" class="stats-loading">
+            <div class="loading-spinner"></div>
+            <p>Carregando suas estatísticas...</p>
+        </main>
+    </div>
+
+    <!-- Barra de Navegação Inferior -->
+    <nav class="bottom-nav">
+        <a href="home2.html" class="nav-item">
+            <img src="../img/home-menu.svg" alt="Home" class="nav-icon">
+            <span>Início</span>
+        </a>
+        <a href="biblia.html" class="nav-item">
+            <img src="../img/book-menu.svg" alt="Bíblia" class="nav-icon">
+            <span>Bíblia</span>
+        </a>
+        <a href="tl1-teologia.html" class="nav-item">
+            <img src="../img/graduation-menu.svg" alt="Teologia" class="nav-icon teologia-img">
+            <span>Trilha</span>
+        </a>
+        <a href="saves.html" class="nav-item">
+            <img src="../img/bookmark-menu.svg" alt="Salvos" class="nav-icon">
+            <span>Salvos</span>
+        </a>
+        <a href="opcoes.html" class="nav-item active">
+            <img src="../img/options-menu.svg" alt="Mais" class="nav-icon">
+            <span>Opções</span>
+        </a>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <script src="../js/auth-guard.js"></script>
+    <script src="../js/theme-manager.js"></script>
+    <script src="../js/estatisticas.js"></script>
+</body>
+
+</html>

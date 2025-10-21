@@ -14,8 +14,8 @@
 
 <body>
 
- <script>
-    (function() {
+  <script>
+    (function () {
       const theme = localStorage.getItem('selectedTheme') || 'light-mode';
       document.body.classList.add(theme);
     })();
@@ -23,19 +23,30 @@
 
   <div id="bible-reader">
     <header class="bible-header">
-      <div class="selectors">
-        <div class="version-selector" id="version-selector">Nvi</div>
-        <div class="chapter-selector" id="chapter-selector">Gênesis 1</div>
-      </div>
-      <div class="actions">
-        <button aria-label="SavePageButton" class="save-page" title="Salvar capítulo">
-          <img src="../img/bookmark-menu.svg" alt="Salvar capítulo" />
+      <!-- Agora tudo está dentro de um único contêiner -->
+     <div class="selectors">
+    <!-- Itens da Esquerda -->
+    <div class="version-selector" id="version-selector">Nvi</div>
+    <div class="chapter-selector" id="chapter-selector">Gênesis 1</div>
+
+    <!-- Separador -->
+    <div class="spacer"></div>
+
+    <!-- NOVO: Grupo para os botões da direita -->
+    <div class="action-buttons-group">
+        <button id="mark-book-as-read-btn" class="action-button" title="Marcar este livro como lido">
+            <img src="../img/check-circle-icon.svg" alt="Marcar como lido" />
         </button>
-        <button aria-label="FontSizeButton" class="font-size-button">
-          <img src="../img/Font-size.svg" alt="FontSizeButton" />
+        <button class="action-button save-page" aria-label="SavePageButton" title="Salvar capítulo">
+            <img src="../img/bookmark-menu.svg" alt="Salvar capítulo" />
         </button>
-      </div>
+        <button class="action-button font-size-button" aria-label="FontSizeButton" title="Ajustar fonte">
+            <img src="../img/Font-size.svg" alt="Ajustar fonte" />
+        </button>
+    </div>
+</div>
     </header>
+
 
     <article class="bible-content" id="bible-content"></article>
   </div>
@@ -297,7 +308,7 @@
   <!-- 5. Outros scripts -->
   <script src="../js/theme-manager.js" defer></script>
   <script src="../js/reading-settings-manager.js"></script>
-  
+
   <script src="../js/home.js" defer></script>
   <script src="../js/modal-handler.js" defer></script>
 </body>
