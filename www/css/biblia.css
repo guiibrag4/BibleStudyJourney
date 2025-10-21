@@ -8,16 +8,17 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    margin: 0;
-    
-    /* CORREÇÃO: Adiciona padding para a safe area e para o bottom-nav */
-    padding-top: env(safe-area-inset-top);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-    padding-bottom: 90px; /* Espaço crucial para o bottom-nav não cobrir o conteúdo */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+
+  /* CORREÇÃO: Adiciona padding para a safe area e para o bottom-nav */
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: 90px;
+  /* Espaço crucial para o bottom-nav não cobrir o conteúdo */
 }
 
 #bible-reader {
@@ -39,7 +40,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: var(--background-color); /* Usa variável */
+  background-color: var(--background-color);
+  /* Usa variável */
 }
 
 .selectors {
@@ -57,24 +59,27 @@ body {
 }
 
 .action-buttons-group {
-    display: flex;
-    align-items: center;
-    gap: 0; 
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 
 .version-selector,
 .chapter-selector {
   text-align: center;
-  color: var(--text-secondary-color); /* Usa variável */
+  color: var(--text-secondary-color);
+  /* Usa variável */
   font-size: 15px;
   height: 40px;
-  background-color: var(--hover-color); /* Usa variável */
+  background-color: var(--hover-color);
+  /* Usa variável */
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid var(--border-color); /* Usa variável */
+  border: 1px solid var(--border-color);
+  /* Usa variável */
   flex-shrink: 0;
 }
 
@@ -90,7 +95,7 @@ body {
 .action-button {
   background: none;
   border: none;
-  padding: 0; 
+  padding: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -110,7 +115,7 @@ body {
 
 /* Efeito de clique */
 .action-button:active img {
-    transform: scale(0.9);
+  transform: scale(0.9);
 }
 
 .save-page img {
@@ -121,14 +126,46 @@ body {
 .font-size-button img {
   width: 50px;
   height: 50px;
-} */
+}
+
+body #bible-reader #content-title-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 15px 10px 15px;
+  margin: 0 10px;
+}
+
+#content-book-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
+#content-chapter-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-secondary-color);
+  margin-top: 4px;
+}
 
 .bible-content {
-  padding: 9px 10px;
+  padding: 10px 20px;
   word-wrap: break-word;
   overflow-x: hidden;
-  background-color: var(--background-color); /* Usa variável */
+  background-color: var(--background-color);
+  /* Usa variável */
   flex: 1;
+
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .bible-content p {
@@ -139,7 +176,17 @@ body {
 }
 
 .bible-content p span {
-  color: var(--primary-color) !important; /* Destaque para o número do versículo */
+  color: var(--primary-color) !important;
+  /* Destaque para o número do versículo */
+}
+
+/* NOVAS CLASSES DE ANIMAÇÃO */
+.bible-content.page-turn-next {
+  animation: pageTurnNext 0.4s forwards;
+}
+
+.bible-content.page-turn-prev {
+  animation: pageTurnPrev 0.4s forwards;
 }
 
 /* Estilos para o modal de seleção de livros e capítulos */
@@ -177,9 +224,9 @@ body {
 .book-item:hover,
 .chapter-item:hover,
 .verse-item:hover {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
 }
 
 .chapter-grid,
@@ -190,15 +237,90 @@ body {
   padding: 8px;
 }
 
+/* ========================================= */
+/*  NOVO: ESTILOS PARA A DICA DE SWIPE       */
+/* ========================================= */
+#swipe-hint {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  /* Z-index alto para ficar sobre tudo */
+  padding: 20px 25px;
+  background-color: var(--swipe-hint-bg);
+  /* Usa variável de tema */
+  color: var(--swipe-hint-text);
+  /* Usa variável de tema */
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  /* Impede que a dica bloqueie cliques */
+  transition: opacity 0.5s ease-in-out;
+}
+
+#swipe-hint.visible {
+  opacity: 1;
+}
+
+#swipe-hint img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+  filter: var(--swipe-hint-icon-filter);
+  /* Usa variável de tema para a cor do ícone */
+  animation: swipe-animation 2.5s ease-in-out infinite;
+}
+
+#swipe-hint p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Animação para avançar capítulo (swipe esquerda) */
+@keyframes pageTurnNext {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+}
+
+/* Animação para retroceder capítulo (swipe direita) */
+@keyframes pageTurnPrev {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+
+
 /* Ajustes responsivos permanecem os mesmos */
 @media (max-width: 480px) {
   .bible-header {
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     gap: 8px;
   }
+
   .selectors {
     min-width: 0;
   }
+
   .version-selector,
   .chapter-selector {
     font-size: 14px;
@@ -206,9 +328,11 @@ body {
     flex-shrink: 1;
     max-width: 100%;
   }
+
   .chapter-selector {
     width: 150px;
   }
+
   .chapter-selector.tessalonicenses {
     width: 190px;
     flex-shrink: 0;
@@ -221,9 +345,11 @@ body {
     gap: 5px;
     overflow: hidden;
   }
+
   .selectors {
     min-width: 0;
   }
+
   .version-selector,
   .chapter-selector {
     font-size: 14px;
@@ -234,6 +360,7 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
   .font-size-button img {
     width: 40px;
     height: 40px;

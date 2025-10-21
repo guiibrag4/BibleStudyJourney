@@ -12,6 +12,11 @@
     --menu-text: #6c757d; /* Texto do menu de navegação */
     --accent-color: #4a90e2; /* Cor de destaque para itens ativos no menu */
 
+    /* NOVO: Variáveis para a Dica de Swipe */
+    --swipe-hint-bg: rgba(0, 0, 0, 0.75); /* Fundo semi-transparente */
+    --swipe-hint-text: #ffffff; /* Texto branco */
+    --swipe-hint-icon-filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(193deg) brightness(109%) contrast(109%); /* Filtro para deixar o ícone branco */
+
     /* NOVAS VARIÁVEIS PARA BOTÕES */
     --button-bg: #4a90e2; /* Fundo do botão primário */
     --button-text: #ffffff; /* Texto do botão primário (branco) */
@@ -58,6 +63,11 @@ body.dark-mode {
     /* CORREÇÃO: Filtro para tornar ícones claros (cinza-claro) no modo escuro */
     --icon-filter: brightness(0) saturate(100%) invert(69%) sepia(8%) saturate(755%) hue-rotate(179deg) brightness(95%) contrast(89%);
 
+     /* NOVO: Variáveis da Dica de Swipe para o Modo Escuro (iguais ao claro, funciona bem) */
+    --swipe-hint-bg: rgba(0, 0, 0, 0.8);
+    --swipe-hint-text: #ffffff;
+    --swipe-hint-icon-filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(193deg) brightness(109%) contrast(109%);
+
     /* Cores de grifo para modo escuro */
     --highlight-yellow: rgba(229, 192, 58, 0.2);
     --highlight-green: rgba(67, 160, 71, 0.2);
@@ -89,6 +99,11 @@ body.sepia-mode {
     
     /* CORREÇÃO: Filtro para tornar ícones escuros (cor de texto sépia) no modo sépia */
     --icon-filter: brightness(0) saturate(100%) invert(29%) sepia(18%) saturate(1221%) hue-rotate(349deg) brightness(93%) contrast(88%);
+
+     /* NOVO: Variáveis da Dica de Swipe para o Modo Sépia (iguais ao claro, funciona bem) */
+    --swipe-hint-bg: rgba(47, 34, 24, 0.8); /* Fundo mais integrado ao tema */
+    --swipe-hint-text: #f9f6f0; /* Texto claro do tema sépia */
+    --swipe-hint-icon-filter: brightness(0) saturate(100%) invert(97%) sepia(8%) saturate(415%) hue-rotate(320deg) brightness(106%) contrast(95%); /* Filtro para o ícone combinar */
 
     /* Cores de grifo para modo sépia */
     --highlight-yellow: #fdeeb3;

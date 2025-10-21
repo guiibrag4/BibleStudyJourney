@@ -16,6 +16,7 @@ const highlightsRoutes = require("./routes/highlightsRoutes.js");
 const chaptersRoutes = require("./routes/chaptersRoutes.js");
 const notesRoutes = require("./routes/notesRoutes.js");
 const statsRoutes = require("./routes/statsRoutes.js");
+const bibleRoutes = require("./routes/bibleRoutes.js");
 
 
 const app = express();
@@ -147,6 +148,7 @@ app.use("/auth", authRoutes);
 app.use("/api/user/progress", verifyToken, progressRoutes);
 
 // NOVO: Rotas de saves (grifos, capítulos, notas)
+app.use("/api/bible", verifyToken, bibleRoutes);
 app.use("/api/user/highlights", verifyToken, highlightsRoutes);
 app.use("/api/user/chapters", verifyToken, chaptersRoutes);
 app.use("/api/user/notes", verifyToken, notesRoutes);
@@ -159,7 +161,11 @@ app.get("/cadastro", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/cadastro2.html"));
 });
 
-app.get("/home", (req, res) => {
+app.get("/home2", (req, res) => {
+    res.sendFile(path.join(__dirname, "../www/html/home2.html"));
+});
+
+app.get("/biblia", (req, res) => {
     res.sendFile(path.join(__dirname, "../www/html/biblia.html"));
 });
 

@@ -24,29 +24,33 @@
   <div id="bible-reader">
     <header class="bible-header">
       <!-- Agora tudo está dentro de um único contêiner -->
-     <div class="selectors">
-    <!-- Itens da Esquerda -->
-    <div class="version-selector" id="version-selector">Nvi</div>
-    <div class="chapter-selector" id="chapter-selector">Gênesis 1</div>
+      <div class="selectors">
+        <!-- Itens da Esquerda -->
+        <div class="version-selector" id="version-selector">Nvi</div>
+        <div class="chapter-selector" id="chapter-selector">Gênesis 1</div>
 
-    <!-- Separador -->
-    <div class="spacer"></div>
+        <!-- Separador -->
+        <div class="spacer"></div>
 
-    <!-- NOVO: Grupo para os botões da direita -->
-    <div class="action-buttons-group">
-        <button id="mark-book-as-read-btn" class="action-button" title="Marcar este livro como lido">
+        <!-- NOVO: Grupo para os botões da direita -->
+        <div class="action-buttons-group">
+          <button id="mark-book-as-read-btn" class="action-button" title="Marcar este livro como lido">
             <img src="../img/check-circle-icon.svg" alt="Marcar como lido" />
-        </button>
-        <button class="action-button save-page" aria-label="SavePageButton" title="Salvar capítulo">
+          </button>
+          <button class="action-button save-page" aria-label="SavePageButton" title="Salvar capítulo">
             <img src="../img/bookmark-menu.svg" alt="Salvar capítulo" />
-        </button>
-        <button class="action-button font-size-button" aria-label="FontSizeButton" title="Ajustar fonte">
+          </button>
+          <button class="action-button font-size-button" aria-label="FontSizeButton" title="Ajustar fonte">
             <img src="../img/Font-size.svg" alt="Ajustar fonte" />
-        </button>
-    </div>
-</div>
+          </button>
+        </div>
+      </div>
     </header>
 
+    <div id="content-title-header">
+      <h1 id="content-book-title"></h1>
+      <h2 id="content-chapter-title"></h2>
+    </div>
 
     <article class="bible-content" id="bible-content"></article>
   </div>
@@ -86,14 +90,18 @@
   <div id="version-dialog" class="dialog">
     <div class="dialog-content">
       <div class="dialog-header">
-        <h2>Select Bible Version</h2>
+        <h2>Selecione sua versão da Bíblia</h2>
         <button class="close-button">×</button>
       </div>
       <div class="dialog-body">
         <select id="version-select">
-          <option value="Nvi">Nvi</option>
-          <option value="Kjv">Apee</option>
-          <option value="Nlt">Bbe</option>
+          <option value="nvi">nvi</option>
+          <option value="apee">apee</option>
+          <option value="bbe">bbe</option>
+          <option value="kjv">kjv</option>
+          <option value="nvi">nvi</option>
+          <option value="ra">ra</option>
+          <option value="rvr">rvr</option>
         </select>
       </div>
     </div>
@@ -274,6 +282,14 @@
     </div>
   </div>
 
+  <!-- NOVO: Dica de Swipe -->
+  <div id="swipe-hint">
+    <!-- Você precisará de um ícone para o gesto de swipe. Pode ser uma mão ou setas -->
+    <!-- Salve-o como 'swipe-gesture-icon.svg' na sua pasta 'img' -->
+    <img src="../img/swipe-gesture-icon.svg" alt="Gesto de deslizar">
+    <p>Deslize para navegar</p>
+  </div>
+
   <div id="overlay" class="overlay"></div>
 
   <nav class="bottom-nav">
@@ -309,7 +325,7 @@
   <script src="../js/theme-manager.js" defer></script>
   <script src="../js/reading-settings-manager.js"></script>
 
-  <script src="../js/home.js" defer></script>
+  <script src="../js/biblia.js" defer></script>
   <script src="../js/modal-handler.js" defer></script>
 </body>
 
