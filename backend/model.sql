@@ -68,3 +68,17 @@ CREATE TABLE app_biblia.anotacoes (
     -- A constraint UNIQUE garante que um usuário tenha apenas uma anotação por versículo/versão.
     UNIQUE (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia)
 );
+
+-- Tabela para rastrear os livros que o usuário marcou como lidos
+CREATE TABLE app_biblia.livros_lidos (
+    id_livro_lido SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    livro_abreviacao VARCHAR(5) NOT NULL,
+    data_conclusao TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+
+    -- Garante que um usuário só possa marcar um livro como lido uma vez
+    UNIQUE (id_usuario, livro_abreviacao)
+);
+
+-- Índice para acelerar a busca de livros lidos por usuário
+CREATE INDEX idx_livros_lidos_id_usuario ON app_biblia.livros_lidos(id_usuario);

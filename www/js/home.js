@@ -290,6 +290,40 @@ function setupEventListeners() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', async ( ) => {
+    // ... (seu código existente)
+
+    const markAsReadBtn = document.getElementById('mark-book-as-read-btn');
+    if (markAsReadBtn) {
+        markAsReadBtn.addEventListener('click', async () => {
+            // 'livroAtual' é a variável global que já existe no seu home.js
+            if (!livroAtual) {
+                alert('Nenhum livro selecionado.');
+                return;
+            }
+
+            if (confirm(`Deseja marcar o livro de ${capitalizeBookName(livroAtual)} como lido?`)) {
+                try {
+                    const token = await window.AuthManager.getToken();
+                    const response = await fetch(`/api/user/stats/read-book/${livroAtual}`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    if (response.ok) {
+                        alert('Livro marcado como lido com sucesso!');
+                    } else {
+                        throw new Error('Não foi possível marcar o livro como lido.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert(error.message);
+                }
+            }
+        });
+    }
+});
+
 // ===== INICIALIZAÇÃO =====
 window.addEventListener('beforeunload', saveCurrentState);
 
