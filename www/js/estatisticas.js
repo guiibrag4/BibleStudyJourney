@@ -1,6 +1,42 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const statsContent = document.getElementById('stats-content');
 
+      function getApiBaseUrl() {
+        const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
+        
+        console.log('[estatisticas.js] Ambiente nativo?', isNativeApp);
+
+        if (isNativeApp) {
+            console.log('[estatisticas.js] Usando API de produção (DuckDNS) para ambiente nativo');
+            // return 'https://biblestudyjourney.duckdns.org';
+            return 'https://biblestudyjourney-v2.onrender.com';
+        }
+
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        
+        console.log(`[estatisticas.js] Hostname: ${hostname}, Protocol: ${protocol}`);
+
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+        }
+
+        if (protocol === 'https:') {
+            if (hostname.includes('onrender.com')) {
+                return 'https://biblestudyjourney-v2.onrender.com';
+            }
+            if (hostname.includes('duckdns.org')) {
+                return 'https://biblestudyjourney.duckdns.org';
+            }
+        }
+
+        return window.location.origin;
+    }
+
+    const API_BASE_URL = getApiBaseUrl();
+    console.log('[estatisticas.js] API Base URL detectada:', API_BASE_URL);
+
+
     // Mapeamento de abreviações para nomes completos
     const bookNames = {
         "Gênesis": "gn", "Êxodo": "ex", "Levítico": "lv", "Números": "nm", "Deuteronômio": "dt",
@@ -22,28 +58,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         "Apocalipse": "ap"
     };
 
-    async function fetchStats() {
+   async function fetchStats() {
+        console.log('[estatisticas.js] Verificando autenticação...');
+        
         if (!window.AuthManager || !await window.AuthManager.isAuthenticated()) {
+            console.log('[estatisticas.js] Usuário não autenticado');
             statsContent.innerHTML = '<p>Você precisa estar logado para ver suas estatísticas.</p>';
             return;
         }
 
         try {
+            console.log('[estatisticas.js] Usuário autenticado, obtendo token...');
             const token = await window.AuthManager.getToken();
-            const response = await fetch('/api/user/stats', {
+            
+            // CORRIGIDO: Usar URL completa com API_BASE_URL
+            const url = `${API_BASE_URL}/api/user/stats`;
+            console.log('[estatisticas.js] Fazendo requisição para:', url);
+            
+            const response = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
+            console.log('[estatisticas.js] Status da resposta:', response.status);
+            
             if (!response.ok) {
-                throw new Error('Falha ao carregar estatísticas.');
+                throw new Error(`Falha ao carregar estatísticas: ${response.status}`);
             }
 
             const stats = await response.json();
+            console.log('[estatisticas.js] Dados recebidos:', stats);
             renderStats(stats);
 
         } catch (error) {
+            console.error('[estatisticas.js] Erro:', error);
             statsContent.classList.remove('stats-loading');
-            statsContent.innerHTML = `<p style="text-align: center;">${error.message}</p>`;
+            statsContent.innerHTML = `<p style="text-align: center;">Erro: ${error.message}</p>`;
         }
     }
 
