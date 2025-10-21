@@ -1,5 +1,4 @@
-const API_URL = "https://www.abibliadigital.com.br/api";
-const API_TOKEN = "***REMOVED***";
+const API_URL = "/api/bible";
 
 // ===== ESTADO GLOBAL =====
 let versaoAtual = "nvi";
@@ -10,13 +9,13 @@ let tempLivro = null;
 let tempCapitulo = null;
 
 // ===== ELEMENTOS DO DOM =====
-const versionSelector = document.getElementById('version-selector' );
+const versionSelector = document.getElementById('version-selector');
 const chapterSelector = document.getElementById('chapter-selector');
 const bibleContentEl = document.getElementById('bible-content');
 
 // Títulos dinâmicos para mudança de livro/capítulo
 const contentBookTitleEl = document.getElementById('content-book-title');
-const contentChapterTitleEl = document.getElementById('content-chapter-title'); 
+const contentChapterTitleEl = document.getElementById('content-chapter-title');
 
 const versionDialog = document.getElementById('version-dialog');
 const bookDialog = document.getElementById('book-dialog');
@@ -24,6 +23,24 @@ const chapterDialog = document.getElementById('chapter-dialog');
 const verseDialog = document.getElementById('verse-dialog');
 const overlay = document.getElementById('overlay');
 const versionSelect = document.getElementById('version-select');
+
+// ===== FUNÇÃO AUXILIAR PARA REQUISIÇÕES AUTENTICADAS (NOVO) =====
+/**
+ * Realiza uma chamada fetch para a API, incluindo o token de autenticação do usuário.
+ * @param {string} url - O endpoint da API para chamar (ex: '/verses/nvi/gn/1').
+ * @returns {Promise<Response>} - A promessa da resposta da requisição.
+ */
+
+async function fetchWithAuth(url) {
+    // Assumindo que você tem um AuthManager global para pegar o token, como no seu saves.js
+    const token = await window.AuthManager.getToken();
+    
+    const headers = {
+        'Authorization': `Bearer ${token}`
+    };
+
+    return fetch(url, { headers });
+}
 
 // ===== UTILITÁRIOS =====
 function capitalizeBookName(book) {
@@ -83,33 +100,61 @@ function closeAllModals() {
 // ===== API CALLS =====
 async function fetchBibleContent(version, book, chapter) {
     try {
-        const response = await fetch(`${API_URL}/verses/${version}/${book}/${chapter}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+        const response = await fetchWithAuth(`${API_URL}/verses/${version}/${book}/${chapter}`,);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log("Conteúdo da Bíblia recebido:", data);
         renderBibleContent(data.verses);
-    } catch (error) { console.error("Erro ao buscar conteúdo da Bíblia:", error); }
+    } catch (error) {
+        console.error("Erro ao buscar conteúdo da Bíblia:", error);
+    }
 }
 
 async function fetchChapters(book) {
     try {
-        const response = await fetch(`${API_URL}/books/${book}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+        const response = await fetchWithAuth(`${API_URL}/books/${book}`,);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('[biblia.js] Capítulos recebidos:', data);
+
         const chapters = Array.from({ length: data.chapters }, (_, i) => i + 1);
         const chapterGrid = document.getElementById('chapter-grid');
         chapterGrid.innerHTML = chapters.map(chapter => `<button class="chapter-item" data-chapter="${chapter}">${chapter}</button>`).join('');
         return data.chapters;
-    } catch (error) { console.error("Erro ao buscar capítulos:", error); return []; }
+    } catch (error) {
+        console.error("Erro ao buscar capítulos:", error);
+        return [];
+    }
 }
 
 async function fetchVerses(version, book, chapter) {
     try {
-        const response = await fetch(`${API_URL}/verses/${version}/${book}/${chapter}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+        const response = await fetchWithAuth(`${API_URL}/verses/${version}/${book}/${chapter}`,);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('[biblia.js] Versículos recebidos:', data);
+
         if (data.verses && data.verses.length > 0) {
             const verses = data.verses.map((_, i) => i + 1);
             const verseGrid = document.getElementById('verse-grid');
-            verseGrid.innerHTML = verses.map(verse => `<button class="verse-item" data-verse="${verse}">${verse}</button>`).join('');
+            verseGrid.innerHTML = verses.map(verse =>
+                `<button class="verse-item" data-verse="${verse}">${verse}</button>`).join('');
         }
-    } catch (error) { console.error("Erro ao buscar versículos:", error); }
+    } catch (error) {
+        console.error("Erro ao buscar versículos:", error);
+    }
 }
 
 function renderBibleContent(verses) {
@@ -151,7 +196,12 @@ async function proximoCapitulo() {
     isProcessingSwipe = true;
 
     try {
-        const response = await fetch(`${API_URL}/books/${livroAtual}`, { headers: { Authorization: `Bearer ${API_TOKEN}` } });
+        const response = await fetchWithAuth(`${API_URL}/books/${livroAtual}`);
+
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+
         const bookData = await response.json();
 
         if (capituloAtual < bookData.chapters) {
@@ -327,7 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Esconde após 4 segundos e marca como vista
         setTimeout(() => {
             hint.classList.remove('visible');
-            localStorage.setItem('hasSeenSwipeHint', 'true');a
+            localStorage.setItem('hasSeenSwipeHint', 'true'); 
         }, 5000); // Duração total: 1s de espera + 4s de exibição
     }
 });
