@@ -8,11 +8,51 @@
 // =============================================================================
 // CONSTANTES E CONFIGURAÇÕES
 // =============================================================================
+ // FUNÇÃO CORRIGIDA: getApiBaseUrl
+  function getApiBaseUrl() {
+    const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
+
+    // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
+    if (isNativeApp) {
+      console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
+      // Escolha aqui o seu servidor de produção principal.
+      // return 'https://biblestudyjourney.duckdns.org';
+      Ou: return 'https://biblestudyjourney-v2.onrender.com';
+    }
+
+    // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
+    const hostname = window.location.hostname;
+    const protocol = window.location.protocol;
+
+    console.log(`[getApiBaseUrl] Detectado ambiente web: ${protocol}//${hostname}`);
+
+    // Ambiente de desenvolvimento local no navegador
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:3000';
+    }
+
+    // Ambiente de produção no navegador (Render, DuckDNS, etc. )
+    if (protocol === 'https:') {
+      if (hostname.includes('onrender.com')) {
+        return 'https://biblestudyjourney-v2.onrender.com';
+      }
+      if (hostname.includes('duckdns.org')) {
+        return 'https://biblestudyjourney.duckdns.org';
+      }
+    }
+
+    // Fallback final: usa a origem da página.
+    // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
+    return window.location.origin;
+  }
+
+  // const API_BASE_URL = getApiBaseUrl();
+
 const CONFIG = {
   COMPLETION_THRESHOLD: 95, // Porcentagem para considerar vídeo completo
   MAX_RECENT_VIDEOS: 5,     // Máximo de vídeos recentes a exibir
   THUMBNAIL_QUALITY: 'mqdefault', // Qualidade da thumbnail do YouTube
-  BIBLE_API_PROXY_URL: '/api/bible'
+  BIBLE_API_URL: `${getApiBaseUrl()}/api/bible`
 };
 
 /**
@@ -272,7 +312,7 @@ const VerseManager = {
     const version = 'nvi';
 
     try {
-      const response = await this.fetchWithAuth(`${CONFIG.BIBLE_API_PROXY_URL}/verses/${version}/random`);
+      const response = await this.fetchWithAuth(`${CONFIG.BIBLE_API_URL}/verses/${version}/random`);
       if (!response.ok) throw new Error('Falha na requisição à API');
 
       const data = await response.json();
