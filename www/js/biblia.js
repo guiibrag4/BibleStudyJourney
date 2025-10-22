@@ -1,13 +1,13 @@
- // FUNÇÃO CORRIGIDA: getApiBaseUrl
-  function getApiBaseUrl() {
+// FUNÇÃO CORRIGIDA: getApiBaseUrl
+function getApiBaseUrl() {
     const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
 
     // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
     if (isNativeApp) {
-      console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
-      // Escolha aqui o seu servidor de produção principal.
-      // return 'https://biblestudyjourney.duckdns.org';
-      Ou: return 'https://biblestudyjourney-v2.onrender.com';
+        console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
+        // Escolha aqui o seu servidor de produção principal.
+        // return 'https://biblestudyjourney.duckdns.org';
+        Ou: return 'https://biblestudyjourney-v2.onrender.com';
     }
 
     // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
@@ -18,26 +18,26 @@
 
     // Ambiente de desenvolvimento local no navegador
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:3000';
+        return 'http://localhost:3000';
     }
 
     // Ambiente de produção no navegador (Render, DuckDNS, etc. )
     if (protocol === 'https:') {
-      if (hostname.includes('onrender.com')) {
-        return 'https://biblestudyjourney-v2.onrender.com';
-      }
-      if (hostname.includes('duckdns.org')) {
-        return 'https://biblestudyjourney.duckdns.org';
-      }
+        if (hostname.includes('onrender.com')) {
+            return 'https://biblestudyjourney-v2.onrender.com';
+        }
+        if (hostname.includes('duckdns.org')) {
+            return 'https://biblestudyjourney.duckdns.org';
+        }
     }
 
     // Fallback final: usa a origem da página.
     // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
     return window.location.origin;
-  }
+}
 
 
-const API_URL = `${getApiBaseUrl( )}/api/bible`;
+const API_URL = `${getApiBaseUrl()}/api/bible`;
 
 // ===== ESTADO GLOBAL =====
 let versaoAtual = "nvi";
@@ -73,7 +73,7 @@ const versionSelect = document.getElementById('version-select');
 async function fetchWithAuth(url) {
     // Assumindo que você tem um AuthManager global para pegar o token, como no seu saves.js
     const token = await window.AuthManager.getToken();
-    
+
     const headers = {
         'Authorization': `Bearer ${token}`
     };
@@ -97,7 +97,7 @@ function updateChapterSelectorStyle() {
 
 function updateUI() {
     chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
-    versionSelector.textContent = versaoAtual.toUpperCase();
+    versionSelector.textContent = versaoAtual.charAt(0).toUpperCase() + versaoAtual.slice(1);
     updateChapterSelectorStyle();
 
     if (contentBookTitleEl && contentChapterTitleEl) {
@@ -109,50 +109,64 @@ function updateUI() {
 // ===== GERENCIAMENTO DE ESTADO =====
 async function saveCurrentState() {
     try {
-        const state = { 
-            version: versaoAtual, 
-            book: livroAtual, 
-            chapter: capituloAtual, 
+        const state = {
+            version: versaoAtual,
+            book: livroAtual,
+            chapter: capituloAtual,
             verse: versoAtual // Importante ter o 'verse' também
         };
-        
+
         // Usamos localforage, que é mais robusto
         await localforage.setItem('bibleAppState', state);
 
         // Linha de DEBUG: Vamos ver no console o que está sendo salvo
         console.log('✅ Estado da leitura salvo:', state);
 
-    } catch (error) { 
-        console.error("❌ Erro ao salvar o estado:", error); 
+    } catch (error) {
+        console.error("❌ Erro ao salvar o estado:", error);
     }
 }
 
 async function loadInitialState() {
     try {
-        // A MÁGICA ACONTECE AQUI:
         const savedState = await localforage.getItem('bibleAppState');
-        
+
         if (savedState) {
             versaoAtual = savedState.version || "nvi";
             livroAtual = savedState.book || "gn";
             capituloAtual = savedState.chapter || 1;
-            versoAtual = savedState.verse || 1; // Pega até o último versículo visto
+            versoAtual = savedState.verse || 1;
         }
-        
-        updateUI(); // Atualiza a interface com os dados carregados
-        await fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Busca o conteúdo correto
-        
+
+        if (versionSelect) {
+            versionSelect.value = versaoAtual;
+        }
+
+        updateUI();
+        await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+
         if (savedState && savedState.verse > 1) {
-         
             setTimeout(() => {
                 scrollToVerse(savedState.verse);
             }, 500);
         }
 
-    } catch (error) { 
-        console.error("Erro ao carregar o estado inicial:", error); 
+    } catch (error) {
+        console.error("Erro ao carregar o estado inicial:", error);
     }
 }
+
+// Arquivo: biblia.js
+
+async function changeVersion(novaVersao) {
+    versaoAtual = novaVersao;
+    closeAllModals();
+    updateUI();
+    bibleContentEl.innerHTML = '<p class="loading-feedback">Carregando...</p>';
+    await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+    await saveCurrentState();
+}
+
 
 // ===== GERENCIAMENTO DE MODAIS =====
 function openDialog(dialog) { dialog.classList.add('open'); overlay.classList.add('open'); }
@@ -340,17 +354,25 @@ function handleSwipeGesture() {
 
 // ===== EVENT LISTENERS =====
 function setupEventListeners() {
+    // --- INÍCIO DA CORREÇÃO ---
     // Seletor de versão
-    if (versionSelector) versionSelector.addEventListener('click', () => openDialog(versionDialog));
-    if (versionSelect) {
-        versionSelect.addEventListener('change', async (event) => {
-            versaoAtual = event.target.value.toLowerCase();
-            updateUI();
-            await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
-            await saveCurrentState();
-            closeAllModals();
+    if (versionSelector) {
+        versionSelector.addEventListener('click', () => {
+            // Sincroniza o valor do select com o estado atual ANTES de abrir o diálogo
+            if (versionSelect) {
+                versionSelect.value = versaoAtual;
+            }
+            openDialog(versionDialog);
         });
     }
+    // --- FIM DA CORREÇÃO ---
+
+   if (versionSelect) {
+    versionSelect.addEventListener('change', (event) => {
+        // Apenas chama a função controladora com o novo valor.
+        changeVersion(event.target.value);
+    });
+}
 
     // Seletor de livro/capítulo
     if (chapterSelector) chapterSelector.addEventListener('click', () => openDialog(bookDialog));
@@ -442,7 +464,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Esconde após 4 segundos e marca como vista
         setTimeout(() => {
             hint.classList.remove('visible');
-            localStorage.setItem('hasSeenSwipeHint', 'true'); 
+            localStorage.setItem('hasSeenSwipeHint', 'true');
         }, 5000); // Duração total: 1s de espera + 4s de exibição
     }
 });
