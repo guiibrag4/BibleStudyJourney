@@ -52,12 +52,6 @@ body {
   text-align: center;
 }
 
-.bible-icon {
-  width: 42px;
-  height: 42px;
-  margin-left: auto;
-}
-
 /* Main Content Styles */
 .main-content {
   display: flex;
@@ -97,6 +91,47 @@ body {
   text-align: center;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+
+/* ================================================== */
+/*  ESTILOS PARA O NOVO LINK DE PROFESSORES           */
+/* ================================================== */
+.teachers-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: fit-content; /* Largura se ajusta ao conteúdo */
+    margin: 10px auto 25px auto; /* Centraliza e adiciona espaçamento */
+    padding: 10px 20px;
+    background-color: var(--hover-color); /* Cor de fundo sutil */
+    border: 1px solid var(--border-color);
+    border-radius: 20px; /* Bordas bem arredondadas */
+    text-decoration: none; /* Remove o sublinhado do link */
+    color: var(--text-secondary-color); /* Cor de texto secundária */
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.teachers-link:hover {
+    background-color: var(--accent-color); /* Cor de destaque no hover */
+    color: var(--button-text); /* Cor do texto do botão (geralmente branco) */
+    border-color: var(--accent-color);
+    transform: translateY(-2px); /* Efeito de elevação sutil */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.teachers-link img {
+    width: 20px;
+    height: 20px;
+    filter: var(--icon-filter); /* Reutiliza seu filtro de ícone para combinar com o tema */
+    transition: filter 0.2s ease-in-out;
+}
+
+.teachers-link:hover img {
+    filter: brightness(0) saturate(100%) invert(100%); /* Deixa o ícone branco no hover */
 }
 
 /* Topics List Styles */

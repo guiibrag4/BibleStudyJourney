@@ -70,23 +70,49 @@ function updateUI() {
 // ===== GERENCIAMENTO DE ESTADO =====
 async function saveCurrentState() {
     try {
-        const state = { version: versaoAtual, book: livroAtual, chapter: capituloAtual, verse: versoAtual };
+        const state = { 
+            version: versaoAtual, 
+            book: livroAtual, 
+            chapter: capituloAtual, 
+            verse: versoAtual // Importante ter o 'verse' também
+        };
+        
+        // Usamos localforage, que é mais robusto
         await localforage.setItem('bibleAppState', state);
-    } catch (error) { console.error("Erro ao salvar o estado:", error); }
+
+        // Linha de DEBUG: Vamos ver no console o que está sendo salvo
+        console.log('✅ Estado da leitura salvo:', state);
+
+    } catch (error) { 
+        console.error("❌ Erro ao salvar o estado:", error); 
+    }
 }
 
 async function loadInitialState() {
     try {
+        // A MÁGICA ACONTECE AQUI:
         const savedState = await localforage.getItem('bibleAppState');
+        
         if (savedState) {
             versaoAtual = savedState.version || "nvi";
             livroAtual = savedState.book || "gn";
             capituloAtual = savedState.chapter || 1;
-            versoAtual = savedState.verse || 1;
+            versoAtual = savedState.verse || 1; // Pega até o último versículo visto
         }
-        updateUI();
-        await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
-    } catch (error) { console.error("Erro ao carregar o estado inicial:", error); }
+        
+        updateUI(); // Atualiza a interface com os dados carregados
+        await fetchBibleContent(versaoAtual, livroAtual, capituloAtual); // Busca o conteúdo correto
+        
+        if (savedState && savedState.verse > 1) {
+         
+            setTimeout(() => {
+                scrollToVerse(savedState.verse);
+            }, 500);
+        }
+
+    } catch (error) { 
+        console.error("Erro ao carregar o estado inicial:", error); 
+    }
 }
 
 // ===== GERENCIAMENTO DE MODAIS =====

@@ -14,6 +14,27 @@ router.use((req, res, next) => {
     next();
 });
 
+router.get('/verses/:version/random', async (req,res) => {
+    const { version } = req.params;
+    const url = `${BIBLE_API_URL}/verses/${version}/random`;
+
+        try {
+        const apiResponse = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${API_TOKEN}` }
+        });
+        const data = await apiResponse.json();
+
+        if (!apiResponse.ok) {
+            return res.status(apiResponse.status).json(data);
+        }
+
+        res.json(data);
+    } catch (error) {
+        console.error('Erro ao buscar versículo aleatório:', error);
+        res.status(500).json({ error: 'Erro interno ao contatar o serviço da Bíblia.' });
+    }
+});
+
 // Rota para buscar os versículos de um capítulo
 router.get('/verses/:version/:book/:chapter', async (req, res) => {
     const { version, book, chapter } = req.params;
