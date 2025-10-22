@@ -11,7 +11,8 @@
 const CONFIG = {
   COMPLETION_THRESHOLD: 95, // Porcentagem para considerar vídeo completo
   MAX_RECENT_VIDEOS: 5,     // Máximo de vídeos recentes a exibir
-  THUMBNAIL_QUALITY: 'mqdefault' // Qualidade da thumbnail do YouTube
+  THUMBNAIL_QUALITY: 'mqdefault', // Qualidade da thumbnail do YouTube
+  BIBLE_API_PROXY_URL: '/api/bible'
 };
 
 /**
@@ -23,8 +24,8 @@ function decodeJwt(token) {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
 
     return JSON.parse(jsonPayload);
@@ -52,11 +53,11 @@ const UserManager = {
     if (window.AuthManager && await window.AuthManager.isAuthenticated()) {
       const token = await window.AuthManager.getToken();
       const userData = decodeJwt(token);
-      
+
       // O seu token JWT tem o campo 'nome'? Se não, ajuste aqui.
       // Supondo que o payload do token tenha { id_usuario, nome, email }
-      const userName = userData?.nome || 'Usuário'; 
-      
+      const userName = userData?.nome || 'Usuário';
+
       this.greetingElement.textContent = `Olá, ${userName}!`;
     } else {
       this.greetingElement.textContent = 'Olá!';
@@ -69,10 +70,6 @@ const UserManager = {
 // =============================================================================
 const JourneyManager = {
   container: null,
-
-  /**
-   * Inicializa o gerenciador da jornada
-   */
   init() {
     this.container = document.querySelector('.cartoes-jornada');
     this.loadJourney();
@@ -86,9 +83,9 @@ const JourneyManager = {
   createCard(videoProgress) {
     // Validações básicas
     if (!videoProgress.duration || !videoProgress.id) return null;
-    
+
     const percentage = Math.floor((videoProgress.currentTime / videoProgress.duration) * 100);
-    
+
     // Não exibe vídeos já concluídos
     if (percentage >= CONFIG.COMPLETION_THRESHOLD) return null;
 
@@ -101,7 +98,7 @@ const JourneyManager = {
 
     // Conteúdo do card (usando a estrutura do seu CSS extra)
     const thumbnailUrl = `https://img.youtube.com/vi/${videoProgress.id}/${CONFIG.THUMBNAIL_QUALITY}.jpg`;
-    
+
     card.innerHTML = `
       <div class="card-thumbnail-wrapper">
         <img src="${thumbnailUrl}" alt="Capa do vídeo ${videoProgress.title}" class="card-thumbnail">
@@ -116,7 +113,7 @@ const JourneyManager = {
     `;
 
     // Event listener para navegação
-    card.addEventListener('click', this.handleCardClick.bind(this ));
+    card.addEventListener('click', this.handleCardClick.bind(this));
 
     return card;
   },
@@ -195,22 +192,64 @@ const JourneyManager = {
 };
 
 // =============================================================================
-// GERENCIAMENTO DOS VERSÍCULOS
+// NOVO: GERENCIAMENTO DA LEITURA CONTÍNUA
+// =============================================================================
+const ReadingManager = {
+  continueButton: null,
+  readingInfoText: null,
+
+  init() {
+    this.continueButton = document.getElementById('botao-continuar-leitura');
+    this.readingInfoText = document.querySelector('.cartao-leitura .texto-suave');
+    this.setupContinueButton();
+  },
+
+  async setupContinueButton() {
+    if (!this.continueButton || !this.readingInfoText) return;
+
+    try {
+      const lastReadingState = await localforage.getItem('bibleAppState');
+
+      if (lastReadingState && lastReadingState.book && lastReadingState.chapter) {
+        const bookName = this.capitalizeBookName(lastReadingState.book);
+        this.readingInfoText.innerHTML = `Você parou em <strong>${bookName} ${lastReadingState.chapter}</strong>`;
+
+        // AÇÃO PRINCIPAL: Apenas redireciona.
+        this.continueButton.addEventListener('click', () => {
+          window.location.href = 'biblia.html';
+        });
+      } else {
+        // ... (código para quando não há nada salvo)
+        this.readingInfoText.innerHTML = 'Comece a ler na <strong>Bíblia</strong> para continuar de onde parou.';
+        this.continueButton.textContent = 'Começar a Ler';
+        this.continueButton.addEventListener('click', () => {
+          window.location.href = 'biblia.html';
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao carregar estado de leitura:", error);
+    }
+  },
+
+  // Função auxiliar para capitalizar o nome do livro (pode ser movida para um arquivo de utils)
+  capitalizeBookName(bookAbbrev) {
+    const bookNames = { gn: "Gênesis", ex: "Êxodo", lv: "Levítico", nm: "Números", dt: "Deuteronômio", js: "Josué", jz: "Juízes", rt: "Rute", "1sm": "1 Samuel", "2sm": "2 Samuel", "1rs": "1 Reis", "2rs": "2 Reis", "1cr": "1 Crônicas", "2cr": "2 Crônicas", ed: "Esdras", ne: "Neemias", et: "Ester", jó: "Jó", sl: "Salmos", pv: "Provérbios", ec: "Eclesiastes", ct: "Cantares", is: "Isaías", jr: "Jeremias", lm: "Lamentações", ez: "Ezequiel", dn: "Daniel", os: "Oséias", jl: "Joel", am: "Amós", ob: "Obadias", jn: "Jonas", mq: "Miquéias", na: "Naum", hb: "Habacuque", sf: "Sofonias", ag: "Ageu", zc: "Zacarias", ml: "Malaquias", mt: "Mateus", mc: "Marcos", lc: "Lucas", jo: "João", at: "Atos", rm: "Romanos", "1co": "1 Coríntios", "2co": "2 Coríntios", gl: "Gálatas", ef: "Efésios", fp: "Filipenses", cl: "Colossenses", "1ts": "1 Tessalonicenses", "2ts": "2 Tessalonicenses", "1tm": "1 Timóteo", "2tm": "2 Timóteo", tt: "Tito", fl: "Filemom", hb: "Hebreus", tg: "Tiago", "1pe": "1 Pedro", "2pe": "2 Pedro", "1jo": "1 João", "2jo": "2 João", "3jo": "3 João", jd: "Judas", ap: "Apocalipse" };
+    return bookNames[bookAbbrev] || bookAbbrev;
+  }
+};
+
+// =============================================================================
+// GERENCIAMENTO DO VERSÍCULO DO DIA
 // =============================================================================
 const VerseManager = {
   elements: {},
 
-  /**
-   * Inicializa o gerenciador de versículos
-   */
   init() {
     this.cacheElements();
     this.setupEventListeners();
+    this.loadDailyVerse(); // Carrega o versículo ao iniciar
   },
 
-  /**
-   * Faz cache dos elementos DOM necessários
-   */
   cacheElements() {
     this.elements = {
       copyButton: document.getElementById('botao-copiar-versiculo'),
@@ -220,11 +259,50 @@ const VerseManager = {
     };
   },
 
-  /**
-   * Configura os event listeners dos botões
-   */
+  async fetchWithAuth(url) {
+    const token = await window.AuthManager.getToken();
+    const headers = { 'Authorization': `Bearer ${token}` };
+    return fetch(url, { headers });
+  },
+
+  async loadDailyVerse() {
+    if (!this.elements.verseText || !this.elements.verseReference) return;
+
+    // Define uma versão padrão, por exemplo 'nvi'
+    const version = 'nvi';
+
+    try {
+      const response = await this.fetchWithAuth(`${CONFIG.BIBLE_API_PROXY_URL}/verses/${version}/random`);
+      if (!response.ok) throw new Error('Falha na requisição à API');
+
+      const data = await response.json();
+
+      // Atualiza os elementos na tela com os dados recebidos
+      let verseText = data.text;
+      verseText = verseText.replace(/^["']+/, '');
+      verseText = verseText.replace(/["']+$/, '');
+      verseText = verseText.charAt(0).toUpperCase() + verseText.slice(1);
+
+      this.elements.verseText.innerHTML = `<span class="verse-number-inline">${data.number}</span> ${data.text}`;
+      this.elements.verseReference.textContent = `${data.book.name} ${data.chapter}:${data.number}`;
+
+      // Reconfigura os event listeners com o novo texto
+      this.setupEventListeners();
+
+    } catch (error) {
+      console.error("Erro ao buscar versículo do dia:", error);
+      this.elements.verseText.textContent = 'Não foi possível carregar o versículo do dia. Tente novamente mais tarde.';
+      this.elements.verseReference.textContent = '';
+    }
+  },
+
   setupEventListeners() {
     if (!this.elements.verseText) return;
+
+    // Remove listeners antigos para evitar duplicação
+    this.elements.copyButton.replaceWith(this.elements.copyButton.cloneNode(true));
+    this.elements.shareButton.replaceWith(this.elements.shareButton.cloneNode(true));
+    this.cacheElements(); // Recarregar elementos clonados
 
     const fullText = this.getFullVerseText();
 
@@ -237,43 +315,34 @@ const VerseManager = {
     }
   },
 
-  /**
-   * Obtém o texto completo do versículo (texto + referência)
-   * @returns {string} - Texto completo formatado
-   */
   getFullVerseText() {
-    const verseText = this.elements.verseText.innerText.trim();
-    const reference = this.elements.verseReference?.innerText.trim() || '';
-    return `${verseText}\n\n${reference}`;
+    const verseText = this.elements.verseText.textContent.trim();
+    const fullReference = this.elements.verseReference?.textContent.trim() || '';
+
+    const verseNumber = fullReference.split(':').pop();
+
+    const formattedText = `${verseNumber} ${verseText}`;
+
+    return `${formattedText}\n\n- ${fullReference}`;
   },
 
-  /**
-   * Copia o versículo para a área de transferência
-   * @param {string} text - Texto a ser copiado
-   */
   async copyVerse(text) {
     try {
       await navigator.clipboard.writeText(text);
-      // TODO: Adicionar feedback visual de sucesso
+      alert('Versículo copiado!'); // Feedback simples
     } catch (error) {
       console.error('Erro ao copiar:', error);
       alert('Não foi possível copiar.');
     }
   },
 
-  /**
-   * Compartilha o versículo usando a Web Share API
-   * @param {string} text - Texto a ser compartilhado
-   */
   async shareVerse(text) {
     try {
       if (navigator.share) {
-        await navigator.share({
-          title: 'Versículo do dia',
-          text: text
-        });
+        await navigator.share({ title: 'Versículo do Dia', text: text });
       } else {
-        alert('Compartilhamento não suportado neste navegador.');
+        this.copyVerse(text); // Como fallback, copia o texto
+        alert('Compartilhamento não suportado. O versículo foi copiado para a área de transferência.');
       }
     } catch (error) {
       console.error('Erro ao compartilhar:', error);
@@ -284,9 +353,10 @@ const VerseManager = {
 // =============================================================================
 // INICIALIZAÇÃO DA APLICAÇÃO
 // =============================================================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Inicializa todos os módulos
   UserManager.init();
   JourneyManager.init();
+  ReadingManager.init();
   VerseManager.init();
 });

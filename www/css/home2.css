@@ -358,8 +358,8 @@ body {
 }
 
 .texto-versiculo {
-  margin-bottom: 1rem;
-  font-size: clamp(0.9rem, 3.8vw, 1rem);
+  margin-bottom: 0.7rem;
+  font-size: clamp(1rem, 4.2vw, 1.1rem);
   line-height: 1.7;
   font-style: italic;
   color: var(--text-secundary-color);
@@ -375,7 +375,7 @@ body {
 
 .referencia-versiculo {
   opacity: 0.9;
-  font-size: clamp(0.875rem, 3.5vw, 0.9rem);
+ font-size: clamp(1rem, 4.2vw, 1.1rem);
   font-weight: 600;
   text-align: right;
   color: var(--text-color);

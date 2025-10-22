@@ -13,8 +13,8 @@
 
 <body>
 
-   <script>
-    (function() {
+  <script>
+    (function () {
       const theme = localStorage.getItem('selectedTheme') || 'light-mode';
       document.body.classList.add(theme);
     })();
@@ -52,6 +52,11 @@
           <div class="subtitle">escolha por onde começar</div>
         </div>
       </section>
+
+      <a href="professores.html" class="teachers-link">
+        <img src="../img/users-icon.svg" alt="Ícone de professores">
+        <span>Conheça seus professores</span>
+      </a>
 
       <div class="topic-item" data-topic="Preparação">
         <div class="topic-header">
@@ -260,7 +265,7 @@
   </main>
   </div>
 
-  <script src="../js/auth-guard.js"></script>
+  <!-- <script src="../js/auth-guard.js"></script> -->
   <script src="../js/tl1-teologia.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
   <script src="../js/theme-manager.js" defer></script>
