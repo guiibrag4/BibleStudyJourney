@@ -308,8 +308,6 @@ body #bible-reader #content-title-header {
   }
 }
 
-
-
 /* Ajustes responsivos permanecem os mesmos */
 @media (max-width: 480px) {
   .bible-header {

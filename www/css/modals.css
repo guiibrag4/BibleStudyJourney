@@ -1,4 +1,4 @@
-/* Arquivo: modals.css (Versão Corrigida com Estilos do Slider) */
+/* Arquivo: modals.css (Versão Ajustada - Alinhada com Modal de Estudo) */
 
 .dialog {
     display: none;
@@ -192,5 +192,49 @@ input[type="range"]::-moz-range-thumb {
     border: 3px solid var(--card-background-color);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
     cursor: pointer;
+}
+
+/* ========================================= */
+/*  ESTILOS PARA SELECT (VERSÃO DA BÍBLIA)  */
+/* ========================================= */
+
+#version-select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    background-color: var(--hover-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none; /* Remove estilo padrão do navegador */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    /* Adiciona seta customizada */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1.41 0L6 4.59L10.59 0L12 1.41l-6 6l-6-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+}
+
+#version-select:hover {
+    background-color: var(--background-color);
+    border-color: var(--primary-color);
+}
+
+#version-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+/* Estilo das opções do select */
+#version-select option {
+    background-color: var(--card-background-color);
+    color: var(--text-color);
+    padding: 12px;
 }
 

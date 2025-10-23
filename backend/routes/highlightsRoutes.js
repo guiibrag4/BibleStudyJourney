@@ -68,7 +68,8 @@ router.post('/', async (req, res) => {
         }
 
         // Aceita abreviações com números e acentos (ex.: 1sm, jó)
-        const match = reference.match(/^([0-9A-Za-zÀ-ÿ]+)(\d+):(\d+)$/i);
+        const match = reference.match(/^([0-9A-Za-zÀ-ÿ°]+)(\d+):(\d+)$/i);
+
         if (!match) {
             return res.status(400).json({ error: 'Formato de referência inválido' });
         }
