@@ -1,3 +1,76 @@
+// =============================================================================
+// GERENCIAMENTO DO DEVOCIONAL DIÁRIO COM IA
+// =============================================================================
+const DevotionalManager = {
+  elements: {},
+
+  init() {
+    this.cacheElements();
+    // Se o VerseManager já tiver preenchido o DOM, tenta aproveitar imediatamente
+    const existingVerse = this.getVerseFromDOM();
+    if (existingVerse) {
+      this.loadDevotionalFromVerse(existingVerse);
+    }
+    // Escuta atualizações do versículo
+    window.addEventListener('verse:loaded', (e) => {
+      const v = e?.detail;
+      if (v?.text && v?.reference) {
+        this.loadDevotionalFromVerse({ text: v.text, reference: v.reference });
+      }
+    });
+  },
+
+  cacheElements() {
+    this.elements = {
+      verseText: document.querySelector('.devocional-texto-versiculo'),
+      verseReference: document.querySelector('.devocional-referencia'),
+      reflexao: document.querySelector('.devocional-texto-reflexao'),
+      aplicacao: document.querySelector('.devocional-texto-aplicacao'),
+    };
+  },
+
+  getVerseFromDOM() {
+    const refEl = document.querySelector('.referencia-versiculo');
+    const textEl = document.querySelector('.texto-versiculo');
+    const reference = refEl ? refEl.textContent.trim() : '';
+    const text = textEl ? textEl.textContent.trim() : '';
+    if (text && reference) return { text, reference };
+    return null;
+  },
+
+  async loadDevotionalFromVerse(verse) {
+    if (!this.elements.verseText || !this.elements.reflexao || !this.elements.aplicacao) return;
+    if (!verse?.text || !verse?.reference) return;
+
+    try {
+      // Preenche com placeholders enquanto gera
+      this.elements.verseText.textContent = verse.text;
+      this.elements.verseReference.textContent = verse.reference;
+      this.elements.reflexao.textContent = 'Gerando reflexão...';
+      this.elements.aplicacao.textContent = 'Gerando aplicação prática...';
+
+      const token = window.AuthManager ? await window.AuthManager.getToken() : null;
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      const response = await fetch(`${CONFIG.BIBLE_API_URL}/devotional/daily`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ verseText: verse.text, reference: verse.reference })
+      });
+      if (!response.ok) throw new Error('Falha ao buscar devocional diário');
+      const data = await response.json();
+
+      this.elements.verseText.textContent = data.verse?.text || verse.text;
+      this.elements.verseReference.textContent = data.verse?.reference || verse.reference;
+      this.elements.reflexao.textContent = data.reflexao || 'Não foi possível gerar a reflexão.';
+      this.elements.aplicacao.textContent = data.aplicacao || 'Não foi possível gerar a aplicação prática.';
+    } catch (error) {
+      console.error('Erro ao buscar devocional diário:', error);
+      this.elements.reflexao.textContent = 'Não foi possível gerar a reflexão agora.';
+      this.elements.aplicacao.textContent = 'Tente novamente mais tarde.';
+    }
+  }
+};
 // Arquivo: www/js/home2.js
 
 /**
@@ -329,6 +402,17 @@ const VerseManager = {
       // Reconfigura os event listeners com o novo texto
       this.setupEventListeners();
 
+      // Dispara evento para que outros módulos (ex.: DevotionalManager) possam usar o versículo carregado
+      try {
+        const versePayload = {
+          text: data.text,
+          reference: `${data.book.name} ${data.chapter}:${data.number}`
+        };
+        window.dispatchEvent(new CustomEvent('verse:loaded', { detail: versePayload }));
+      } catch (e) {
+        console.warn('Falha ao disparar evento verse:loaded:', e);
+      }
+
     } catch (error) {
       console.error("Erro ao buscar versículo do dia:", error);
       this.elements.verseText.textContent = 'Não foi possível carregar o versículo do dia. Tente novamente mais tarde.';
@@ -399,4 +483,5 @@ document.addEventListener('DOMContentLoaded', function () {
   JourneyManager.init();
   ReadingManager.init();
   VerseManager.init();
+  DevotionalManager.init();
 });

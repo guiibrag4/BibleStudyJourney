@@ -1,3 +1,55 @@
+/* =============================================================================
+   SEÇÃO DEVOCIONAL DIÁRIO
+   ============================================================================= */
+.secao-devocional {
+  margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
+  color: var(--text-color);
+}
+
+.cartao-devocional {
+  background: var(--card-background-color, #2D4C76);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem 1.25rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border: 1px solid var(--border-color, #3a5a7a);
+  animation: fadeInUp 0.5s ease;
+}
+
+.devocional-label {
+  font-weight: 700;
+  color: var(--botao);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.devocional-texto-versiculo,
+.devocional-referencia {
+  font-size: 1.05rem;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.devocional-referencia {
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+}
+
+.devocional-texto-reflexao,
+.devocional-texto-aplicacao {
+  font-size: 1rem;
+  color: var(--text-secondary-color, #e0e6ed);
+  margin-bottom: 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .cartao-devocional {
+    padding: 1rem 0.5rem;
+  }
+}
 /* Arquivo: www/css/home2.css (VERSÃO FINAL COM RESPONSIVIDADE DESKTOP) */
 
 /* =============================================================================
