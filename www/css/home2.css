@@ -234,6 +234,7 @@ body {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -279,8 +280,8 @@ body {
 .error-state p,
 .jornada-vazia,
 .jornada-erro {
-  color: var(--texto-suave);
-  font-size: 0.9rem;
+  color: var(--text-color);
+  font-size: 1.0rem;
   line-height: 1.5;
 }
 
