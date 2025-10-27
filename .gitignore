@@ -36,3 +36,9 @@ node_modules/
 /www/css/biblia-efect-book.css
 /www/js/biblia-efect-book.js
 
+# Arquivos de teste
+
+/test-frontend-performance.html
+/test-compression.js
+/GUIA_TESTES_ETAPA2.md
+
