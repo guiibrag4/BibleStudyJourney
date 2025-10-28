@@ -243,7 +243,6 @@ async function startServer() {
       console.log(`🚀 Servidor Bible Study Journey iniciado com sucesso!`);
       console.log(`${'='.repeat(60)}`);
       console.log(`📍 URL Local:  http://localhost:${PORT}`);
-      console.log(`📍 URL Rede:   http://0.0.0.0:${PORT}`);
       console.log(`🔧 Ambiente:   ${NODE_ENV}`);
       console.log(`⚡ Otimizações:`);
       console.log(`   - Compressão Gzip habilitada (Level 6)`);
