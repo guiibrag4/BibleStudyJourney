@@ -111,7 +111,7 @@ const DevotionalManager = {
     if (dataEl) dataEl.textContent = dataFormatada;
     
     if (this.elements.modalData) {
-      this.elements.modalData.textContent = `🌅 ${dataFormatada}`;
+      this.elements.modalData.textContent = `❤️‍🔥 ${dataFormatada}`;
     }
   },
 

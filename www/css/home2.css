@@ -135,7 +135,7 @@
   width: 100vw;
   height: 100vh;
   background-color: var(--background-color);
-  z-index: 2000;
+  z-index: 20001;
   overflow-y: auto;
   animation: slideUp 0.3s ease;
 }
@@ -268,7 +268,7 @@
 }
 
 .modal-section p {
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.8;
   text-align: justify;
   color: var(--text-color);
@@ -340,7 +340,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   transform: translateX(400px);
   transition: transform 0.3s ease;
-  z-index: 9999;
+  z-index: 21000;
   min-width: 260px;
 }
 
@@ -384,20 +384,20 @@
   }
   
   .modal-header-center .modal-data {
-    font-size: 12px;
-    white-space: nowrap;
+    font-size: 14px;
+    /* white-space: nowrap; */
     overflow: hidden;
     text-overflow: ellipsis;
   }
   
   .modal-streak {
-    font-size: 13px;
+    font-size: 14px;
     padding: 3px 8px;
   }
   
   .btn-voltar {
     padding: 8px 14px;
-    font-size: 13px;
+    font-size: 14px;
   }
   
   .btn-concluir-devocional {
