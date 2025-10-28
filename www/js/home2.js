@@ -1,69 +1,333 @@
 // =============================================================================
-// GERENCIAMENTO DO DEVOCIONAL DIÁRIO COM IA
+// GERENCIAMENTO DO DEVOCIONAL DIÁRIO COM IA E GAMIFICAÇÃO
 // =============================================================================
 const DevotionalManager = {
   elements: {},
+  devotionalData: null,
+  streakData: null,
 
   init() {
     this.cacheElements();
-    // 🎯 CACHE GLOBAL: Carrega imediatamente o devocional do dia (independente do versículo)
-    this.loadDevotionalFromVerse();
+    this.setupEventListeners();
+    this.loadDevotional();
+    this.loadStreakData();
   },
 
   cacheElements() {
+    // Preview
     this.elements = {
-      verseText: document.querySelector('.devocional-texto-versiculo'),
-      verseReference: document.querySelector('.devocional-referencia'),
-      estudo: document.querySelector('.devocional-texto-estudo'),
-      reflexao: document.querySelector('.devocional-texto-reflexao'),
-      aplicacao: document.querySelector('.devocional-texto-aplicacao'),
+      previewVerseText: document.getElementById('preview-verse-text'),
+      previewVerseRef: document.getElementById('preview-verse-ref'),
+      previewStudyText: document.getElementById('preview-study-text'),
+      streakCount: document.getElementById('streak-count'),
+      btnAbrirModal: document.getElementById('btn-abrir-devocional'),
+      btnCompartilhar: document.getElementById('btn-compartilhar-devocional'),
+      btnCopiar: document.getElementById('btn-copiar-devocional'),
+      
+      // Modal
+      modal: document.getElementById('modal-devocional'),
+      btnFecharModal: document.getElementById('btn-fechar-modal'),
+      btnConcluir: document.getElementById('btn-concluir-devocional'),
+      modalData: document.getElementById('modal-data'),
+      modalVerseText: document.getElementById('modal-verse-text'),
+      modalVerseRef: document.getElementById('modal-verse-ref'),
+      modalStudyText: document.getElementById('modal-study-text'),
+      modalReflectionText: document.getElementById('modal-reflection-text'),
+      modalApplicationText: document.getElementById('modal-application-text'),
+      modalStreakCount: document.getElementById('modal-streak-count')
     };
   },
 
+  setupEventListeners() {
+    if (this.elements.btnAbrirModal) {
+      this.elements.btnAbrirModal.addEventListener('click', () => this.openModal());
+    }
+    if (this.elements.btnFecharModal) {
+      this.elements.btnFecharModal.addEventListener('click', () => this.closeModal());
+    }
+    if (this.elements.btnConcluir) {
+      this.elements.btnConcluir.addEventListener('click', () => this.markAsComplete());
+    }
+    if (this.elements.btnCompartilhar) {
+      this.elements.btnCompartilhar.addEventListener('click', () => this.shareDevotional());
+    }
+    if (this.elements.btnCopiar) {
+      this.elements.btnCopiar.addEventListener('click', () => this.copyDevotional());
+    }
+    
+    // Fecha modal com ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !this.elements.modal.classList.contains('hidden')) {
+        this.closeModal();
+      }
+    });
+  },
 
-
-  async loadDevotionalFromVerse() {
-    if (!this.elements.verseText || !this.elements.estudo || !this.elements.reflexao || !this.elements.aplicacao) return;
-
-    // 🎯 CACHE GLOBAL: Não envia versículo, apenas busca o devocional do dia
-    // Mostra placeholders enquanto carrega
-    this.elements.verseText.textContent = 'Carregando versículo do dia...';
-    this.elements.verseReference.textContent = '';
-    this.elements.estudo.textContent = 'Carregando estudo exegético...';
-    this.elements.reflexao.textContent = 'Carregando reflexão...';
-    this.elements.aplicacao.textContent = 'Carregando aplicação prática...';
-
+  async loadDevotional() {
     try {
       const token = window.AuthManager ? await window.AuthManager.getToken() : null;
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
       
-      // 🚀 USA GET: Busca o devocional global do dia (mesmo para todos)
       const response = await fetch(`${CONFIG.BIBLE_API_URL}/devotional/daily`, {
         method: 'GET',
         headers
       });
-      if (!response.ok) throw new Error('Falha ao buscar devocional diário');
-      const data = await response.json();
-
-      this.elements.verseText.textContent = data.verse?.text || 'Versículo não disponível';
-      this.elements.verseReference.textContent = data.verse?.reference || '';
-      this.elements.estudo.textContent = data.estudo || 'Não foi possível gerar o estudo.';
-      this.elements.reflexao.textContent = data.reflexao || 'Não foi possível gerar a reflexão.';
-      this.elements.aplicacao.textContent = data.aplicacao || 'Não foi possível gerar a aplicação prática.';
       
-      // Log para debug
+      if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+      const data = await response.json();
+      
+      this.devotionalData = data;
+      this.displayPreview(data);
+      
       if (data.cached) {
         console.log('✅ Devocional carregado do cache (sem custo de IA)');
       } else {
         console.log('🚀 Devocional gerado agora (primeira requisição do dia)');
       }
     } catch (error) {
-      console.error('Erro ao buscar devocional diário:', error);
-      this.elements.estudo.textContent = 'Não foi possível gerar o estudo agora.';
-      this.elements.reflexao.textContent = 'Não foi possível gerar a reflexão agora.';
-      this.elements.aplicacao.textContent = 'Tente novamente mais tarde.';
+      console.error('Erro ao buscar devocional:', error);
+      this.showError();
     }
+  },
+
+  displayPreview(data) {
+    if (!data.verse) return;
+    
+    // Atualiza preview
+    this.elements.previewVerseText.textContent = data.verse.text || 'Versículo não disponível';
+    this.elements.previewVerseRef.textContent = data.verse.reference || '';
+    this.elements.previewStudyText.textContent = data.estudo || 'Estudo não disponível';
+    
+    // Atualiza data no header (preview e modal)
+    const hoje = new Date().toLocaleDateString('pt-BR', { 
+      weekday: 'long',
+      day: 'numeric', 
+      month: 'long' 
+    });
+    const dataFormatada = hoje.charAt(0).toUpperCase() + hoje.slice(1);
+    
+    const dataEl = document.querySelector('.devocional-data');
+    if (dataEl) dataEl.textContent = dataFormatada;
+    
+    if (this.elements.modalData) {
+      this.elements.modalData.textContent = `🌅 ${dataFormatada}`;
+    }
+  },
+
+  async loadStreakData() {
+    try {
+      const token = window.AuthManager ? await window.AuthManager.getToken() : null;
+      if (!token) return;
+      
+      const headers = { 'Authorization': `Bearer ${token}` };
+      const response = await fetch(`${CONFIG.BIBLE_API_URL}/devotional/stats`, {
+        method: 'GET',
+        headers
+      });
+      
+      if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+      const data = await response.json();
+      
+      this.streakData = data;
+      this.updateStreakDisplay(data.currentStreak);
+      
+      // Atualiza estado do botão se já leu hoje
+      if (data.readToday && this.elements.btnConcluir) {
+        this.elements.btnConcluir.classList.add('concluido');
+        this.elements.btnConcluir.textContent = '✅ Devocional Concluído Hoje';
+        this.elements.btnConcluir.disabled = true;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar streak:', error);
+    }
+  },
+
+  updateStreakDisplay(streak) {
+    if (this.elements.streakCount) {
+      this.elements.streakCount.textContent = streak;
+    }
+    if (this.elements.modalStreakCount) {
+      this.elements.modalStreakCount.textContent = streak;
+    }
+  },
+
+  openModal() {
+    if (!this.devotionalData) return;
+    
+    // Preenche modal com dados completos
+    this.elements.modalVerseText.textContent = this.devotionalData.verse?.text || '';
+    this.elements.modalVerseRef.textContent = this.devotionalData.verse?.reference || '';
+    this.elements.modalStudyText.textContent = this.devotionalData.estudo || '';
+    this.elements.modalReflectionText.textContent = this.devotionalData.reflexao || '';
+    this.elements.modalApplicationText.textContent = this.devotionalData.aplicacao || '';
+    
+    // Mostra modal
+    this.elements.modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    console.log('📖 Modal devocional aberto');
+  },
+
+  closeModal() {
+    this.elements.modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  },
+
+  async markAsComplete() {
+    if (this.elements.btnConcluir.disabled) return;
+    
+    try {
+      this.elements.btnConcluir.disabled = true;
+      this.elements.btnConcluir.textContent = '⏳ Processando...';
+      
+      const token = window.AuthManager ? await window.AuthManager.getToken() : null;
+      if (!token) {
+        alert('Você precisa estar logado para marcar o devocional como concluído');
+        this.elements.btnConcluir.disabled = false;
+        this.elements.btnConcluir.textContent = '✅ Concluir Devocional';
+        return;
+      }
+      
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+      
+      const response = await fetch(`${CONFIG.BIBLE_API_URL}/devotional/mark-read`, {
+        method: 'POST',
+        headers
+      });
+      
+      if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+      const data = await response.json();
+      
+      this.updateStreakDisplay(data.currentStreak);
+      
+      // Anima streak
+      const streakEls = document.querySelectorAll('.devocional-streak, .modal-streak');
+      streakEls.forEach(el => {
+        el.classList.add('pulse');
+        setTimeout(() => el.classList.remove('pulse'), 600);
+      });
+      
+      this.showConfetti();
+      
+      if (data.newBadges && data.newBadges.length > 0) {
+        setTimeout(() => {
+          data.newBadges.forEach((badge, index) => {
+            setTimeout(() => this.showBadgeUnlocked(badge), index * 500);
+          });
+        }, 1000);
+      }
+      
+      this.elements.btnConcluir.classList.add('concluido');
+      this.elements.btnConcluir.textContent = '✅ Devocional Concluído Hoje';
+      
+      setTimeout(() => this.closeModal(), 2000);
+      
+      console.log('🎉 Devocional marcado como concluído!', data);
+      
+    } catch (error) {
+      console.error('Erro ao marcar devocional como concluído:', error);
+      alert('Erro ao processar. Tente novamente.');
+      this.elements.btnConcluir.disabled = false;
+      this.elements.btnConcluir.textContent = '✅ Concluir Devocional';
+    }
+  },
+
+  showConfetti() {
+    if (typeof confetti === 'undefined') return;
+    
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#667eea', '#764ba2', '#10B981', '#FFD700']
+    });
+    
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#667eea', '#764ba2', '#10B981']
+      });
+    }, 200);
+    
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#667eea', '#764ba2', '#10B981']
+      });
+    }, 400);
+  },
+
+  showBadgeUnlocked(badge) {
+    const toast = document.createElement('div');
+    toast.className = 'badge-toast';
+    toast.innerHTML = `
+      <div class="badge-toast-content">
+        <span class="badge-emoji">${badge.emoji}</span>
+        <div>
+          <strong>🏆 Conquista Desbloqueada!</strong>
+          <p>${badge.title}</p>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  },
+
+  async shareDevotional() {
+    if (!this.devotionalData?.verse) return;
+    
+    const text = `� Devocional do Dia\n\n"${this.devotionalData.verse.text}"\n\n${this.devotionalData.verse.reference}\n\n💡 ${this.devotionalData.estudo.substring(0, 100)}...\n\n#DevocionalDiário #BibleStudy`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+      } catch (error) {
+        console.log('Compartilhamento cancelado');
+      }
+    } else {
+      await this.copyDevotional();
+      alert('Texto copiado! Cole onde desejar.');
+    }
+  },
+
+  async copyDevotional() {
+    if (!this.devotionalData?.verse) return;
+    
+    const text = `📖 Devocional do Dia\n\n"${this.devotionalData.verse.text}"\n\n${this.devotionalData.verse.reference}`;
+    
+    try {
+      await navigator.clipboard.writeText(text);
+      
+      const btn = this.elements.btnCopiar;
+      const originalText = btn.textContent;
+      btn.textContent = '✅ Copiado!';
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    } catch (error) {
+      console.error('Erro ao copiar:', error);
+    }
+  },
+
+  showError() {
+    this.elements.previewVerseText.textContent = 'Não foi possível carregar o devocional.';
+    this.elements.previewStudyText.textContent = 'Tente novamente mais tarde.';
   }
 };
 // Arquivo: www/js/home2.js

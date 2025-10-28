@@ -401,6 +401,195 @@ router.use((req, res, next) => {
     next();
 });
 
+// ============================================================================
+// ROTAS DE GAMIFICAÇÃO DO DEVOCIONAL
+// ============================================================================
+
+// Marcar devocional como lido e atualizar streak
+router.post('/devotional/mark-read', async (req, res) => {
+    try {
+        const userId = req.usuario?.id_usuario;
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuário não autenticado' });
+        }
+
+        const dayKey = getDevotionalDayKey(DEVOTIONAL_TZ, DEVOTIONAL_RESET_HOUR);
+        
+        // Insere ou ignora se já marcado hoje
+        await pool.query(
+            'INSERT INTO app_biblia.devocional_leitura (id_usuario, day_key) VALUES ($1, $2) ON CONFLICT (id_usuario, day_key) DO NOTHING',
+            [userId, dayKey]
+        );
+
+        // Calcula streak atual
+        const streakResult = await pool.query(`
+            WITH leituras_ordenadas AS (
+                SELECT day_key,
+                       LAG(day_key) OVER (ORDER BY day_key DESC) as dia_anterior
+                FROM app_biblia.devocional_leitura
+                WHERE id_usuario = $1
+                ORDER BY day_key DESC
+            )
+            SELECT COUNT(*) as streak
+            FROM leituras_ordenadas
+            WHERE day_key = CURRENT_DATE 
+               OR dia_anterior IS NULL 
+               OR day_key = dia_anterior + INTERVAL '1 day'
+        `, [userId]);
+
+        const currentStreak = parseInt(streakResult.rows[0]?.streak || 0);
+
+        // Calcula maior streak de todos os tempos (corrigido)
+        const maxStreakResult = await pool.query(`
+            WITH daily_reads AS (
+                SELECT day_key,
+                       day_key - ROW_NUMBER() OVER (ORDER BY day_key)::integer as streak_group
+                FROM app_biblia.devocional_leitura
+                WHERE id_usuario = $1
+            )
+            SELECT COALESCE(MAX(streak_size), 0) as max_streak
+            FROM (
+                SELECT streak_group, COUNT(*) as streak_size
+                FROM daily_reads
+                GROUP BY streak_group
+            ) as streaks
+        `, [userId]);
+
+        const maxStreak = parseInt(maxStreakResult.rows[0]?.max_streak || 0);
+
+        // Verifica conquistas a desbloquear
+        const newBadges = [];
+        const milestones = [
+            { streak: 1, type: 'streak_1', emoji: '🌱', title: 'Primeiro Passo' },
+            { streak: 3, type: 'streak_3', emoji: '🌿', title: 'Constante' },
+            { streak: 7, type: 'streak_7', emoji: '🔥', title: 'Uma Semana!' },
+            { streak: 14, type: 'streak_14', emoji: '⭐', title: 'Duas Semanas!' },
+            { streak: 30, type: 'streak_30', emoji: '💎', title: 'Um Mês!' },
+            { streak: 100, type: 'streak_100', emoji: '👑', title: 'Centurião da Fé!' }
+        ];
+
+        for (const milestone of milestones) {
+            if (currentStreak >= milestone.streak) {
+                const inserted = await pool.query(
+                    'INSERT INTO app_biblia.devocional_conquistas (id_usuario, tipo_conquista) VALUES ($1, $2) ON CONFLICT DO NOTHING RETURNING *',
+                    [userId, milestone.type]
+                );
+                if (inserted.rows.length > 0) {
+                    newBadges.push(milestone);
+                }
+            }
+        }
+
+        // Próximo marco
+        const nextMilestone = milestones.find(m => m.streak > currentStreak);
+
+        res.json({
+            success: true,
+            currentStreak,
+            maxStreak,
+            newBadges,
+            nextMilestone: nextMilestone ? {
+                streak: nextMilestone.streak,
+                title: nextMilestone.title,
+                daysRemaining: nextMilestone.streak - currentStreak
+            } : null
+        });
+
+    } catch (error) {
+        console.error('Erro ao marcar devocional como lido:', error);
+        res.status(500).json({ error: 'Erro ao processar leitura do devocional' });
+    }
+});
+
+// Obter estatísticas do devocional do usuário
+router.get('/devotional/stats', async (req, res) => {
+    try {
+        const userId = req.usuario?.id_usuario;
+        if (!userId) {
+            return res.status(401).json({ error: 'Usuário não autenticado' });
+        }
+
+        // Streak atual
+        const streakResult = await pool.query(`
+            WITH leituras_ordenadas AS (
+                SELECT day_key,
+                       LAG(day_key) OVER (ORDER BY day_key DESC) as dia_anterior
+                FROM app_biblia.devocional_leitura
+                WHERE id_usuario = $1
+                ORDER BY day_key DESC
+            )
+            SELECT COUNT(*) as streak
+            FROM leituras_ordenadas
+            WHERE day_key = CURRENT_DATE 
+               OR dia_anterior IS NULL 
+               OR day_key = dia_anterior + INTERVAL '1 day'
+        `, [userId]);
+
+        const currentStreak = parseInt(streakResult.rows[0]?.streak || 0);
+
+        // Maior streak (calcula o maior número consecutivo de dias)
+        const maxStreakResult = await pool.query(`
+            WITH daily_reads AS (
+                SELECT day_key,
+                       day_key - ROW_NUMBER() OVER (ORDER BY day_key)::integer as streak_group
+                FROM app_biblia.devocional_leitura
+                WHERE id_usuario = $1
+            )
+            SELECT COALESCE(MAX(streak_size), 0) as max_streak
+            FROM (
+                SELECT streak_group, COUNT(*) as streak_size
+                FROM daily_reads
+                GROUP BY streak_group
+            ) as streaks
+        `, [userId]);
+
+        const maxStreak = parseInt(maxStreakResult.rows[0]?.max_streak || 0);
+
+        // Total de leituras
+        const totalResult = await pool.query(
+            'SELECT COUNT(*) as total FROM app_biblia.devocional_leitura WHERE id_usuario = $1',
+            [userId]
+        );
+        const totalRead = parseInt(totalResult.rows[0]?.total || 0);
+
+        // Leituras no mês atual
+        const monthlyResult = await pool.query(
+            `SELECT COUNT(*) as monthly FROM app_biblia.devocional_leitura 
+             WHERE id_usuario = $1 AND EXTRACT(MONTH FROM day_key) = EXTRACT(MONTH FROM CURRENT_DATE)
+             AND EXTRACT(YEAR FROM day_key) = EXTRACT(YEAR FROM CURRENT_DATE)`,
+            [userId]
+        );
+        const monthlyProgress = parseInt(monthlyResult.rows[0]?.monthly || 0);
+
+        // Conquistas desbloqueadas
+        const badgesResult = await pool.query(
+            'SELECT tipo_conquista, desbloqueado_em FROM app_biblia.devocional_conquistas WHERE id_usuario = $1 ORDER BY desbloqueado_em DESC',
+            [userId]
+        );
+
+        // Verifica se leu hoje
+        const dayKey = getDevotionalDayKey(DEVOTIONAL_TZ, DEVOTIONAL_RESET_HOUR);
+        const readTodayResult = await pool.query(
+            'SELECT 1 FROM app_biblia.devocional_leitura WHERE id_usuario = $1 AND day_key = $2',
+            [userId, dayKey]
+        );
+        const readToday = readTodayResult.rows.length > 0;
+
+        res.json({
+            currentStreak,
+            maxStreak,
+            totalRead,
+            monthlyProgress,
+            readToday,
+            badges: badgesResult.rows
+        });
+
+    } catch (error) {
+        console.error('Erro ao buscar estatísticas do devocional:', error);
+        res.status(500).json({ error: 'Erro ao buscar estatísticas' });
+    }
+});
+
 router.get('/verses/:version/random', async (req,res) => {
     const { version } = req.params;
     const url = `${BIBLE_API_URL}/verses/${version}/random`;
