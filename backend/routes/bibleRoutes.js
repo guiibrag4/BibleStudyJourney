@@ -17,17 +17,15 @@ let devotionalTableReady = false;
 async function ensureDevotionalTable() {
     if (devotionalTableReady) return;
     const sql = `
-    CREATE TABLE IF NOT EXISTS app_biblia.devocional_diario (
+    CREATE TABLE IF NOT EXISTS app_biblia.devocional_diario_global (
         id_devocional SERIAL PRIMARY KEY,
-        id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
-        day_key DATE NOT NULL,
+        day_key DATE NOT NULL UNIQUE,
         verse_text TEXT NOT NULL,
         verse_reference TEXT NOT NULL,
         estudo TEXT NOT NULL,
         reflexao TEXT NOT NULL,
         aplicacao TEXT NOT NULL,
-        generated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE (id_usuario, day_key)
+        generated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );`;
     await pool.query(sql);
     devotionalTableReady = true;
@@ -305,19 +303,28 @@ router.get('/devotional/daily', async (req, res) => {
     const version = req.query.version || 'nvi';
     try {
         await ensureDevotionalTable();
-        const userId = req.usuario?.id_usuario;
         const dayKey = getDevotionalDayKey(DEVOTIONAL_TZ, DEVOTIONAL_RESET_HOUR);
 
-        if (userId) {
-            const { rows } = await pool.query(
-                'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM app_biblia.devocional_diario WHERE id_usuario=$1 AND day_key=$2',
-                [userId, dayKey]
-            );
-            if (rows.length > 0) {
-                const r = rows[0];
-                return res.json({ verse: { text: r.verse_text, reference: r.verse_reference }, estudo: r.estudo, reflexao: r.reflexao, aplicacao: r.aplicacao, cached: true });
-            }
+        // 🎯 CACHE GLOBAL: Verifica se já existe devocional para HOJE (todos os usuários compartilham)
+        const { rows } = await pool.query(
+            'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM app_biblia.devocional_diario_global WHERE day_key=$1',
+            [dayKey]
+        );
+        
+        if (rows.length > 0) {
+            console.log('[CACHE HIT] Devocional já existe para', dayKey);
+            const r = rows[0];
+            return res.json({ 
+                verse: { text: r.verse_text, reference: r.verse_reference }, 
+                estudo: r.estudo, 
+                reflexao: r.reflexao, 
+                aplicacao: r.aplicacao, 
+                cached: true 
+            });
         }
+
+        // 🚀 GERAÇÃO ÚNICA: Primeira requisição do dia gera o devocional
+        console.log('[CACHE MISS] Gerando novo devocional para', dayKey);
 
         const verseResp = await fetch(`${BIBLE_API_URL}/verses/${version}/random`, {
             headers: { 'Authorization': `Bearer ${API_TOKEN}` }
@@ -332,18 +339,19 @@ router.get('/devotional/daily', async (req, res) => {
 
         const { estudo, reflexao, aplicacao } = await generateDevotionalWithAI({ verseText, reference });
         
-        if (userId) {
-            try {
-                await pool.query(
-                    `INSERT INTO app_biblia.devocional_diario (id_usuario, day_key, verse_text, verse_reference, estudo, reflexao, aplicacao)
-                     VALUES ($1, $2, $3, $4, $5, $6, $7)
-                     ON CONFLICT (id_usuario, day_key) DO UPDATE SET verse_text=EXCLUDED.verse_text, verse_reference=EXCLUDED.verse_reference, estudo=EXCLUDED.estudo, reflexao=EXCLUDED.reflexao, aplicacao=EXCLUDED.aplicacao`,
-                    [userId, dayKey, verseText, reference, estudo, reflexao, aplicacao]
-                );
-            } catch (e) {
-                console.warn('[Devocional] Falha ao gravar cache:', e?.message);
-            }
+        // 💾 Salva no cache global para TODOS os usuários
+        try {
+            await pool.query(
+                `INSERT INTO app_biblia.devocional_diario_global (day_key, verse_text, verse_reference, estudo, reflexao, aplicacao)
+                 VALUES ($1, $2, $3, $4, $5, $6)
+                 ON CONFLICT (day_key) DO UPDATE SET verse_text=EXCLUDED.verse_text, verse_reference=EXCLUDED.verse_reference, estudo=EXCLUDED.estudo, reflexao=EXCLUDED.reflexao, aplicacao=EXCLUDED.aplicacao`,
+                [dayKey, verseText, reference, estudo, reflexao, aplicacao]
+            );
+            console.log('[CACHE SAVED] Devocional salvo para', dayKey);
+        } catch (e) {
+            console.warn('[Devocional] Falha ao gravar cache global:', e?.message);
         }
+        
         res.json({ verse: { text: verseText, reference }, estudo, reflexao, aplicacao, cached: false });
     } catch (error) {
         console.error('Erro ao gerar devocional diário (GET):', error?.message, 'details:', error?.details);
@@ -354,44 +362,34 @@ router.get('/devotional/daily', async (req, res) => {
 router.post('/devotional/daily', async (req, res) => {
     try {
         await ensureDevotionalTable();
-        const { verseText, reference } = req.body || {};
-        if (!verseText || !reference) {
-            return res.status(400).json({ error: 'Parâmetros ausentes: envie verseText e reference.' });
-        }
-
-        const userId = req.usuario?.id_usuario;
         const dayKey = getDevotionalDayKey(DEVOTIONAL_TZ, DEVOTIONAL_RESET_HOUR);
 
-        if (userId) {
-            const { rows } = await pool.query(
-                'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM app_biblia.devocional_diario WHERE id_usuario=$1 AND day_key=$2',
-                [userId, dayKey]
-            );
-            if (rows.length > 0) {
-                const r = rows[0];
-                return res.json({ verse: { text: r.verse_text, reference: r.verse_reference }, estudo: r.estudo, reflexao: r.reflexao, aplicacao: r.aplicacao, cached: true });
-            }
+        // 🎯 CACHE GLOBAL: Ignora versículo enviado pelo frontend, usa o do dia
+        const { rows } = await pool.query(
+            'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM app_biblia.devocional_diario_global WHERE day_key=$1',
+            [dayKey]
+        );
+        
+        if (rows.length > 0) {
+            console.log('[CACHE HIT POST] Devocional já existe para', dayKey);
+            const r = rows[0];
+            return res.json({ 
+                verse: { text: r.verse_text, reference: r.verse_reference }, 
+                estudo: r.estudo, 
+                reflexao: r.reflexao, 
+                aplicacao: r.aplicacao, 
+                cached: true 
+            });
         }
 
-        const { estudo, reflexao, aplicacao } = await generateDevotionalWithAI({ verseText, reference });
-
-        if (userId) {
-            try {
-                await pool.query(
-                    `INSERT INTO app_biblia.devocional_diario (id_usuario, day_key, verse_text, verse_reference, estudo, reflexao, aplicacao)
-                     VALUES ($1, $2, $3, $4, $5, $6, $7)
-                     ON CONFLICT (id_usuario, day_key) DO UPDATE SET verse_text=EXCLUDED.verse_text, verse_reference=EXCLUDED.verse_reference, estudo=EXCLUDED.estudo, reflexao=EXCLUDED.reflexao, aplicacao=EXCLUDED.aplicacao`,
-                    [userId, dayKey, verseText, reference, estudo, reflexao, aplicacao]
-                );
-            } catch (e) {
-                console.warn('[Devocional] Falha ao gravar cache:', e?.message);
-            }
-        }
-
-        res.json({ verse: { text: verseText, reference }, estudo, reflexao, aplicacao, cached: false });
+        // 🚀 Se não existe, redireciona para GET que faz a geração
+        console.log('[CACHE MISS POST] Redirecionando para geração...');
+        return res.status(404).json({ 
+            error: 'Devocional ainda não gerado para hoje. Use GET /devotional/daily' 
+        });
     } catch (error) {
-        console.error('Erro ao gerar devocional diário (POST):', error?.message, 'details:', error?.details);
-        res.status(502).json({ error: 'Erro ao gerar devocional diário via IA.', details: error?.details || undefined });
+        console.error('Erro ao buscar devocional diário (POST):', error?.message);
+        res.status(502).json({ error: 'Erro ao buscar devocional diário.', details: error?.message });
     }
 });
 

@@ -6,18 +6,8 @@ const DevotionalManager = {
 
   init() {
     this.cacheElements();
-    // Se o VerseManager já tiver preenchido o DOM, tenta aproveitar imediatamente
-    const existingVerse = this.getVerseFromDOM();
-    if (existingVerse) {
-      this.loadDevotionalFromVerse(existingVerse);
-    }
-    // Escuta atualizações do versículo
-    window.addEventListener('verse:loaded', (e) => {
-      const v = e?.detail;
-      if (v?.text && v?.reference) {
-        this.loadDevotionalFromVerse({ text: v.text, reference: v.reference });
-      }
-    });
+    // 🎯 CACHE GLOBAL: Carrega imediatamente o devocional do dia (independente do versículo)
+    this.loadDevotionalFromVerse();
   },
 
   cacheElements() {
@@ -30,48 +20,44 @@ const DevotionalManager = {
     };
   },
 
-  getVerseFromDOM() {
-    const refEl = document.querySelector('.referencia-versiculo');
-    const textEl = document.querySelector('.texto-versiculo');
-    const reference = refEl ? refEl.textContent.trim() : '';
-    const text = textEl ? textEl.textContent.trim() : '';
-    if (text && reference) return { text, reference };
-    return null;
-  },
 
-  async loadDevotionalFromVerse(verse) {
+
+  async loadDevotionalFromVerse() {
     if (!this.elements.verseText || !this.elements.estudo || !this.elements.reflexao || !this.elements.aplicacao) return;
-    if (!verse?.text || !verse?.reference) return;
 
-    // Preenche com placeholders apenas se ainda não há conteúdo relevante (evita flicker)
-    if (!this.elements.verseText.textContent.trim() || this.elements.verseText.textContent.includes('Carregando'))
-      this.elements.verseText.textContent = verse.text;
-    if (!this.elements.verseReference.textContent.trim())
-      this.elements.verseReference.textContent = verse.reference;
-    if (!this.elements.estudo.textContent.trim() || this.elements.estudo.textContent.includes('Carregando'))
-      this.elements.estudo.textContent = 'Gerando estudo exegético...';
-    if (!this.elements.reflexao.textContent.trim() || this.elements.reflexao.textContent.includes('Carregando'))
-      this.elements.reflexao.textContent = 'Gerando reflexão...';
-    if (!this.elements.aplicacao.textContent.trim() || this.elements.aplicacao.textContent.includes('Carregando'))
-      this.elements.aplicacao.textContent = 'Gerando aplicação prática...';
+    // 🎯 CACHE GLOBAL: Não envia versículo, apenas busca o devocional do dia
+    // Mostra placeholders enquanto carrega
+    this.elements.verseText.textContent = 'Carregando versículo do dia...';
+    this.elements.verseReference.textContent = '';
+    this.elements.estudo.textContent = 'Carregando estudo exegético...';
+    this.elements.reflexao.textContent = 'Carregando reflexão...';
+    this.elements.aplicacao.textContent = 'Carregando aplicação prática...';
 
     try {
       const token = window.AuthManager ? await window.AuthManager.getToken() : null;
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
+      
+      // 🚀 USA GET: Busca o devocional global do dia (mesmo para todos)
       const response = await fetch(`${CONFIG.BIBLE_API_URL}/devotional/daily`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ verseText: verse.text, reference: verse.reference })
+        method: 'GET',
+        headers
       });
       if (!response.ok) throw new Error('Falha ao buscar devocional diário');
       const data = await response.json();
 
-      this.elements.verseText.textContent = data.verse?.text || verse.text;
-      this.elements.verseReference.textContent = data.verse?.reference || verse.reference;
+      this.elements.verseText.textContent = data.verse?.text || 'Versículo não disponível';
+      this.elements.verseReference.textContent = data.verse?.reference || '';
       this.elements.estudo.textContent = data.estudo || 'Não foi possível gerar o estudo.';
       this.elements.reflexao.textContent = data.reflexao || 'Não foi possível gerar a reflexão.';
       this.elements.aplicacao.textContent = data.aplicacao || 'Não foi possível gerar a aplicação prática.';
+      
+      // Log para debug
+      if (data.cached) {
+        console.log('✅ Devocional carregado do cache (sem custo de IA)');
+      } else {
+        console.log('🚀 Devocional gerado agora (primeira requisição do dia)');
+      }
     } catch (error) {
       console.error('Erro ao buscar devocional diário:', error);
       this.elements.estudo.textContent = 'Não foi possível gerar o estudo agora.';
