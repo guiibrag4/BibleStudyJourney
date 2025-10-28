@@ -24,6 +24,7 @@ const DevotionalManager = {
     this.elements = {
       verseText: document.querySelector('.devocional-texto-versiculo'),
       verseReference: document.querySelector('.devocional-referencia'),
+      estudo: document.querySelector('.devocional-texto-estudo'),
       reflexao: document.querySelector('.devocional-texto-reflexao'),
       aplicacao: document.querySelector('.devocional-texto-aplicacao'),
     };
@@ -39,16 +40,22 @@ const DevotionalManager = {
   },
 
   async loadDevotionalFromVerse(verse) {
-    if (!this.elements.verseText || !this.elements.reflexao || !this.elements.aplicacao) return;
+    if (!this.elements.verseText || !this.elements.estudo || !this.elements.reflexao || !this.elements.aplicacao) return;
     if (!verse?.text || !verse?.reference) return;
 
-    try {
-      // Preenche com placeholders enquanto gera
+    // Preenche com placeholders apenas se ainda não há conteúdo relevante (evita flicker)
+    if (!this.elements.verseText.textContent.trim() || this.elements.verseText.textContent.includes('Carregando'))
       this.elements.verseText.textContent = verse.text;
+    if (!this.elements.verseReference.textContent.trim())
       this.elements.verseReference.textContent = verse.reference;
+    if (!this.elements.estudo.textContent.trim() || this.elements.estudo.textContent.includes('Carregando'))
+      this.elements.estudo.textContent = 'Gerando estudo exegético...';
+    if (!this.elements.reflexao.textContent.trim() || this.elements.reflexao.textContent.includes('Carregando'))
       this.elements.reflexao.textContent = 'Gerando reflexão...';
+    if (!this.elements.aplicacao.textContent.trim() || this.elements.aplicacao.textContent.includes('Carregando'))
       this.elements.aplicacao.textContent = 'Gerando aplicação prática...';
 
+    try {
       const token = window.AuthManager ? await window.AuthManager.getToken() : null;
       const headers = { 'Content-Type': 'application/json' };
       if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -62,10 +69,12 @@ const DevotionalManager = {
 
       this.elements.verseText.textContent = data.verse?.text || verse.text;
       this.elements.verseReference.textContent = data.verse?.reference || verse.reference;
+      this.elements.estudo.textContent = data.estudo || 'Não foi possível gerar o estudo.';
       this.elements.reflexao.textContent = data.reflexao || 'Não foi possível gerar a reflexão.';
       this.elements.aplicacao.textContent = data.aplicacao || 'Não foi possível gerar a aplicação prática.';
     } catch (error) {
       console.error('Erro ao buscar devocional diário:', error);
+      this.elements.estudo.textContent = 'Não foi possível gerar o estudo agora.';
       this.elements.reflexao.textContent = 'Não foi possível gerar a reflexão agora.';
       this.elements.aplicacao.textContent = 'Tente novamente mais tarde.';
     }
