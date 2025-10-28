@@ -79,6 +79,84 @@
             </div>
         </section>
 
+        <!-- NOVA SEÇÃO: Devocional Diário -->
+        <section class="secao-devocional">
+          <h3>Devocional Diário</h3>
+          
+          <!-- Preview Compacto -->
+          <div class="cartao-devocional-preview">
+            <div class="devocional-header">
+              <span class="devocional-data">28 de Outubro</span>
+              <span class="devocional-streak">🔥 <span id="streak-count">0</span> dias</span>
+            </div>
+            
+            <div class="devocional-versiculo-preview">
+              <p class="devocional-texto-preview" id="preview-verse-text">Carregando versículo...</p>
+              <p class="devocional-referencia-preview" id="preview-verse-ref"></p>
+            </div>
+            
+            <div class="devocional-estudo-preview">
+              <strong>💡 Estudo:</strong>
+              <p id="preview-study-text">Carregando...</p>
+            </div>
+            
+            <button class="btn-fazer-devocional" id="btn-abrir-devocional">
+              🎯 Fazer Devocional Completo
+            </button>
+            
+            <div class="devocional-actions">
+              <button class="btn-action-small" id="btn-compartilhar-devocional" title="Compartilhar">
+                📤 Compartilhar
+              </button>
+              <button class="btn-action-small" id="btn-copiar-devocional" title="Copiar">
+                📋 Copiar
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Modal Full-Screen do Devocional -->
+        <div id="modal-devocional" class="modal-devocional hidden">
+          <div class="modal-header">
+            <button class="btn-voltar" id="btn-fechar-modal">
+              ← Voltar
+            </button>
+            <div class="modal-header-center">
+              <span class="modal-data" id="modal-data">📖 Devocional do Dia</span>
+            </div>
+            <div class="modal-header-info">
+              <span class="modal-streak">🔥 <span id="modal-streak-count">0</span> dias</span>
+            </div>
+          </div>
+          
+          <div class="modal-content">
+            <div class="modal-versiculo">
+              <h3>📖 Versículo do Dia</h3>
+              <p class="modal-verse-text" id="modal-verse-text">Carregando...</p>
+              <p class="modal-verse-ref" id="modal-verse-ref"></p>
+            </div>
+            
+            <div class="modal-section">
+              <h3>💡 Estudo Exegético</h3>
+              <p id="modal-study-text">Carregando estudo...</p>
+            </div>
+            
+            <div class="modal-section">
+              <h3>🤔 Reflexão</h3>
+              <p id="modal-reflection-text">Carregando reflexão...</p>
+            </div>
+            
+            <div class="modal-section">
+              <h3>✨ Aplicação Prática</h3>
+              <p id="modal-application-text">Carregando aplicação...</p>
+            </div>
+          </div>
+          
+          <button class="btn-concluir-devocional" id="btn-concluir-devocional">
+            ✅ Concluir Devocional
+          </button>
+        </div>
+
         <section class="secao-versiculo">
           <h3>Versículos Dinâmicos</h3>
           <div class="cartao-versiculo">
@@ -132,6 +210,7 @@
   </nav>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="../js/auth-guard.js"></script>
   <script src="../js/gerenciador-de-progresso.js"></script>
   <script src="../js/theme-manager.js" defer></script>

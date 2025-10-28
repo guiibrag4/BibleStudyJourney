@@ -6,6 +6,7 @@ const cors = require("cors");
 const fetch = require('node-fetch');
 const path = require("path");
 const compression = require('compression');
+const { runMigration } = require('./db-migration');
 
 // --- ARQUIVOS DE ROTAS ---
 const authRoutes = require("./routes/auth/auth.js");
@@ -228,19 +229,33 @@ app.get("/tl1-teologia", (req, res) => res.sendFile(path.join(__dirname, "../www
 app.get("/tl2-teologia", (req, res) => res.sendFile(path.join(__dirname, "../www/html/tl2-teologia.html")));
 
 // ============================================================================
-// INICIAR O SERVIDOR - Com health check do pool de conexões
+// INICIAR O SERVIDOR - Com migração automática e health check
 // ============================================================================
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`\n${'='.repeat(60)}`);
-    console.log(`🚀 Servidor Bible Study Journey iniciado com sucesso!`);
-    console.log(`${'='.repeat(60)}`);
-    console.log(`📍 URL Local:  http://localhost:${PORT}`);
-    console.log(`📍 URL Rede:   http://0.0.0.0:${PORT}`);
-    console.log(`🔧 Ambiente:   ${NODE_ENV}`);
-    console.log(`⚡ Otimizações:`);
-    console.log(`   - Compressão Gzip habilitada (Level 6)`);
-    console.log(`   - HTTP Cache Headers configurados`);
-    console.log(`   - Connection Pool otimizado (min: 2, max: 20)`);
-    console.log(`   - Performance monitoring ${!IS_PRODUCTION ? 'ativo' : 'desabilitado'}`);
-    console.log(`${'='.repeat(60)}\n`);
-});
+async function startServer() {
+  try {
+    // Executar migração automática do banco de dados
+    console.log('🔄 Verificando/criando tabelas do banco de dados...');
+    await runMigration();
+    
+    // Iniciar servidor
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`\n${'='.repeat(60)}`);
+      console.log(`🚀 Servidor Bible Study Journey iniciado com sucesso!`);
+      console.log(`${'='.repeat(60)}`);
+      console.log(`📍 URL Local:  http://localhost:${PORT}`);
+      console.log(`🔧 Ambiente:   ${NODE_ENV}`);
+      console.log(`⚡ Otimizações:`);
+      console.log(`   - Compressão Gzip habilitada (Level 6)`);
+      console.log(`   - HTTP Cache Headers configurados`);
+      console.log(`   - Connection Pool otimizado (min: 2, max: 20)`);
+      console.log(`   - Migração automática do banco executada`);
+      console.log(`   - Performance monitoring ${!IS_PRODUCTION ? 'ativo' : 'desabilitado'}`);
+      console.log(`${'='.repeat(60)}\n`);
+    });
+  } catch (error) {
+    console.error('❌ Erro ao iniciar servidor:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

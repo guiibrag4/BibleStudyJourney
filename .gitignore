@@ -25,20 +25,15 @@ node_modules/
 /plugins/
 /platforms/
 /backend/.env
-/backend/model.sql
 
 /notes.md
 /professores.md
 /ideias.md
-
-# Alterações pro futuro, por enquanto temporário
-/www/html/biblia-efect-book.html
-/www/css/biblia-efect-book.css
-/www/js/biblia-efect-book.js
 
 # Arquivos de teste
 
 /test-frontend-performance.html
 /test-compression.js
 /GUIA_TESTES_ETAPA2.md
+
 

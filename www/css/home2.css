@@ -1,3 +1,417 @@
+/* =============================================================================
+   SEÇÃO DEVOCIONAL DIÁRIO - PREVIEW E MODAL (MINIMALISTA)
+   ============================================================================= */
+.secao-devocional {
+  margin-bottom: clamp(2.5rem, 6vw, 3.5rem);
+  color: var(--text-color);
+}
+
+/* Preview Compacto na Home - usando tema padrão */
+.cartao-devocional-preview {
+  background-color: var(--card-background-color);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.5s ease;
+}
+
+.devocional-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.devocional-data {
+  font-size: 14px;
+  color: var(--text-secondary-color);
+  font-weight: 500;
+}
+
+.devocional-streak {
+  font-weight: 600;
+  font-size: 14px;
+  background-color: var(--hover-color);
+  color: var(--accent-color);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.devocional-versiculo-preview {
+  margin-bottom: 16px;
+}
+
+.devocional-texto-preview {
+  font-size: 16px;
+  line-height: 1.6;
+  font-style: italic;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.devocional-referencia-preview {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  color: var(--text-secondary-color);
+}
+
+.devocional-estudo-preview {
+  background-color: var(--hover-color);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid var(--border-color);
+}
+
+.devocional-estudo-preview p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 8px 0 0 0;
+  color: var(--text-secondary-color);
+}
+
+.devocional-estudo-preview p::after {
+  content: " [...]";
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.btn-fazer-devocional {
+  background: var(--button-bg);
+  color: var(--button-text);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  margin-top: 8px;
+  width: 100%;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-fazer-devocional:hover {
+  background: var(--button-hover-bg);
+}
+
+.devocional-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-action-small {
+  flex: 1;
+  background-color: transparent;
+  color: var(--text-secondary-color);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-action-small:hover {
+  background-color: var(--hover-color);
+  color: var(--text-color);
+}
+
+/* Modal Full-Screen - usando tema padrão */
+.modal-devocional {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--background-color);
+  z-index: 20001;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+.modal-devocional.hidden {
+  display: none;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  padding: 20px 24px;
+  background-color: var(--card-background-color);
+  border-bottom: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.btn-voltar {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  justify-self: start;
+}
+
+.btn-voltar:hover {
+  background-color: var(--hover-color);
+}
+
+.modal-header-center {
+  text-align: center;
+  justify-self: center;
+}
+
+.modal-data {
+  font-size: 14px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.modal-header-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  justify-self: end;
+}
+
+.modal-streak {
+  font-weight: 600;
+  font-size: 14px;
+  background-color: var(--hover-color);
+  color: var(--accent-color);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.modal-content {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 24px 24px 24px;
+}
+
+.modal-versiculo {
+  background-color: var(--card-background-color);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 2px solid var(--border-color);
+}
+
+.modal-versiculo h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-verse-text {
+  font-size: 17px;
+  line-height: 1.8;
+  font-style: italic;
+  margin-bottom: 12px;
+  color: var(--text-color);
+}
+
+.modal-verse-ref {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: right;
+  color: var(--text-secondary-color);
+}
+
+.modal-section {
+  margin-bottom: 24px;
+  background-color: var(--card-background-color);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.modal-section h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-section p {
+  font-size: 17px;
+  line-height: 1.8;
+  text-align: justify;
+  color: var(--text-color);
+}
+
+.btn-concluir-devocional {
+  position: sticky;
+  bottom: 20px;
+  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-color);
+  color: white;
+  padding: 14px 28px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  width: fit-content;
+  z-index: 1;
+}
+
+.btn-concluir-devocional:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-concluir-devocional.concluido,
+.btn-concluir-devocional:disabled {
+  background: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-concluir-devocional.concluido:hover,
+.btn-concluir-devocional:disabled:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Animação de streak - mais sutil */
+@keyframes fire-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.devocional-streak.pulse,
+.modal-streak.pulse {
+  animation: fire-pulse 0.4s ease-in-out;
+}
+
+/* Badge Toast - mais discreto */
+.badge-toast {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  background-color: var(--card-background-color);
+  border: 2px solid var(--accent-color);
+  padding: 12px 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  transform: translateX(400px);
+  transition: transform 0.3s ease;
+  z-index: 21000;
+  min-width: 260px;
+}
+
+.badge-toast.show {
+  transform: translateX(0);
+}
+
+.badge-toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.badge-emoji {
+  font-size: 28px;
+}
+
+.badge-toast-content strong {
+  display: block;
+  color: var(--text-color);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.badge-toast-content p {
+  color: var(--text-secondary-color);
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 20px 16px 20px;
+  }
+  
+  .modal-header {
+    padding: 16px 20px;
+    gap: 8px;
+    grid-template-columns: auto 1fr auto;
+  }
+  
+  .modal-header-center .modal-data {
+    font-size: 14px;
+    /* white-space: nowrap; */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .modal-streak {
+    font-size: 14px;
+    padding: 3px 8px;
+  }
+  
+  .btn-voltar {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+  
+  .btn-concluir-devocional {
+    bottom: 16px;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  
+  .badge-toast {
+    right: 16px;
+    left: 16px;
+    min-width: auto;
+  }
+}
 /* Arquivo: www/css/home2.css (VERSÃO FINAL COM RESPONSIVIDADE DESKTOP) */
 
 /* =============================================================================
@@ -136,6 +550,7 @@ body {
 
 .secao-jornada h2,
 .secao-leitura h3,
+.secao-devocional h3,
 .secao-versiculo h3 {
   font-family: 'Merriweather', serif;
   font-size: clamp(1.125rem, 4vw, 1.25rem);

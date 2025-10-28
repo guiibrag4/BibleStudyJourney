@@ -82,3 +82,32 @@ CREATE TABLE app_biblia.livros_lidos (
 
 -- Índice para acelerar a busca de livros lidos por usuário
 CREATE INDEX idx_livros_lidos_id_usuario ON app_biblia.livros_lidos(id_usuario);
+
+-- ============================================================================
+-- TABELAS PARA GAMIFICAÇÃO DO DEVOCIONAL DIÁRIO
+-- ============================================================================
+
+-- Tabela para rastrear leituras diárias do devocional por usuário
+CREATE TABLE app_biblia.devocional_leitura (
+    id_leitura SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    day_key DATE NOT NULL,
+    lido_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    tempo_leitura_segundos INTEGER DEFAULT 0,
+    UNIQUE(id_usuario, day_key)
+);
+
+-- Índice para acelerar consultas de streak
+CREATE INDEX idx_devocional_leitura_usuario_data ON app_biblia.devocional_leitura(id_usuario, day_key DESC);
+
+-- Tabela para conquistas/badges desbloqueadas
+CREATE TABLE app_biblia.devocional_conquistas (
+    id_conquista SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    tipo_conquista VARCHAR(50) NOT NULL, -- 'streak_3', 'streak_7', 'streak_30', etc.
+    desbloqueado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_usuario, tipo_conquista)
+);
+
+-- Índice para buscar conquistas por usuário
+CREATE INDEX idx_devocional_conquistas_usuario ON app_biblia.devocional_conquistas(id_usuario);
