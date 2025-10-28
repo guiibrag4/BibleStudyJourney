@@ -7,7 +7,7 @@ const BIBLE_API_URL = "https://www.abibliadigital.com.br/api";
 const API_TOKEN = process.env.API_BIBLIA;
 const CF_ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
 const CF_AI_TOKEN = process.env.CLOUDFLARE_AI_TOKEN;
-const CF_AI_MODEL = process.env.CLOUDFLARE_AI_MODEL || '@cf/meta/llama-3-8b-instruct-awq';
+const CF_AI_MODEL = process.env.CLOUDFLARE_AI_MODEL;
 const CF_AI_FALLBACK_MODELS = (process.env.CLOUDFLARE_AI_FALLBACK_MODELS || '').split(',').map(s => s.trim()).filter(Boolean);
 
 const DEVOTIONAL_TZ = process.env.DEVOTIONAL_TZ || 'America/Sao_Paulo';
