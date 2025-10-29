@@ -1,43 +1,10 @@
-// FUNÇÃO CORRIGIDA: getApiBaseUrl
-function getApiBaseUrl() {
-    const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
+// ============================================================================
+// CONFIGURAÇÃO DE API (Usa config.js centralizado)
+// ============================================================================
+// A função getApiBaseUrl() e todas as URLs agora estão em config.js
+// Aqui usamos apenas o objeto CONFIG global
 
-    // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
-    if (isNativeApp) {
-        console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
-        // Escolha aqui o seu servidor de produção principal.
-        return 'https://biblestudyjourney.duckdns.org';
-        // Ou: return 'https://biblestudyjourney-v2.onrender.com';
-    }
-
-    // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
-    const hostname = window.location.hostname;
-    const protocol = window.location.protocol;
-
-    console.log(`[getApiBaseUrl] Detectado ambiente web: ${protocol}//${hostname}`);
-
-    // Ambiente de desenvolvimento local no navegador
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:3000';
-    }
-
-    // Ambiente de produção no navegador (Render, DuckDNS, etc. )
-    if (protocol === 'https:') {
-        if (hostname.includes('onrender.com')) {
-            return 'https://biblestudyjourney-v2.onrender.com';
-        }
-        if (hostname.includes('duckdns.org')) {
-            return 'https://biblestudyjourney.duckdns.org';
-        }
-    }
-
-    // Fallback final: usa a origem da página.
-    // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
-    return window.location.origin;
-}
-
-
-const API_URL = `${getApiBaseUrl()}/api/bible`;
+const API_URL = CONFIG.BIBLE_API_URL;
 
 // ===== ESTADO GLOBAL =====
 let versaoAtual = "nvi";

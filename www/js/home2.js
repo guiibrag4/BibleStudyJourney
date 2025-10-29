@@ -340,51 +340,13 @@ const DevotionalManager = {
 // =============================================================================
 // CONSTANTES E CONFIGURAÇÕES
 // =============================================================================
- // FUNÇÃO CORRIGIDA: getApiBaseUrl
-  function getApiBaseUrl() {
-    const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
+// ⚠️ NOTA: A configuração de API agora está centralizada em config.js
+// Aqui apenas definimos constantes específicas da página home
 
-    // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
-    if (isNativeApp) {
-      console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
-      // Escolha aqui o seu servidor de produção principal.
-      return 'https://biblestudyjourney.duckdns.org';
-      // Ou: return 'https://biblestudyjourney-v2.onrender.com';
-    }
-
-    // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
-    const hostname = window.location.hostname;
-    const protocol = window.location.protocol;
-
-    console.log(`[getApiBaseUrl] Detectado ambiente web: ${protocol}//${hostname}`);
-
-    // Ambiente de desenvolvimento local no navegador
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:3000';
-    }
-
-    // Ambiente de produção no navegador (Render, DuckDNS, etc. )
-    if (protocol === 'https:') {
-      if (hostname.includes('onrender.com')) {
-        return 'https://biblestudyjourney-v2.onrender.com';
-      }
-      if (hostname.includes('duckdns.org')) {
-        return 'https://biblestudyjourney.duckdns.org';
-      }
-    }
-
-    // Fallback final: usa a origem da página.
-    // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
-    return window.location.origin;
-  }
-
-  // const API_BASE_URL = getApiBaseUrl();
-
-const CONFIG = {
+const HOME_CONFIG = {
   COMPLETION_THRESHOLD: 95, // Porcentagem para considerar vídeo completo
   MAX_RECENT_VIDEOS: 5,     // Máximo de vídeos recentes a exibir
-  THUMBNAIL_QUALITY: 'mqdefault', // Qualidade da thumbnail do YouTube
-  BIBLE_API_URL: `${getApiBaseUrl()}/api/bible`
+  THUMBNAIL_QUALITY: 'mqdefault' // Qualidade da thumbnail do YouTube
 };
 
 /**
@@ -459,7 +421,7 @@ const JourneyManager = {
     const percentage = Math.floor((videoProgress.currentTime / videoProgress.duration) * 100);
 
     // Não exibe vídeos já concluídos
-    if (percentage >= CONFIG.COMPLETION_THRESHOLD) return null;
+    if (percentage >= HOME_CONFIG.COMPLETION_THRESHOLD) return null;
 
     // Criação do elemento
     const card = document.createElement('article');
@@ -469,7 +431,8 @@ const JourneyManager = {
     card.style.animationDelay = `${this.container.childElementCount * 0.1}s`; // Adiciona delay de animação dinâmico
 
     // Conteúdo do card (usando a estrutura do seu CSS extra)
-    const thumbnailUrl = `https://img.youtube.com/vi/${videoProgress.id}/${CONFIG.THUMBNAIL_QUALITY}.jpg`;
+    const thumbnailUrl = `https://img.youtube.com/vi/${videoProgress.id}/${HOME_CONFIG.THUMBNAIL_QUALITY}.jpg`;
+
 
     card.innerHTML = `
       <div class="card-thumbnail-wrapper">
@@ -517,7 +480,7 @@ const JourneyManager = {
       const allProgress = await window.progressManager.getAllProgress();
       this.container.innerHTML = ''; // Limpa conteúdo anterior
 
-      const recentVideos = allProgress.slice(0, CONFIG.MAX_RECENT_VIDEOS);
+      const recentVideos = allProgress.slice(0, HOME_CONFIG.MAX_RECENT_VIDEOS);
 
       // Verifica se há vídeos para exibir
       if (recentVideos.length === 0) {

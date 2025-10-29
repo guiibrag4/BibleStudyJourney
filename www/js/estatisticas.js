@@ -1,39 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const statsContent = document.getElementById('stats-content');
 
-      function getApiBaseUrl() {
-        const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
-        
-        console.log('[estatisticas.js] Ambiente nativo?', isNativeApp);
-
-        if (isNativeApp) {
-            console.log('[estatisticas.js] Usando API de produção (DuckDNS) para ambiente nativo');
-            // return 'https://biblestudyjourney.duckdns.org';
-            return 'https://biblestudyjourney-v2.onrender.com';
-        }
-
-        const hostname = window.location.hostname;
-        const protocol = window.location.protocol;
-        
-        console.log(`[estatisticas.js] Hostname: ${hostname}, Protocol: ${protocol}`);
-
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            return 'http://localhost:3000';
-        }
-
-        if (protocol === 'https:') {
-            if (hostname.includes('onrender.com')) {
-                return 'https://biblestudyjourney-v2.onrender.com';
-            }
-            if (hostname.includes('duckdns.org')) {
-                return 'https://biblestudyjourney.duckdns.org';
-            }
-        }
-
-        return window.location.origin;
-    }
-
-    const API_BASE_URL = getApiBaseUrl();
+    // ========================================================================
+    // CONFIGURAÇÃO DE API (Usa config.js centralizado)
+    // ========================================================================
+    const API_BASE_URL = CONFIG.BASE_URL;
     console.log('[estatisticas.js] API Base URL detectada:', API_BASE_URL);
 
 
