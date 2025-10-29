@@ -253,6 +253,110 @@ function highlightVerse(verseNumber) {
     }
 }
 
+// ===== SISTEMA DE HEADER/MENU INTELIGENTE COM DETECÇÃO DE VELOCIDADE =====
+let lastScrollY = 0;
+let lastScrollTime = Date.now();
+let scrollVelocity = 0;
+let isHeaderVisible = true;
+let isMenuVisible = true;
+let titleHeaderElement = null;
+
+// Thresholds
+const SCROLL_THRESHOLD_HIDE = 120; // Pixels para ocultar (após zona segura)
+const SCROLL_THRESHOLD_SHOW_SLOW = 30; // Pixels para mostrar (scroll lento)
+const VELOCITY_THRESHOLD_FAST = 3; // px/frame (~180px/s) - scroll rápido
+const BOTTOM_THRESHOLD = 100; // Pixels do fim para mostrar menu
+
+function initSmartHeaderMenu() {
+    titleHeaderElement = document.getElementById('content-title-header');
+    const header = document.querySelector('.bible-header');
+    const menu = document.querySelector('.bottom-nav');
+    
+    let ticking = false;
+    
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                handleSmartScroll(header, menu);
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
+}
+
+function handleSmartScroll(header, menu) {
+    const currentScrollY = window.scrollY;
+    const currentTime = Date.now();
+    const titleBottomPosition = titleHeaderElement ? (titleHeaderElement.offsetTop + titleHeaderElement.offsetHeight) : 0;
+    const documentHeight = document.documentElement.scrollHeight;
+    const windowHeight = window.innerHeight;
+    const isNearBottom = (documentHeight - (currentScrollY + windowHeight)) < BOTTOM_THRESHOLD;
+    
+    // Calcula velocidade do scroll
+    const scrollDelta = currentScrollY - lastScrollY;
+    const timeDelta = Math.max(currentTime - lastScrollTime, 1); // Evita divisão por zero
+    scrollVelocity = Math.abs(scrollDelta) / timeDelta * 16; // Normaliza para ~60fps (16ms/frame)
+    
+    const isScrollingDown = scrollDelta > 0;
+    const isScrollingUp = scrollDelta < 0;
+    const isFastScroll = scrollVelocity > VELOCITY_THRESHOLD_FAST;
+    
+    // ZONA SEGURA: Usa o valor de SCROLL_THRESHOLD_HIDE para controle preciso
+    const safeZone = SCROLL_THRESHOLD_HIDE;
+    
+    if (currentScrollY < safeZone) {
+        showHeaderAndMenu(header, menu);
+        lastScrollY = currentScrollY;
+        lastScrollTime = currentTime;
+        return;
+    }
+    
+    // ESTADO 1: Scroll DOWN rápido - Oculta IMEDIATAMENTE (reforça intenção de leitura)
+    if (isScrollingDown && isFastScroll && currentScrollY > SCROLL_THRESHOLD_HIDE) {
+        hideHeaderAndMenu(header, menu);
+    }
+    // ESTADO 2: Scroll DOWN normal - Oculta após threshold
+    else if (isScrollingDown && currentScrollY > SCROLL_THRESHOLD_HIDE) {
+        hideHeaderAndMenu(header, menu);
+    }
+    
+    // ESTADO 3: Scroll UP rápido - Mostra IMEDIATAMENTE (intenção de acessar controles)
+    if (isScrollingUp && isFastScroll) {
+        showHeaderAndMenu(header, menu);
+    }
+    // ESTADO 4: Scroll UP lento - Mostra após threshold reduzido
+    else if (isScrollingUp && Math.abs(scrollDelta) >= SCROLL_THRESHOLD_SHOW_SLOW) {
+        showHeaderAndMenu(header, menu);
+    }
+    
+    // ESTADO 5: Próximo ao fim da página - Mostra menu para navegação
+    if (isNearBottom) {
+        showHeaderAndMenu(header, menu);
+    }
+    
+    lastScrollY = currentScrollY;
+    lastScrollTime = currentTime;
+}
+
+function hideHeaderAndMenu(header, menu) {
+    if (isHeaderVisible || isMenuVisible) {
+        header?.classList.add('hidden');
+        menu?.classList.add('hidden');
+        isHeaderVisible = false;
+        isMenuVisible = false;
+    }
+}
+
+function showHeaderAndMenu(header, menu) {
+    if (!isHeaderVisible || !isMenuVisible) {
+        header?.classList.remove('hidden');
+        menu?.classList.remove('hidden');
+        isHeaderVisible = true;
+        isMenuVisible = true;
+    }
+}
+
 // ===== DETECÇÃO DE SWIPE PARA MUDANÇA DE CAPÍTULO =====
 let touchStartX = 0;
 let touchEndX = 0;
@@ -481,6 +585,9 @@ window.addEventListener('beforeunload', () => {
 document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
     await loadInitialState();
+    
+    // Inicializa o sistema de header/menu inteligente
+    initSmartHeaderMenu();
 
     // Lógica para mostrar a dica de swipe na primeira visita
     const hint = document.getElementById('swipe-hint');
