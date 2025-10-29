@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Configuração</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #0e4c1e;
+            color: #7cfc00;
+        }
+        .error {
+            background: #4c0e0e;
+            color: #ff6b6b;
+        }
+        .info {
+            background: #1e3a4c;
+            color: #6bb6ff;
+        }
+        pre {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de Configuração - config.js</h1>
+    
+    <div id="status"></div>
+    
+    <h2>Ações de Teste:</h2>
+    <button class="btn-success" onclick="testConfigObject()">1. Verificar CONFIG</button>
+    <button class="btn-info" onclick="testDebugFunction()">2. Testar CONFIG.debug()</button>
+    <button class="btn-info" onclick="testAllProperties()">3. Verificar Propriedades</button>
+    <button class="btn-info" onclick="testEnvironment()">4. Testar Ambiente</button>
+    
+    <h2>Console Output:</h2>
+    <pre id="output">Aguardando testes...</pre>
+    
+    <!-- CARREGA O CONFIG.JS -->
+    <script src="js/config.js"></script>
+    
+    <script>
+        const output = document.getElementById('output');
+        const statusDiv = document.getElementById('status');
+        
+        function log(message, type = 'info') {
+            const now = new Date().toLocaleTimeString();
+            output.innerHTML += `[${now}] ${message}\n`;
+            console.log(message);
+        }
+        
+        function showStatus(message, isSuccess) {
+            statusDiv.innerHTML = `<div class="status ${isSuccess ? 'success' : 'error'}">${message}</div>`;
+        }
+        
+        // Teste automático ao carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            log('='.repeat(60));
+            log('🔍 INICIANDO TESTES AUTOMÁTICOS');
+            log('='.repeat(60));
+            
+            // Teste 1: CONFIG existe?
+            if (typeof CONFIG === 'undefined') {
+                log('❌ ERRO: Objeto CONFIG não encontrado!', 'error');
+                showStatus('❌ ERRO: config.js não foi carregado corretamente!', false);
+                return;
+            }
+            
+            log('✅ Objeto CONFIG encontrado!', 'success');
+            
+            // Teste 2: CONFIG.debug existe?
+            if (typeof CONFIG.debug === 'function') {
+                log('✅ Função CONFIG.debug() encontrada!', 'success');
+                showStatus('✅ Configuração carregada com sucesso!', true);
+            } else {
+                log('❌ ERRO: CONFIG.debug não é uma função!', 'error');
+                log(`   Tipo de CONFIG.debug: ${typeof CONFIG.debug}`, 'error');
+                showStatus('⚠️ AVISO: CONFIG carregado, mas debug() não encontrado!', false);
+            }
+            
+            // Teste 3: Listar propriedades
+            log('\n📋 Propriedades do CONFIG:');
+            for (let key in CONFIG) {
+                log(`   - ${key}: ${typeof CONFIG[key] === 'function' ? '[Function]' : CONFIG[key]}`);
+            }
+            
+            log('\n✅ Testes automáticos concluídos!');
+        });
+        
+        function testConfigObject() {
+            output.innerHTML = '';
+            log('🔍 Teste 1: Verificando objeto CONFIG...\n');
+            
+            if (typeof CONFIG === 'undefined') {
+                log('❌ FALHA: CONFIG não está definido!');
+                showStatus('❌ config.js não foi carregado!', false);
+                return;
+            }
+            
+            log('✅ SUCESSO: CONFIG está definido!');
+            log(`   Tipo: ${typeof CONFIG}`);
+            log(`   É objeto: ${typeof CONFIG === 'object'}`);
+            showStatus('✅ CONFIG carregado corretamente!', true);
+        }
+        
+        function testDebugFunction() {
+            output.innerHTML = '';
+            log('🔍 Teste 2: Testando CONFIG.debug()...\n');
+            
+            if (typeof CONFIG === 'undefined') {
+                log('❌ FALHA: CONFIG não está definido!');
+                showStatus('❌ Carregue config.js primeiro!', false);
+                return;
+            }
+            
+            if (typeof CONFIG.debug !== 'function') {
+                log('❌ FALHA: CONFIG.debug não é uma função!');
+                log(`   Tipo atual: ${typeof CONFIG.debug}`);
+                showStatus('❌ debug() não encontrado!', false);
+                return;
+            }
+            
+            log('✅ CONFIG.debug() é uma função!');
+            log('\n📊 Executando CONFIG.debug()...\n');
+            
+            try {
+                CONFIG.debug();
+                log('\n✅ CONFIG.debug() executado com sucesso!');
+                showStatus('✅ Função debug() funcionando!', true);
+            } catch (error) {
+                log(`❌ ERRO ao executar: ${error.message}`);
+                showStatus('❌ Erro ao executar debug()!', false);
+            }
+        }
+        
+        function testAllProperties() {
+            output.innerHTML = '';
+            log('🔍 Teste 3: Verificando todas as propriedades...\n');
+            
+            if (typeof CONFIG === 'undefined') {
+                log('❌ FALHA: CONFIG não está definido!');
+                return;
+            }
+            
+            const expectedProps = [
+                'BASE_URL',
+                'API_URL',
+                'BIBLE_API_URL',
+                'AUTH_URL',
+                'USER_API_URL',
+                'PROGRESS_API_URL',
+                'HIGHLIGHTS_API_URL',
+                'CHAPTERS_API_URL',
+                'NOTES_API_URL',
+                'STATS_API_URL',
+                'DEVOTIONAL_API_URL',
+                'ENVIRONMENT',
+                'IS_NATIVE',
+                'IS_DEVELOPMENT',
+                'IS_STAGING',
+                'IS_PRODUCTION',
+                'VERSION',
+                'debug'
+            ];
+            
+            let missing = [];
+            let found = [];
+            
+            expectedProps.forEach(prop => {
+                if (CONFIG.hasOwnProperty(prop)) {
+                    found.push(prop);
+                    const value = typeof CONFIG[prop] === 'function' ? '[Function]' : CONFIG[prop];
+                    log(`✅ ${prop}: ${value}`);
+                } else {
+                    missing.push(prop);
+                    log(`❌ ${prop}: NÃO ENCONTRADO`);
+                }
+            });
+            
+            log(`\n📊 Resultado:`);
+            log(`   Encontrados: ${found.length}/${expectedProps.length}`);
+            log(`   Faltando: ${missing.length}`);
+            
+            if (missing.length > 0) {
+                log(`   Propriedades faltando: ${missing.join(', ')}`);
+                showStatus(`⚠️ ${missing.length} propriedades faltando!`, false);
+            } else {
+                log(`\n✅ Todas as propriedades encontradas!`);
+                showStatus('✅ CONFIG completo!', true);
+            }
+        }
+        
+        function testEnvironment() {
+            output.innerHTML = '';
+            log('🔍 Teste 4: Verificando detecção de ambiente...\n');
+            
+            if (typeof CONFIG === 'undefined') {
+                log('❌ FALHA: CONFIG não está definido!');
+                return;
+            }
+            
+            log('📊 Informações do Ambiente:');
+            log(`   window.location.hostname: ${window.location.hostname}`);
+            log(`   window.location.protocol: ${window.location.protocol}`);
+            log(`   window.location.origin: ${window.location.origin}`);
+            log(`   window.Capacitor: ${typeof window.Capacitor}`);
+            
+            log('\n📊 Configuração Detectada:');
+            log(`   BASE_URL: ${CONFIG.BASE_URL}`);
+            log(`   ENVIRONMENT: ${CONFIG.ENVIRONMENT}`);
+            log(`   IS_NATIVE: ${CONFIG.IS_NATIVE}`);
+            log(`   IS_DEVELOPMENT: ${CONFIG.IS_DEVELOPMENT}`);
+            log(`   IS_STAGING: ${CONFIG.IS_STAGING}`);
+            log(`   IS_PRODUCTION: ${CONFIG.IS_PRODUCTION}`);
+            
+            log('\n✅ Teste de ambiente concluído!');
+            showStatus('✅ Ambiente detectado corretamente!', true);
+        }
+    </script>
+</body>
+</html>

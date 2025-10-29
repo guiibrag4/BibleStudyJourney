@@ -10,51 +10,14 @@
 
   const STORAGE_KEY = 'bibleStudySaves';
 
-  // FUNÇÃO CORRIGIDA: getApiBaseUrl
-  function getApiBaseUrl() {
-    // O Capacitor injeta o objeto global 'Capacitor' quando o app está rodando nativamente.
-    // A propriedade 'isNativePlatform' nos diz se estamos no iOS ou Android.
-    const isNativeApp = window.Capacitor && window.Capacitor.isNativePlatform();
-
-    // 1. Se for o aplicativo nativo (Android/iOS), SEMPRE use a API de produção (HTTPS).
-    if (isNativeApp) {
-      console.log('[getApiBaseUrl] Detectado ambiente nativo (Capacitor). Forçando API de produção.');
-      // Escolha aqui o seu servidor de produção principal.
-      return 'https://biblestudyjourney.duckdns.org';
-      // Ou: return 'https://biblestudyjourney-v2.onrender.com';
-    }
-
-    // 2. Se não for nativo, é um navegador web. Use a lógica anterior.
-    const hostname = window.location.hostname;
-    const protocol = window.location.protocol;
-
-    console.log(`[getApiBaseUrl] Detectado ambiente web: ${protocol}//${hostname}`);
-
-    // Ambiente de desenvolvimento local no navegador
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:3000';
-    }
-
-    // Ambiente de produção no navegador (Render, DuckDNS, etc. )
-    if (protocol === 'https:') {
-      if (hostname.includes('onrender.com')) {
-        return 'https://biblestudyjourney-v2.onrender.com';
-      }
-      if (hostname.includes('duckdns.org')) {
-        return 'https://biblestudyjourney.duckdns.org';
-      }
-    }
-
-    // Fallback final: usa a origem da página.
-    // Isso garante que se você acessar https://meusite.com, a API será https://meusite.com/api/...
-    return window.location.origin;
-  }
-
-  const API_BASE_URL = getApiBaseUrl();
+  // ========================================================================
+  // CONFIGURAÇÃO DE API (Usa config.js centralizado)
+  // ========================================================================
+  const API_BASE_URL = CONFIG.BASE_URL;
   const API_ENDPOINTS = {
-    highlights: `${API_BASE_URL}/api/user/highlights`,
-    chapters: `${API_BASE_URL}/api/user/chapters`,
-    notes: `${API_BASE_URL}/api/user/notes`
+    highlights: CONFIG.HIGHLIGHTS_API_URL,
+    chapters: CONFIG.CHAPTERS_API_URL,
+    notes: CONFIG.NOTES_API_URL
   };
 
   const DEBUG = true;
