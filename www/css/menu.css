@@ -7,10 +7,6 @@
   right: 0;
   width: 100%;
   min-height: 64px; /* Altura mínima consistente */
-  transform: none !important;
-  translate: none;
-
-
   background: var(--menu-bg);
   display: flex;
   justify-content: space-around;
@@ -19,7 +15,14 @@
   padding-bottom: env(safe-area-inset-bottom);
   border-top: 1px solid var(--border-color);
   z-index: 10000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Sombra sutil para destacar */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(0);
+}
+
+/* Estado: Menu oculto */
+.bottom-nav.hidden {
+  transform: translateY(100%);
 }
 
 .nav-item {
