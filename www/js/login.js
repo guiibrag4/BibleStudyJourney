@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const API_BASE_URL = CONFIG.BASE_URL;
     console.log('[login.js] API Base URL detectada:', API_BASE_URL);
 
-    const CONFIG = {
+    const LOGIN_CONFIG = {
         REDIRECT_PAGE: "biblia.html",
         SIGNUP_PAGE: "cadastro2.html"
     };
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         setupEventListeners() {
             this.elements.loginForm?.addEventListener("submit", this.handleLoginSubmit.bind(this));
-            this.elements.signupLink?.addEventListener("click", () => this.redirectTo(CONFIG.SIGNUP_PAGE));
+            this.elements.signupLink?.addEventListener("click", () => this.redirectTo(LOGIN_CONFIG.SIGNUP_PAGE));
         },
 
         async handleLoginSubmit(event) {
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.ok && data.token) {
                     await AuthManager.saveToken(data.token);
                     if (DEBUG) console.log("Login bem-sucedido! Token salvo.");
-                    this.redirectTo(CONFIG.REDIRECT_PAGE);
+                    this.redirectTo(LOGIN_CONFIG.REDIRECT_PAGE);
                 } else {
                     this.showError(data.error || "Erro ao fazer login. Verifique suas credenciais.");
                 }
