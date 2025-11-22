@@ -653,4 +653,42 @@ router.get('/books/:book', async (req, res) => {
     }
 });
 
+// Busca de versículos por palavra
+router.post('/verses/search', async (req, res) => {
+    const { version, search } = req.body;
+    
+    if (!search || search.trim().length < 3) {
+        return res.status(400).json({ error: 'Termo de busca deve ter no mínimo 3 caracteres' });
+    }
+    
+    const url = `${BIBLE_API_URL}/verses/search`;
+    
+    try {
+        console.log(`[BIBLE SEARCH] Buscando: "${search}" na versão ${version}`);
+        
+        const apiResponse = await fetch(url, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${API_TOKEN}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ version, search })
+        });
+        
+        const data = await apiResponse.json();
+        
+        console.log(`[BIBLE SEARCH] Status: ${apiResponse.status}, Resultados: ${data.verses?.length || 0}`);
+        
+        if (!apiResponse.ok) {
+            console.error('[BIBLE SEARCH] Erro da API:', data);
+            return res.status(apiResponse.status).json(data);
+        }
+        
+        res.json(data);
+    } catch (error) {
+        console.error('[BIBLE SEARCH] Erro ao buscar versículos:', error);
+        res.status(500).json({ error: 'Erro interno ao buscar versículos.' });
+    }
+});
+
 module.exports = router;
