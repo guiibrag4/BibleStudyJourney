@@ -34,18 +34,20 @@ const versionSelect = document.getElementById('version-select');
 /**
  * Realiza uma chamada fetch para a API, incluindo o token de autenticação do usuário.
  * @param {string} url - O endpoint da API para chamar (ex: '/verses/nvi/gn/1').
+ * @param {object} options - Opções adicionais do fetch (method, body, etc).
  * @returns {Promise<Response>} - A promessa da resposta da requisição.
  */
 
-async function fetchWithAuth(url) {
+async function fetchWithAuth(url, options = {}) {
     // Assumindo que você tem um AuthManager global para pegar o token, como no seu saves.js
     const token = await window.AuthManager.getToken();
 
     const headers = {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        ...(options.headers || {})
     };
 
-    return fetch(url, { headers });
+    return fetch(url, { ...options, headers });
 }
 
 // ===== UTILITÁRIOS =====
@@ -236,6 +238,338 @@ function renderBibleContent(verses) {
     bibleContentEl.appendChild(fragment);
     
     window.dispatchEvent(new Event('chapterChanged'));
+}
+
+// ===== FILTRO DE PESQUISA DE LIVROS =====
+/**
+ * Filtra os livros bíblicos com base no termo de pesquisa.
+ * @param {string} searchTerm - Termo de pesquisa inserido pelo usuário.
+ */
+function filterBooks(searchTerm) {
+    const normalizedSearch = searchTerm.toLowerCase().trim();
+    const categories = document.querySelectorAll('.book-category');
+    
+    categories.forEach(category => {
+        const books = category.querySelectorAll('.book-item');
+        let hasVisibleBook = false;
+        
+        books.forEach(book => {
+            const bookName = book.textContent.toLowerCase();
+            
+            if (bookName.includes(normalizedSearch)) {
+                book.classList.remove('hidden');
+                hasVisibleBook = true;
+            } else {
+                book.classList.add('hidden');
+            }
+        });
+        
+        // Oculta a categoria inteira se nenhum livro for visível
+        if (hasVisibleBook) {
+            category.classList.remove('hidden');
+        } else {
+            category.classList.add('hidden');
+        }
+    });
+}
+
+// ===== BUSCA DE VERSÍCULOS =====
+let searchResultsCache = [];
+let currentSearchTerm = '';
+let displayedResults = 0;
+const RESULTS_PER_PAGE = 20;
+let searchTimeout = null;
+
+/**
+ * Busca versículos na API com debounce.
+ */
+const debouncedVerseSearch = (() => {
+    return function(searchTerm) {
+        clearTimeout(searchTimeout);
+        
+        if (searchTerm.length < 3) {
+            resetVerseSearch();
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            searchVerses(searchTerm, true);
+        }, 500); // 500ms de debounce
+    };
+})();
+
+/**
+ * Realiza a busca de versículos na API.
+ */
+async function searchVerses(searchTerm, resetResults = false) {
+    const trimmedSearch = searchTerm.trim();
+    
+    if (trimmedSearch.length < 3) {
+        resetVerseSearch();
+        return;
+    }
+    
+    // Verifica cache
+    const cacheKey = `verse_search_${versaoAtual}_${trimmedSearch.toLowerCase()}`;
+    
+    if (resetResults) {
+        currentSearchTerm = trimmedSearch;
+        displayedResults = 0;
+        
+        // Tenta buscar do cache
+        try {
+            const cached = await localforage.getItem(cacheKey);
+            const cacheTime = await localforage.getItem(`${cacheKey}_time`);
+            
+            // Cache válido por 1 hora
+            if (cached && cacheTime && (Date.now() - cacheTime < 3600000)) {
+                searchResultsCache = cached;
+                renderSearchResults();
+                return;
+            }
+        } catch (error) {
+            console.log('Cache miss ou erro:', error);
+        }
+    }
+    
+    // Mostra loading
+    showSearchLoading(true);
+    
+    try {
+        // Busca versículos através do proxy do backend (que tem o token da API)
+        const token = await window.AuthManager.getToken();
+        
+        console.log(`[BUSCA] Buscando por: "${trimmedSearch}" na versão ${versaoAtual}`);
+        console.log(`[BUSCA] Endpoint: ${API_URL}/verses/search`);
+        
+        const response = await fetch(`${API_URL}/verses/search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                version: versaoAtual,
+                search: trimmedSearch
+            })
+        });
+        
+        console.log(`[BUSCA] Status da resposta: ${response.status}`);
+        
+        if (!response.ok) {
+            // Tenta ler a resposta de erro
+            const errorText = await response.text();
+            console.error('[BUSCA] Erro da API:', errorText);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log(`[BUSCA] Resultados recebidos:`, data);
+        console.log(`[BUSCA] Total de versículos: ${data.verses?.length || 0}`);
+        
+        if (resetResults) {
+            searchResultsCache = data.verses || [];
+            
+            // Salva no cache
+            try {
+                await localforage.setItem(cacheKey, searchResultsCache);
+                await localforage.setItem(`${cacheKey}_time`, Date.now());
+                console.log(`[BUSCA] Resultados salvos no cache: ${cacheKey}`);
+            } catch (error) {
+                console.error('[BUSCA] Erro ao salvar cache:', error);
+            }
+        }
+        
+        renderSearchResults();
+        
+    } catch (error) {
+        console.error('[BUSCA] Erro ao buscar versículos:', error);
+        console.error('[BUSCA] Detalhes:', {
+            versao: versaoAtual,
+            termo: trimmedSearch,
+            endpoint: `${API_URL}/verses/search`
+        });
+        showSearchError();
+    } finally {
+        showSearchLoading(false);
+    }
+}
+
+/**
+ * Renderiza os resultados da busca.
+ */
+function renderSearchResults() {
+    const resultsContainer = document.getElementById('search-results');
+    const searchInfo = document.getElementById('search-info');
+    const searchCount = document.getElementById('search-count');
+    const loadMoreBtn = document.getElementById('load-more-results');
+    
+    if (!resultsContainer) return;
+    
+    const totalResults = searchResultsCache.length;
+    const endIndex = Math.min(displayedResults + RESULTS_PER_PAGE, totalResults);
+    const resultsToShow = searchResultsCache.slice(displayedResults, endIndex);
+    
+    // Atualiza contador
+    if (searchInfo && searchCount) {
+        searchCount.textContent = `${totalResults} versículo${totalResults !== 1 ? 's' : ''} encontrado${totalResults !== 1 ? 's' : ''}`;
+        searchInfo.classList.remove('hidden');
+    }
+    
+    // Se é primeira renderização, limpa container
+    if (displayedResults === 0) {
+        resultsContainer.innerHTML = '';
+    }
+    
+    if (totalResults === 0) {
+        resultsContainer.innerHTML = `
+            <div class="search-empty">
+                <img src="../img/search-icon.svg" alt="Sem resultados" />
+                <p>Nenhum versículo encontrado para "${currentSearchTerm}"</p>
+            </div>
+        `;
+        if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+        return;
+    }
+    
+    // Renderiza resultados
+    const fragment = document.createDocumentFragment();
+    
+    resultsToShow.forEach(verse => {
+        const resultItem = document.createElement('div');
+        resultItem.className = 'search-result-item';
+        resultItem.dataset.book = verse.book.abbrev.pt;
+        resultItem.dataset.chapter = verse.chapter;
+        resultItem.dataset.verse = verse.number;
+        
+        // Destaca o termo de busca no texto
+        const highlightedText = highlightSearchTerm(verse.text, currentSearchTerm);
+        
+        resultItem.innerHTML = `
+            <div class="result-reference">
+                <span class="book-name">${verse.book.name}</span>
+                <span class="chapter-verse">${verse.chapter}:${verse.number}</span>
+            </div>
+            <p class="result-text">${highlightedText}</p>
+        `;
+        
+        // Adiciona evento de clique
+        resultItem.addEventListener('click', () => {
+            navigateToSearchResult(verse.book.abbrev.pt, verse.chapter, verse.number);
+        });
+        
+        fragment.appendChild(resultItem);
+    });
+    
+    resultsContainer.appendChild(fragment);
+    displayedResults = endIndex;
+    
+    // Mostra/oculta botão "Carregar mais"
+    if (loadMoreBtn) {
+        if (displayedResults < totalResults) {
+            loadMoreBtn.classList.remove('hidden');
+            loadMoreBtn.textContent = `Carregar mais (${totalResults - displayedResults} restantes)`;
+        } else {
+            loadMoreBtn.classList.add('hidden');
+        }
+    }
+}
+
+/**
+ * Carrega mais resultados.
+ */
+function loadMoreSearchResults() {
+    renderSearchResults();
+}
+
+/**
+ * Destaca o termo de busca no texto.
+ */
+function highlightSearchTerm(text, searchTerm) {
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    return text.replace(regex, '<mark>$1</mark>');
+}
+
+/**
+ * Navega para o versículo encontrado.
+ */
+async function navigateToSearchResult(book, chapter, verse) {
+    livroAtual = book;
+    capituloAtual = chapter;
+    versoAtual = verse;
+    
+    closeAllModals();
+    updateUI();
+    
+    await fetchBibleContent(versaoAtual, livroAtual, capituloAtual);
+    await saveCurrentState();
+    
+    // Aguarda o conteúdo carregar e rola até o versículo
+    setTimeout(() => {
+        scrollToVerse(verse);
+        highlightVerse(verse);
+    }, 300);
+}
+
+/**
+ * Reseta a busca de versículos.
+ */
+function resetVerseSearch() {
+    const resultsContainer = document.getElementById('search-results');
+    const searchInfo = document.getElementById('search-info');
+    const loadMoreBtn = document.getElementById('load-more-results');
+    
+    if (resultsContainer) {
+        resultsContainer.innerHTML = `
+            <div class="search-empty">
+                <img src="../img/search-icon.svg" alt="Buscar" />
+                <p>Digite pelo menos 3 caracteres para buscar</p>
+            </div>
+        `;
+    }
+    
+    if (searchInfo) searchInfo.classList.add('hidden');
+    if (loadMoreBtn) loadMoreBtn.classList.add('hidden');
+    
+    searchResultsCache = [];
+    currentSearchTerm = '';
+    displayedResults = 0;
+}
+
+/**
+ * Mostra/oculta loading da busca.
+ */
+function showSearchLoading(show) {
+    const loading = document.getElementById('search-loading');
+    const results = document.getElementById('search-results');
+    const searchInfo = document.getElementById('search-info');
+    
+    if (loading) {
+        if (show) {
+            loading.classList.remove('hidden');
+            if (results) results.style.display = 'none';
+            if (searchInfo) searchInfo.classList.add('hidden');
+        } else {
+            loading.classList.add('hidden');
+            if (results) results.style.display = 'block';
+        }
+    }
+}
+
+/**
+ * Mostra erro na busca.
+ */
+function showSearchError() {
+    const resultsContainer = document.getElementById('search-results');
+    
+    if (resultsContainer) {
+        resultsContainer.innerHTML = `
+            <div class="search-empty">
+                <img src="../img/search-icon.svg" alt="Erro" />
+                <p>Erro ao buscar versículos. Tente novamente.</p>
+            </div>
+        `;
+    }
 }
 
 // ===== NAVEGAÇÃO =====
@@ -479,7 +813,110 @@ function setupEventListeners() {
 }
 
     // Seletor de livro/capítulo
-    if (chapterSelector) chapterSelector.addEventListener('click', () => openDialog(bookDialog));
+    if (chapterSelector) chapterSelector.addEventListener('click', () => {
+        openDialog(bookDialog);
+        // Limpa a pesquisa ao abrir o modal
+        const searchInput = document.getElementById('book-search-input');
+        if (searchInput) {
+            searchInput.value = '';
+            filterBooks('');
+        }
+    });
+
+    // Botão de busca de versículos
+    const searchVersesBtn = document.getElementById('search-verses-btn');
+    if (searchVersesBtn) {
+        searchVersesBtn.addEventListener('click', () => {
+            openDialog(document.getElementById('search-dialog'));
+            // Foca no input ao abrir
+            setTimeout(() => {
+                const verseSearchInput = document.getElementById('verse-search-input');
+                if (verseSearchInput) verseSearchInput.focus();
+            }, 100);
+        });
+    }
+
+    // Barra de pesquisa de livros
+    const bookSearchInput = document.getElementById('book-search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+    
+    if (bookSearchInput) {
+        bookSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            filterBooks(searchTerm);
+            
+            // Mostra/oculta botão de limpar
+            if (clearSearchBtn) {
+                if (searchTerm.length > 0) {
+                    clearSearchBtn.classList.add('visible');
+                } else {
+                    clearSearchBtn.classList.remove('visible');
+                }
+            }
+        });
+    }
+    
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener('click', () => {
+            if (bookSearchInput) {
+                bookSearchInput.value = '';
+                filterBooks('');
+                clearSearchBtn.classList.remove('visible');
+                bookSearchInput.focus();
+            }
+        });
+    }
+
+    // Busca de versículos
+    const verseSearchInput = document.getElementById('verse-search-input');
+    const clearVerseSearchBtn = document.getElementById('clear-verse-search');
+    const loadMoreBtn = document.getElementById('load-more-results');
+    
+    if (verseSearchInput) {
+        verseSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            
+            // Mostra/oculta botão de limpar
+            if (clearVerseSearchBtn) {
+                if (searchTerm.length > 0) {
+                    clearVerseSearchBtn.classList.add('visible');
+                } else {
+                    clearVerseSearchBtn.classList.remove('visible');
+                    resetVerseSearch();
+                }
+            }
+            
+            // Debounce da busca
+            debouncedVerseSearch(searchTerm);
+        });
+        
+        // Busca ao pressionar Enter
+        verseSearchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const searchTerm = e.target.value.trim();
+                if (searchTerm.length >= 3) {
+                    searchVerses(searchTerm, true);
+                }
+            }
+        });
+    }
+    
+    if (clearVerseSearchBtn) {
+        clearVerseSearchBtn.addEventListener('click', () => {
+            if (verseSearchInput) {
+                verseSearchInput.value = '';
+                clearVerseSearchBtn.classList.remove('visible');
+                resetVerseSearch();
+                verseSearchInput.focus();
+            }
+        });
+    }
+    
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            loadMoreSearchResults();
+        });
+    }
 
     // ⚡ OTIMIZAÇÃO: Event Delegation - Um único listener para todos os cliques
     // Em vez de adicionar listener a cada botão (book-item, chapter-item, verse-item),

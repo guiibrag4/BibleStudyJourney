@@ -200,6 +200,303 @@ body #bible-reader #content-title-header {
 }
 
 /* Estilos para o modal de seleção de livros e capítulos */
+
+/* Barra de pesquisa de livros */
+.book-search-container {
+  position: relative;
+  width: 100%;
+}
+
+#book-search-input {
+  width: 85%;
+  padding: 12px 40px 12px 16px;
+  font-size: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--hover-color);
+  color: var(--text-color);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+#book-search-input:focus {
+  border-color: var(--primary-color);
+  background-color: var(--background-color);
+}
+
+#book-search-input::placeholder {
+  color: var(--text-secondary-color);
+  opacity: 0.7;
+}
+
+.search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: var(--text-secondary-color);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.search-clear.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-clear:hover {
+  color: var(--primary-color);
+}
+
+/* Estados de visibilidade para categorias e livros */
+.book-category.hidden {
+  display: none;
+}
+
+.book-item.hidden {
+  display: none;
+}
+
+/* ========================================= */
+/*  BUSCA DE VERSÍCULOS                      */
+/* ========================================= */
+
+.verse-search-container {
+  position: relative;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+#verse-search-input {
+  width: 100%;
+  padding: 14px 40px 14px 16px;
+  font-size: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  background-color: var(--hover-color);
+  color: var(--text-color);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+#verse-search-input:focus {
+  border-color: var(--primary-color);
+  background-color: var(--background-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+#verse-search-input::placeholder {
+  color: var(--text-secondary-color);
+  opacity: 0.7;
+}
+
+.search-clear-verses {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: var(--text-secondary-color);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.search-clear-verses.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-clear-verses:hover {
+  color: var(--primary-color);
+}
+
+/* Informações da busca */
+.search-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--hover-color);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--text-secondary-color);
+}
+
+.search-info.hidden {
+  display: none;
+}
+
+/* Container de resultados */
+.search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+/* Estado vazio */
+.search-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--text-secondary-color);
+  text-align: center;
+}
+
+.search-empty img {
+  width: 60px;
+  height: 60px;
+  opacity: 0.3;
+  margin-bottom: 16px;
+  filter: var(--icon-filter);
+}
+
+.search-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Card de resultado */
+.search-result-item {
+  padding: 14px;
+  margin-bottom: 8px;
+  background-color: var(--hover-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.search-result-item:hover {
+  background-color: var(--background-color);
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.search-result-item:active {
+  transform: translateX(2px);
+}
+
+.result-reference {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 6px;
+}
+
+.result-reference .book-name {
+  color: var(--primary-color);
+}
+
+.result-reference .chapter-verse {
+  color: var(--text-secondary-color);
+}
+
+.result-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.result-text mark {
+  background-color: rgba(var(--primary-color-rgb), 0.2);
+  color: var(--text-color);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+/* Loading */
+.search-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--text-secondary-color);
+}
+
+.search-loading.hidden {
+  display: none;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.search-loading p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Botão carregar mais */
+.load-more-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.load-more-btn:hover {
+  background-color: var(--primary-color);
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.load-more-btn:active {
+  transform: translateY(0);
+}
+
+.load-more-btn.hidden {
+  display: none;
+}
+
+/* Scrollbar customizada para resultados */
+.search-results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.search-results::-webkit-scrollbar-track {
+  background: var(--hover-color);
+  border-radius: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary-color);
+}
+
 .book-category h3 {
   font-size: 1.2rem;
   margin-bottom: 5px;

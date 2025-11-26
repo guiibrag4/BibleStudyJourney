@@ -34,6 +34,9 @@
 
         <!-- NOVO: Grupo para os botões da direita -->
         <div class="action-buttons-group">
+          <button id="search-verses-btn" class="action-button" title="Buscar versículos">
+            <img src="../img/search-icon.svg" alt="Buscar versículos" />
+          </button>
           <button id="mark-book-as-read-btn" class="action-button" title="Marcar este livro como lido">
             <img src="../img/check-circle-icon.svg" alt="Marcar como lido" />
           </button>
@@ -115,6 +118,11 @@
         <button class="close-button">×</button>
       </div>
       <div class="dialog-body">
+        <!-- Barra de Pesquisa -->
+        <div class="book-search-container">
+          <input type="text" id="book-search-input" placeholder="Pesquisar livro..." autocomplete="off">
+          <span class="search-clear" id="clear-search">×</span>
+        </div>
         <div class="book-category">
           <h3>Pentateuco</h3>
           <div class="book-list">
@@ -264,6 +272,45 @@
       </div>
       <div class="dialog-body">
         <div id="verse-grid" class="verse-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Verses Dialog -->
+  <div id="search-dialog" class="dialog">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2>Qual versículo você está procurando?</h2>
+        <button class="close-button">×</button>
+      </div>
+      <div class="dialog-body">
+        <!-- Input de busca -->
+        <div class="verse-search-container">
+          <input type="text" id="verse-search-input" placeholder="Digite uma palavra ou frase..." autocomplete="off" />
+          <span class="search-clear-verses" id="clear-verse-search">×</span>
+        </div>
+        
+        <!-- Informações de busca -->
+        <div id="search-info" class="search-info hidden">
+          <span id="search-count">0 versículos encontrados</span>
+        </div>
+        
+        <!-- Resultados -->
+        <div id="search-results" class="search-results">
+          <div class="search-empty">
+            <img src="../img/search-icon.svg" alt="Buscar" />
+            <p>Digite pelo menos 3 caracteres para buscar</p>
+          </div>
+        </div>
+        
+        <!-- Loading -->
+        <div id="search-loading" class="search-loading hidden">
+          <div class="spinner"></div>
+          <p>Buscando...</p>
+        </div>
+        
+        <!-- Botão carregar mais -->
+        <button id="load-more-results" class="load-more-btn hidden">Carregar mais resultados</button>
       </div>
     </div>
   </div>
