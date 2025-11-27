@@ -590,55 +590,6 @@ router.get('/devotional/stats', async (req, res) => {
     }
 });
 
-// ============================================================================
-// ROTA DE BUSCA DE VERSÍCULOS
-// ============================================================================
-
-router.post('/verses/search', async (req, res) => {
-    const { version, search } = req.body;
-    
-    // Validação básica
-    if (!search || search.trim().length < 3) {
-        return res.status(400).json({ error: 'Termo de busca deve ter no mínimo 3 caracteres' });
-    }
-    
-    const url = `${BIBLE_API_URL}/verses/search`;
-    
-    try {
-        console.log(`[BIBLE SEARCH] Buscando: "${search}" na versão ${version || 'nvi'}`);
-        
-        const apiResponse = await fetch(url, {
-            method: 'POST',
-            headers: { 
-                'Authorization': `Bearer ${API_TOKEN}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 
-                version: version || 'nvi', 
-                search: search.trim() 
-            })
-        });
-        
-        const data = await apiResponse.json();
-        
-        console.log(`[BIBLE SEARCH] Status: ${apiResponse.status}, Resultados: ${data.verses?.length || 0}`);
-        
-        if (!apiResponse.ok) {
-            return res.status(apiResponse.status).json(data);
-        }
-        
-        res.json(data);
-        
-    } catch (error) {
-        console.error('[BIBLE SEARCH] Erro:', error);
-        res.status(500).json({ error: 'Erro interno ao buscar versículos.' });
-    }
-});
-
-// ============================================================================
-// OUTRAS ROTAS DA BÍBLIA
-// ============================================================================
-
 router.get('/verses/:version/random', async (req,res) => {
     const { version } = req.params;
     const url = `${BIBLE_API_URL}/verses/${version}/random`;
