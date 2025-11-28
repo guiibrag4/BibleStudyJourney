@@ -1004,42 +1004,90 @@ class SavesManager {
 
         const templates = [
             {
-                id: 'classic',
-                name: 'Clássico',
-                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                id: 'royal-purple',
+                name: 'Púrpura Real',
+                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                textColor: '#ffffff',
+                pattern: null
             },
             {
-                id: 'modern',
-                name: 'Moderno',
-                gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-            },
-            {
-                id: 'elegant',
-                name: 'Elegante',
-                gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-            },
-            {
-                id: 'minimal',
-                name: 'Minimal',
-                gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
-            },
-            {
-                id: 'sunset',
+                id: 'sunset-glow',
                 name: 'Pôr do Sol',
-                gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+                gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                textColor: '#ffffff',
+                pattern: null
             },
             {
-                id: 'ocean',
-                name: 'Oceano',
-                gradient: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)'
+                id: 'ocean-breeze',
+                name: 'Brisa Oceânica',
+                gradient: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)',
+                textColor: '#ffffff',
+                pattern: null
+            },
+            {
+                id: 'forest-green',
+                name: 'Verde Floresta',
+                gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)',
+                textColor: '#ffffff',
+                pattern: null
+            },
+            {
+                id: 'golden-hour',
+                name: 'Hora Dourada',
+                gradient: 'linear-gradient(135deg, #f7971e 0%, #ffd200 100%)',
+                textColor: '#2c3e50',
+                pattern: null
+            },
+            {
+                id: 'midnight-blue',
+                name: 'Azul Meia-Noite',
+                gradient: 'linear-gradient(135deg, #000428 0%, #004e92 100%)',
+                textColor: '#ffffff',
+                pattern: 'data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M30 0l30 30-30 30L0 30z" fill="%23ffffff" fill-opacity="0.05"/%3E%3C/svg%3E'
+            },
+            {
+                id: 'rose-gold',
+                name: 'Ouro Rosê',
+                gradient: 'linear-gradient(135deg, #ed4264 0%, #ffedbc 100%)',
+                textColor: '#ffffff',
+                pattern: null
+            },
+            {
+                id: 'mint-fresh',
+                name: 'Menta Fresca',
+                gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                textColor: '#ffffff',
+                pattern: null
+            },
+            {
+                id: 'warm-flame',
+                name: 'Chama Quente',
+                gradient: 'linear-gradient(135deg, #ff0844 0%, #ffb199 100%)',
+                textColor: '#ffffff',
+                pattern: null
+            },
+            {
+                id: 'cloudy-sky',
+                name: 'Céu Nublado',
+                gradient: 'linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%)',
+                textColor: '#ffffff',
+                pattern: 'data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="20" cy="20" r="2" fill="%23ffffff" fill-opacity="0.1"/%3E%3C/svg%3E'
             }
         ];
 
+        // Armazenar templates completos para uso no download
+        this.availableTemplates = templates;
+
         container.innerHTML = templates.map(template => `
             <div class="share-template" data-template="${template.id}">
-                <div class="template-preview" style="background: ${template.gradient}">
-                    <strong>${item.reference}</strong><br><br>
-                    "${this.truncateText(item.text, 80)}"
+                <div class="template-preview" style="
+                    background: ${template.gradient};
+                    ${template.pattern ? `background-image: url('${template.pattern}');` : ''}
+                    background-size: ${template.pattern ? '60px 60px' : 'cover'};
+                    color: ${template.textColor};
+                ">
+                    <strong style="font-size: 0.9rem;">${item.reference}</strong><br><br>
+                    <span style="font-size: 0.75rem; line-height: 1.4;">"${this.truncateText(item.text, 70)}"</span>
                 </div>
                 <div class="template-name">${template.name}</div>
             </div>
@@ -1063,7 +1111,133 @@ class SavesManager {
     }
 
     async downloadAsImage() {
-        this.showNotification('Funcionalidade de download em desenvolvimento. Use "Copiar Texto" por enquanto.', 'info');
+        if (!window.html2canvas) {
+            this.showNotification('Biblioteca html2canvas não carregada. Tente novamente.', 'error');
+            return;
+        }
+
+        const { item } = this.selectedShareItem;
+        const templateId = this.getSelectedTemplate();
+        const template = this.availableTemplates?.find(t => t.id === templateId);
+
+        if (!template) {
+            this.showNotification('Selecione um template primeiro', 'error');
+            return;
+        }
+
+        try {
+            // Mostrar loading
+            this.showNotification('Gerando imagem... ⏳', 'info');
+
+            // Criar container temporário para renderização
+            const container = document.createElement('div');
+            container.style.cssText = `
+                position: fixed;
+                top: -9999px;
+                left: -9999px;
+                width: 1080px;
+                height: 1080px;
+                background: ${template.gradient};
+                ${template.pattern ? `background-image: url('${template.pattern}');` : ''}
+                background-size: ${template.pattern ? '120px 120px' : 'cover'};
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 80px;
+                box-sizing: border-box;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            `;
+
+            // Conteúdo da imagem
+            container.innerHTML = `
+                <div style="
+                    width: 100%;
+                    max-width: 900px;
+                    text-align: center;
+                    color: ${template.textColor};
+                ">
+                    <!-- Ícone de citação superior -->
+                    <div style="font-size: 80px; opacity: 0.3; margin-bottom: 40px;">"</div>
+                    
+                    <!-- Referência bíblica -->
+                    <h2 style="
+                        font-size: 48px;
+                        font-weight: 700;
+                        margin: 0 0 60px 0;
+                        letter-spacing: -0.5px;
+                        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                    ">${item.reference}</h2>
+                    
+                    <!-- Texto do versículo -->
+                    <p style="
+                        font-size: 32px;
+                        line-height: 1.8;
+                        margin: 0 0 60px 0;
+                        font-weight: 400;
+                        text-shadow: 0 1px 5px rgba(0,0,0,0.1);
+                        max-width: 800px;
+                        margin-left: auto;
+                        margin-right: auto;
+                    ">"${item.text}"</p>
+                    
+                    <!-- Ícone de citação inferior -->
+                    <div style="font-size: 80px; opacity: 0.3; margin-bottom: 60px; transform: rotate(180deg);">"</div>
+                    
+                    <!-- Rodapé -->
+                    <div style="
+                        font-size: 24px;
+                        opacity: 0.7;
+                        font-weight: 500;
+                        letter-spacing: 1px;
+                    ">📖 Bible Study Journey</div>
+                </div>
+            `;
+
+            document.body.appendChild(container);
+
+            // Aguardar fontes carregarem
+            await document.fonts.ready;
+
+            // Pequeno delay para garantir renderização
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            // Gerar canvas com alta qualidade
+            const canvas = await html2canvas(container, {
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            });
+
+            // Remover container temporário
+            document.body.removeChild(container);
+
+            // Converter para blob e fazer download
+            canvas.toBlob((blob) => {
+                if (!blob) {
+                    this.showNotification('Erro ao gerar imagem', 'error');
+                    return;
+                }
+
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${item.reference.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.showNotification('Imagem baixada com sucesso! 📸', 'success');
+                document.getElementById('share-modal').style.display = 'none';
+            }, 'image/png', 1.0);
+
+        } catch (error) {
+            console.error('Erro ao gerar imagem:', error);
+            this.showNotification('Erro ao gerar imagem: ' + error.message, 'error');
+        }
     }
 
     shareToWhatsApp() {
