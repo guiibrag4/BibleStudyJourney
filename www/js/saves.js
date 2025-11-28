@@ -11,12 +11,20 @@ class SavesManager {
             capitulos: [],
             notas: []
         };
+        this.filteredSaves = {
+            versiculos: [],
+            capitulos: [],
+            notas: []
+        };
+        this.searchQuery = '';
+        this.selectedShareItem = null;
         this.init();
     }
 
     async init() {
         await this.loadSaves();
         this.setupEventListeners();
+        this.setupSearchListeners();
         this.renderCurrentTab();
         this.updateCounts();
     }
@@ -42,6 +50,9 @@ class SavesManager {
                 capitulos: chapters || [],
                 notas: notes || []
             };
+
+            // Inicializar filteredSaves com todos os dados
+            this.filterSaves();
 
             console.log('[saves.js] Saves carregados:', this.saves);
         } catch (error) {
@@ -78,10 +89,48 @@ class SavesManager {
 
         // Tecla ESC para fechar modal
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal?.style.display !== 'none') {
-                modal.style.display = 'none';
+            if (e.key === 'Escape') {
+                if (modal?.style.display !== 'none') {
+                    modal.style.display = 'none';
+                }
+                const shareModal = document.getElementById('share-modal');
+                if (shareModal?.style.display === 'flex') {
+                    shareModal.style.display = 'none';
+                }
             }
         });
+
+        // Event listeners do modal de compartilhamento
+        const shareModal = document.getElementById('share-modal');
+        const closeShareBtn = document.getElementById('close-share-btn');
+        const downloadImageBtn = document.getElementById('download-image-btn');
+        const shareWhatsappBtn = document.getElementById('share-whatsapp-btn');
+        const copyTextBtn = document.getElementById('copy-text-btn');
+
+        if (closeShareBtn) {
+            closeShareBtn.addEventListener('click', () => {
+                shareModal.style.display = 'none';
+            });
+        }
+
+        // Fechar modal ao clicar no overlay
+        shareModal?.addEventListener('click', (e) => {
+            if (e.target === shareModal) {
+                shareModal.style.display = 'none';
+            }
+        });
+
+        if (downloadImageBtn) {
+            downloadImageBtn.addEventListener('click', () => this.downloadAsImage());
+        }
+
+        if (shareWhatsappBtn) {
+            shareWhatsappBtn.addEventListener('click', () => this.shareToWhatsApp());
+        }
+
+        if (copyTextBtn) {
+            copyTextBtn.addEventListener('click', () => this.copyText());
+        }
 
         // EVENT DELEGATION para botões dos cards (evita onclick inline)
         document.addEventListener('click', (e) => {
@@ -97,6 +146,15 @@ class SavesManager {
                 const btn = e.target.closest('.delete-versiculo-btn');
                 const id = btn.dataset.id;
                 this.deleteItem('versiculos', id);
+                return;
+            }
+
+            // Botão de compartilhar versículo
+            if (e.target.closest('.share-versiculo-btn')) {
+                const btn = e.target.closest('.share-versiculo-btn');
+                const id = btn.dataset.id;
+                this.openShareModal('versiculo', id);
+                return;
             }
 
             // Botão de expandir versículo
@@ -107,9 +165,12 @@ class SavesManager {
                 return;
             }
 
-            // Clicar no card de versículo navega (exceto botões de excluir e expandir)
+            // Clicar no card de versículo navega (exceto botões de ação)
             const versiculoCard = e.target.closest('.versiculo-card');
-            if (versiculoCard && !e.target.closest('.delete-versiculo-btn') && !e.target.closest('.expand-versiculo-btn')) {
+            if (versiculoCard && 
+                !e.target.closest('.delete-versiculo-btn') && 
+                !e.target.closest('.share-versiculo-btn') && 
+                !e.target.closest('.expand-versiculo-btn')) {
                 const id = versiculoCard.dataset.id;
                 this.navigateToHighlightedVerse(id);
                 return;
@@ -143,6 +204,15 @@ class SavesManager {
                 const btn = e.target.closest('.edit-note-btn');
                 const id = btn.dataset.id;
                 this.editNote(id);
+                return;
+            }
+
+            // Botão de compartilhar nota
+            if (e.target.closest('.share-nota-btn')) {
+                const btn = e.target.closest('.share-nota-btn');
+                const id = btn.dataset.id;
+                this.openShareModal('nota', id);
+                return;
             }
 
             // Botão de excluir nota
@@ -150,6 +220,7 @@ class SavesManager {
                 const btn = e.target.closest('.delete-nota-btn');
                 const id = btn.dataset.id;
                 this.deleteItem('notas', id);
+                return;
             }
 
             // Botão de expandir nota
@@ -215,15 +286,24 @@ class SavesManager {
         const grid = document.getElementById('versiculos-grid');
         const empty = document.getElementById('versiculos-empty');
         
-        if (!this.saves.versiculos || this.saves.versiculos.length === 0) {
+        if (!this.filteredSaves.versiculos || this.filteredSaves.versiculos.length === 0) {
             grid.innerHTML = '';
             empty.style.display = 'block';
+            if (this.searchQuery) {
+                empty.innerHTML = `
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <p>Nenhum versículo encontrado</p>
+                `;
+            }
             return;
         }
 
         empty.style.display = 'none';
         
-        grid.innerHTML = this.saves.versiculos.map(versiculo => `
+        grid.innerHTML = this.filteredSaves.versiculos.map(versiculo => `
             <div class="save-card versiculo-card highlight-${versiculo.color}" data-id="${versiculo.id}">
                 <div class="card-header">
                     <h3 class="card-title">${versiculo.reference}</h3>
@@ -232,6 +312,15 @@ class SavesManager {
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
                                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn share-versiculo-btn" data-id="${versiculo.id}" title="Compartilhar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                             </svg>
                         </button>
                         <button class="action-btn delete-versiculo-btn" data-id="${versiculo.id}" title="Excluir versículo">
@@ -272,15 +361,24 @@ class SavesManager {
         const grid = document.getElementById('capitulos-grid');
         const empty = document.getElementById('capitulos-empty');
         
-        if (!this.saves.capitulos || this.saves.capitulos.length === 0) {
+        if (!this.filteredSaves.capitulos || this.filteredSaves.capitulos.length === 0) {
             grid.innerHTML = '';
             empty.style.display = 'block';
+            if (this.searchQuery) {
+                empty.innerHTML = `
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <p>Nenhum capítulo encontrado</p>
+                `;
+            }
             return;
         }
 
         empty.style.display = 'none';
         
-        grid.innerHTML = this.saves.capitulos.map(capitulo => `
+        grid.innerHTML = this.filteredSaves.capitulos.map(capitulo => `
             <div class="save-card capitulo-card" data-id="${capitulo.id}">
                 <div class="card-header">
                     <h3 class="card-title">${capitulo.title}</h3>
@@ -330,15 +428,24 @@ class SavesManager {
         const grid = document.getElementById('notas-grid');
         const empty = document.getElementById('notas-empty');
         
-        if (!this.saves.notas || this.saves.notas.length === 0) {
+        if (!this.filteredSaves.notas || this.filteredSaves.notas.length === 0) {
             grid.innerHTML = '';
             empty.style.display = 'block';
+            if (this.searchQuery) {
+                empty.innerHTML = `
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <p>Nenhuma nota encontrada</p>
+                `;
+            }
             return;
         }
 
         empty.style.display = 'none';
         
-        grid.innerHTML = this.saves.notas.map(nota => `
+        grid.innerHTML = this.filteredSaves.notas.map(nota => `
             <div class="save-card nota-card" data-id="${nota.id}">
                 <div class="card-header">
                     <h3 class="card-title">${nota.reference}</h3>
@@ -347,6 +454,15 @@ class SavesManager {
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn share-nota-btn" data-id="${nota.id}" title="Compartilhar">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                             </svg>
                         </button>
                         <button class="action-btn delete-nota-btn" data-id="${nota.id}" title="Excluir nota">
@@ -786,6 +902,189 @@ class SavesManager {
                 }
             }, 300);
         }, 3000);
+    }
+
+    // ========================================================================
+    // FUNCIONALIDADE DE BUSCA
+    // ========================================================================
+    
+    setupSearchListeners() {
+        const searchInput = document.getElementById('search-input');
+        const clearBtn = document.getElementById('clear-search');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.searchQuery = e.target.value.toLowerCase().trim();
+                this.filterSaves();
+                this.renderCurrentTab();
+                
+                // Mostrar/esconder botão de limpar
+                if (clearBtn) {
+                    clearBtn.style.display = this.searchQuery ? 'flex' : 'none';
+                }
+            });
+        }
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                this.searchQuery = '';
+                this.filterSaves();
+                this.renderCurrentTab();
+                clearBtn.style.display = 'none';
+                searchInput.focus();
+            });
+        }
+    }
+
+    filterSaves() {
+        if (!this.searchQuery) {
+            this.filteredSaves = {
+                versiculos: this.saves.versiculos,
+                capitulos: this.saves.capitulos,
+                notas: this.saves.notas
+            };
+            return;
+        }
+
+        this.filteredSaves = {
+            versiculos: this.saves.versiculos.filter(v => 
+                v.reference.toLowerCase().includes(this.searchQuery) ||
+                v.text.toLowerCase().includes(this.searchQuery) ||
+                this.getColorName(v.color).toLowerCase().includes(this.searchQuery)
+            ),
+            capitulos: this.saves.capitulos.filter(c =>
+                c.title.toLowerCase().includes(this.searchQuery) ||
+                c.subtitle.toLowerCase().includes(this.searchQuery)
+            ),
+            notas: this.saves.notas.filter(n =>
+                n.reference.toLowerCase().includes(this.searchQuery) ||
+                n.text.toLowerCase().includes(this.searchQuery)
+            )
+        };
+    }
+
+    // ========================================================================
+    // FUNCIONALIDADE DE COMPARTILHAMENTO
+    // ========================================================================
+
+    openShareModal(type, id) {
+        const modal = document.getElementById('share-modal');
+        
+        let item;
+        if (type === 'versiculo') {
+            item = this.saves.versiculos?.find(v => v.id === id);
+        } else if (type === 'nota') {
+            item = this.saves.notas?.find(n => n.id === id);
+        }
+
+        if (!item) return;
+
+        this.selectedShareItem = { type, item };
+        this.renderShareTemplates();
+        modal.style.display = 'flex';
+
+        // Event listeners
+        const closeBtn = modal.querySelector('.close-share-modal');
+        closeBtn.onclick = () => modal.style.display = 'none';
+
+        modal.onclick = (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        };
+
+        // Botões de ação
+        document.getElementById('download-image').onclick = () => this.downloadAsImage();
+        document.getElementById('share-whatsapp').onclick = () => this.shareToWhatsApp();
+        document.getElementById('copy-text').onclick = () => this.copyText();
+    }
+
+    renderShareTemplates() {
+        const container = document.getElementById('share-templates');
+        const { type, item } = this.selectedShareItem;
+
+        const templates = [
+            {
+                id: 'classic',
+                name: 'Clássico',
+                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+            },
+            {
+                id: 'modern',
+                name: 'Moderno',
+                gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+            },
+            {
+                id: 'elegant',
+                name: 'Elegante',
+                gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+            },
+            {
+                id: 'minimal',
+                name: 'Minimal',
+                gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+            },
+            {
+                id: 'sunset',
+                name: 'Pôr do Sol',
+                gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+            },
+            {
+                id: 'ocean',
+                name: 'Oceano',
+                gradient: 'linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%)'
+            }
+        ];
+
+        container.innerHTML = templates.map(template => `
+            <div class="share-template" data-template="${template.id}">
+                <div class="template-preview" style="background: ${template.gradient}">
+                    <strong>${item.reference}</strong><br><br>
+                    "${this.truncateText(item.text, 80)}"
+                </div>
+                <div class="template-name">${template.name}</div>
+            </div>
+        `).join('');
+
+        // Event listeners para selecionar template
+        container.querySelectorAll('.share-template').forEach(el => {
+            el.addEventListener('click', () => {
+                container.querySelectorAll('.share-template').forEach(t => t.classList.remove('selected'));
+                el.classList.add('selected');
+            });
+        });
+
+        // Selecionar o primeiro por padrão
+        container.querySelector('.share-template')?.classList.add('selected');
+    }
+
+    getSelectedTemplate() {
+        const selected = document.querySelector('.share-template.selected');
+        return selected ? selected.dataset.template : 'classic';
+    }
+
+    async downloadAsImage() {
+        this.showNotification('Funcionalidade de download em desenvolvimento. Use "Copiar Texto" por enquanto.', 'info');
+    }
+
+    shareToWhatsApp() {
+        const { item } = this.selectedShareItem;
+        const text = `*${item.reference}*\n\n"${item.text}"\n\n_Compartilhado via Bible Study Journey_`;
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    }
+
+    async copyText() {
+        const { item } = this.selectedShareItem;
+        const text = `${item.reference}\n\n"${item.text}"\n\nCompartilhado via Bible Study Journey`;
+        
+        try {
+            await navigator.clipboard.writeText(text);
+            this.showNotification('Texto copiado para a área de transferência!', 'success');
+            document.getElementById('share-modal').style.display = 'none';
+        } catch (error) {
+            console.error('Erro ao copiar:', error);
+            this.showNotification('Erro ao copiar texto', 'error');
+        }
     }
 }
 
