@@ -104,16 +104,16 @@ class SavesManager {
                 const btn = e.target.closest('.expand-versiculo-btn');
                 const id = btn.dataset.id;
                 this.showFullContent('versiculo', id);
-                    return; // Previne conflito com navegação
+                return;
             }
 
-                // Clicar no card de versículo navega para ele (exceto em botões de ação)
-                const versiculoCard = e.target.closest('.versiculo-card');
-                if (versiculoCard && !e.target.closest('.card-actions') && !e.target.closest('.card-expand')) {
-                    const id = versiculoCard.dataset.id;
-                    this.navigateToHighlightedVerse(id);
-                    return;
-                }
+            // Clicar no card de versículo navega (exceto botões de excluir e expandir)
+            const versiculoCard = e.target.closest('.versiculo-card');
+            if (versiculoCard && !e.target.closest('.delete-versiculo-btn') && !e.target.closest('.expand-versiculo-btn')) {
+                const id = versiculoCard.dataset.id;
+                this.navigateToHighlightedVerse(id);
+                return;
+            }
 
             // Botão de ler capítulo
             if (e.target.closest('.read-chapter-btn')) {
@@ -127,6 +127,15 @@ class SavesManager {
                 const btn = e.target.closest('.delete-capitulo-btn');
                 const id = btn.dataset.id;
                 this.deleteItem('capitulos', id);
+                return;
+            }
+
+            // Clicar no card de capítulo navega (exceto botão de excluir)
+            const capituloCard = e.target.closest('.capitulo-card');
+            if (capituloCard && !e.target.closest('.delete-capitulo-btn')) {
+                const id = capituloCard.dataset.id;
+                this.readChapter(id);
+                return;
             }
 
             // Botão de editar nota
@@ -148,6 +157,15 @@ class SavesManager {
                 const btn = e.target.closest('.expand-nota-btn');
                 const id = btn.dataset.id;
                 this.showFullContent('nota', id);
+                return;
+            }
+
+            // Clicar no card de nota abre edição (exceto botões de excluir e expandir)
+            const notaCard = e.target.closest('.nota-card');
+            if (notaCard && !e.target.closest('.delete-nota-btn') && !e.target.closest('.expand-nota-btn')) {
+                const id = notaCard.dataset.id;
+                this.editNote(id);
+                return;
             }
         });
     }

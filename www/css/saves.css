@@ -317,12 +317,8 @@ body {
     .card-actions {
         display: flex;
         gap: 0.5rem;
-        opacity: 0;
+        opacity: 1; /* Sempre visível */
         transition: var(--transition);
-    }
-
-    .save-card:hover .card-actions {
-        opacity: 1;
     }
 
     .action-btn {
@@ -412,12 +408,8 @@ body {
         justify-content: center;
         cursor: pointer;
         transition: var(--transition);
-        opacity: 0;
+        opacity: 1; /* Sempre visível */
         color: var(--text-secondary);
-    }
-
-    .save-card:hover .card-expand {
-        opacity: 1;
     }
 
     .card-expand:hover {
@@ -429,15 +421,17 @@ body {
     /* ===== TIPOS DE CARDS ===== */
     .versiculo-card {
         border-left: 4px solid var(--primary-color);
-           cursor: pointer;
+        cursor: pointer;
     }
 
     .capitulo-card {
         border-left: 4px solid var(--secondary-color);
+        cursor: pointer;
     }
 
     .nota-card {
         border-left: 4px solid var(--success-color);
+        cursor: pointer;
     }
 
     /* Cards com destaque colorido */
