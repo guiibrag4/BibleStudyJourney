@@ -110,7 +110,22 @@ const saveCurrentState = (() => {
 
 async function loadInitialState() {
     try {
-        const savedState = await localforage.getItem('bibleAppState');
+            // Prioridade 1: Estado de navegação vindo de saves.html
+            let navigationState = null;
+            const navigationStateStr = localStorage.getItem('bibleNavigationState');
+            if (navigationStateStr) {
+                try {
+                    navigationState = JSON.parse(navigationStateStr);
+                    // Limpar após usar
+                    localStorage.removeItem('bibleNavigationState');
+                    console.log('✅ Navegação de saves.html detectada:', navigationState);
+                } catch (e) {
+                    console.error('Erro ao parsear bibleNavigationState:', e);
+                }
+            }
+
+            // Prioridade 2: Estado salvo da última leitura
+            const savedState = navigationState || await localforage.getItem('bibleAppState');
 
         if (savedState) {
             versaoAtual = savedState.version || "nvi";

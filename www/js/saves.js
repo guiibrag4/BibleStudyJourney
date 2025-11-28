@@ -70,7 +70,8 @@ class SavesManager {
 
         // Fechar modal ao clicar fora
         modal?.addEventListener('click', (e) => {
-            if (e.target === modal) {
+              // Fecha ao clicar no overlay OU no conteúdo do modal (qualquer clique)
+              if (e.target === modal || e.target.closest('.modal-content')) {
                 modal.style.display = 'none';
             }
         });
@@ -84,11 +85,11 @@ class SavesManager {
 
         // EVENT DELEGATION para botões dos cards (evita onclick inline)
         document.addEventListener('click', (e) => {
-            // Botão de editar grifo
-            if (e.target.closest('.edit-highlight-btn')) {
-                const btn = e.target.closest('.edit-highlight-btn');
+                // Botão de navegar para versículo grifado
+                if (e.target.closest('.navigate-verse-btn')) {
+                    const btn = e.target.closest('.navigate-verse-btn');
                 const id = btn.dataset.id;
-                this.editHighlight(id);
+                    this.navigateToHighlightedVerse(id);
             }
 
             // Botão de excluir versículo
@@ -103,7 +104,16 @@ class SavesManager {
                 const btn = e.target.closest('.expand-versiculo-btn');
                 const id = btn.dataset.id;
                 this.showFullContent('versiculo', id);
+                    return; // Previne conflito com navegação
             }
+
+                // Clicar no card de versículo navega para ele (exceto em botões de ação)
+                const versiculoCard = e.target.closest('.versiculo-card');
+                if (versiculoCard && !e.target.closest('.card-actions') && !e.target.closest('.card-expand')) {
+                    const id = versiculoCard.dataset.id;
+                    this.navigateToHighlightedVerse(id);
+                    return;
+                }
 
             // Botão de ler capítulo
             if (e.target.closest('.read-chapter-btn')) {
@@ -200,10 +210,10 @@ class SavesManager {
                 <div class="card-header">
                     <h3 class="card-title">${versiculo.reference}</h3>
                     <div class="card-actions">
-                        <button class="action-btn edit-highlight-btn" data-id="${versiculo.id}" title="Editar grifo">
+                            <button class="action-btn navigate-verse-btn" data-id="${versiculo.id}" title="Ir para versículo">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                             </svg>
                         </button>
                         <button class="action-btn delete-versiculo-btn" data-id="${versiculo.id}" title="Excluir versículo">
@@ -471,24 +481,250 @@ class SavesManager {
             this.showNotification('Erro ao excluir item', 'error');
         }
     }
-
+    
     editHighlight(id) {
-        // Implementar edição de grifo (mudar cor)
-        this.showNotification('Funcionalidade de edição em desenvolvimento', 'info');
+        // Mantido para compatibilidade; redireciona para o versículo grifado
+        this.navigateToHighlightedVerse(id);
+    }
+    
+    navigateToHighlightedVerse(id) {
+        // Navegar para o versículo grifado na tela da bíblia
+        const item = this.saves.versiculos?.find(v => v.id === id);
+        if (item) {
+            this.navigateToVerse(item.reference, item.version);
+        }
     }
 
     editNote(id) {
-        // Implementar edição de nota
-        this.showNotification('Funcionalidade de edição em desenvolvimento', 'info');
+        // Abrir modal de edição de nota
+        const nota = this.saves.notas?.find(n => n.id === id);
+        if (!nota) return;
+
+        // Criar modal de edição
+        const modal = document.createElement('div');
+        modal.className = 'edit-note-modal';
+        modal.innerHTML = `
+            <div class="edit-note-content">
+                <div class="edit-note-header">
+                    <h3>Editar Nota - ${nota.reference}</h3>
+                    <button class="close-edit-note-btn">×</button>
+                </div>
+                <div class="edit-note-body">
+                    <textarea class="edit-note-textarea" placeholder="Digite sua nota...">${nota.text}</textarea>
+                </div>
+                <div class="edit-note-footer">
+                    <button class="save-edit-note-btn">Salvar</button>
+                    <button class="cancel-edit-note-btn">Cancelar</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Event listeners do modal
+        const closeModal = () => {
+            modal.remove();
+        };
+
+        modal.querySelector('.close-edit-note-btn').addEventListener('click', closeModal);
+        modal.querySelector('.cancel-edit-note-btn').addEventListener('click', closeModal);
+        
+        modal.querySelector('.save-edit-note-btn').addEventListener('click', async () => {
+            const newText = modal.querySelector('.edit-note-textarea').value.trim();
+            
+            if (!newText) {
+                this.showNotification('A nota não pode estar vazia', 'error');
+                return;
+            }
+
+            try {
+                const result = await window.savesManager.notes.save({
+                    reference: nota.reference,
+                    version: nota.version,
+                    text: newText
+                });
+
+                if (result) {
+                    this.showNotification('Nota atualizada com sucesso!', 'success');
+                    await this.loadSaves();
+                    this.renderCurrentTab();
+                    closeModal();
+                } else {
+                    this.showNotification('Erro ao atualizar nota', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar nota:', error);
+                this.showNotification('Erro ao atualizar nota', 'error');
+            }
+        });
+
+        // Fechar ao clicar fora
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Aplicar estilos inline
+        Object.assign(modal.style, {
+            display: 'flex',
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: '10000',
+            justifyContent: 'center',
+            alignItems: 'center'
+        });
+
+            // Estilos para o conteúdo do modal
+            const content = modal.querySelector('.edit-note-content');
+            Object.assign(content.style, {
+                backgroundColor: 'var(--background-color, #fff)',
+                borderRadius: '12px',
+                maxWidth: '600px',
+                width: '90%',
+                maxHeight: '80vh',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+            });
+
+            const header = modal.querySelector('.edit-note-header');
+            Object.assign(header.style, {
+                padding: '20px',
+                borderBottom: '1px solid var(--border-color, #eaeaea)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            });
+
+            const h3 = modal.querySelector('.edit-note-header h3');
+            Object.assign(h3.style, {
+                margin: '0',
+                fontSize: '18px',
+                color: 'var(--text-color, #333)',
+                fontWeight: '600'
+            });
+
+            const closeEditBtn = modal.querySelector('.close-edit-note-btn');
+            Object.assign(closeEditBtn.style, {
+                background: 'none',
+                border: 'none',
+                fontSize: '28px',
+                cursor: 'pointer',
+                color: 'var(--text-color, #666)',
+                lineHeight: '1',
+                padding: '0',
+                width: '32px',
+                height: '32px'
+            });
+
+            const body = modal.querySelector('.edit-note-body');
+            Object.assign(body.style, {
+                padding: '20px',
+                flexGrow: '1',
+                overflowY: 'auto'
+            });
+
+            const textarea = modal.querySelector('.edit-note-textarea');
+            Object.assign(textarea.style, {
+                width: '100%',
+                minHeight: '200px',
+                padding: '12px',
+                border: '1px solid var(--border-color, #ddd)',
+                borderRadius: '8px',
+                fontSize: '15px',
+                fontFamily: 'inherit',
+                resize: 'vertical',
+                backgroundColor: 'var(--input-background, #fff)',
+                color: 'var(--text-color, #333)',
+                lineHeight: '1.6'
+            });
+
+            const footer = modal.querySelector('.edit-note-footer');
+            Object.assign(footer.style, {
+                padding: '20px',
+                borderTop: '1px solid var(--border-color, #eaeaea)',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '12px'
+            });
+
+            const saveBtn = modal.querySelector('.save-edit-note-btn');
+            Object.assign(saveBtn.style, {
+                padding: '10px 24px',
+                backgroundColor: 'var(--accent-color, #2196f3)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+            });
+
+            const cancelBtn = modal.querySelector('.cancel-edit-note-btn');
+            Object.assign(cancelBtn.style, {
+                padding: '10px 24px',
+                backgroundColor: 'var(--button-secondary, #e0e0e0)',
+                color: 'var(--text-color, #333)',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+            });
     }
 
     readChapter(id) {
-        // Implementar navegação para o capítulo
-        this.showNotification('Redirecionando para o capítulo...', 'info');
-        // Aqui você pode implementar a navegação de volta para biblia.html com o capítulo específico
-        setTimeout(() => {
-            window.location.href = 'biblia.html';
-        }, 1000);
+        // Navegar para o capítulo específico na tela da bíblia
+        const capitulo = this.saves.capitulos?.find(c => c.id === id);
+        if (capitulo) {
+            this.navigateToChapter(capitulo.livro, capitulo.capitulo, capitulo.versao);
+        }
+    }
+
+    navigateToVerse(reference, version) {
+        // Parse da referência (ex: "gn1:1" ou "Gênesis 1:1")
+        const match = reference.match(/^([0-9A-Za-zÀ-ÿ°]+)(\d+):(\d+)$/i);
+        if (!match) {
+            console.error('Formato de referência inválido:', reference);
+            return;
+        }
+
+        const [, livro, capitulo, versiculo] = match;
+        
+        // Salvar estado no localStorage para biblia.html carregar
+        const state = {
+            version: version.toLowerCase(),
+            book: livro.toLowerCase(),
+            chapter: parseInt(capitulo),
+            verse: parseInt(versiculo)
+        };
+
+        localStorage.setItem('bibleNavigationState', JSON.stringify(state));
+        
+        // Redirecionar
+        window.location.href = 'biblia.html';
+    }
+
+    navigateToChapter(livro, capitulo, version) {
+        // Salvar estado no localStorage para biblia.html carregar
+        const state = {
+            version: version.toLowerCase(),
+            book: livro.toLowerCase(),
+            chapter: parseInt(capitulo),
+            verse: 1
+        };
+
+        localStorage.setItem('bibleNavigationState', JSON.stringify(state));
+        
+        // Redirecionar
+        window.location.href = 'biblia.html';
     }
 
     showNotification(message, type = 'info') {
