@@ -773,7 +773,7 @@ class SavesManager {
                 fontSize: '15px',
                 fontFamily: 'inherit',
                 resize: 'vertical',
-                backgroundColor: 'var(--input-background, #fff)',
+                backgroundColor: 'var(--card-background-color)',
                 color: 'var(--text-color, #333)',
                 lineHeight: '1.6'
             });
@@ -790,8 +790,8 @@ class SavesManager {
             const saveBtn = modal.querySelector('.save-edit-note-btn');
             Object.assign(saveBtn.style, {
                 padding: '10px 24px',
-                backgroundColor: 'var(--accent-color, #2196f3)',
-                color: '#fff',
+                backgroundColor: 'var(--button-bg)',
+                color: 'var(--button-text, #fff)',
                 border: 'none',
                 borderRadius: '6px',
                 fontSize: '14px',
@@ -803,7 +803,7 @@ class SavesManager {
             const cancelBtn = modal.querySelector('.cancel-edit-note-btn');
             Object.assign(cancelBtn.style, {
                 padding: '10px 24px',
-                backgroundColor: 'var(--button-secondary, #e0e0e0)',
+                backgroundColor: 'var(--button-secondary-bg)',
                 color: 'var(--text-color, #333)',
                 border: 'none',
                 borderRadius: '6px',
