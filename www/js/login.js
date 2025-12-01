@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log('[login.js] API Base URL detectada:', API_BASE_URL);
 
     const LOGIN_CONFIG = {
-        REDIRECT_PAGE: "biblia.html",
+        REDIRECT_PAGE: "home2.html",
         SIGNUP_PAGE: "cadastro2.html"
     };
 

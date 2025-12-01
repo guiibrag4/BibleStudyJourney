@@ -135,6 +135,37 @@ document.addEventListener('DOMContentLoaded', () => {
     return data;
   }
 
+  // Realiza login imediatamente após o cadastro para evitar redirecionamento pelo AuthGuard
+  async function loginAfterRegister(email, senha) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.token) {
+        console.warn('[cadastro.js] Login pós-cadastro falhou:', data?.error || 'sem token');
+        return false;
+      }
+
+      // Salva o token usando o AuthManager global (auth-guard.js)
+      if (window.AuthManager && typeof window.AuthManager.saveToken === 'function') {
+        await window.AuthManager.saveToken(data.token);
+      } else {
+        // Fallback muito defensivo
+        localStorage.setItem('token-jwt', data.token);
+      }
+
+      return true;
+    } catch (e) {
+      console.error('[cadastro.js] Erro no login pós-cadastro:', e);
+      return false;
+    }
+  }
+
   /* =========================
      6) HANDLERS
      ========================= */
@@ -155,7 +186,15 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       await registerUser(userData);
 
-      // Sucesso
+      // Tenta logar automaticamente após cadastro
+      const logged = await loginAfterRegister(userData.email, userData.senha);
+      if (logged) {
+        // Redireciona imediatamente para home já autenticado
+        window.location.href = 'home2.html';
+        return;
+      }
+
+      // Fallback: mostra tela de sucesso para o usuário continuar manualmente
       if (DOM.registrationContainer) DOM.registrationContainer.style.display = 'none';
       if (DOM.successContainer) DOM.successContainer.style.display = 'block';
 
@@ -171,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'login2.html';
   }
 
-  function handleGoToLogin() {
-    window.location.href = 'login2.html'; // caminho absoluto
+  function handleGoToHome() {
+    window.location.href = 'home2.html'; // caminho absoluto
   }
 
   /* =========================
@@ -187,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (DOM.goToLoginButton) {
-    DOM.goToLoginButton.addEventListener('click', handleGoToLogin); // ADICIONADO
+    DOM.goToLoginButton.addEventListener('click', handleGoToHome); // ADICIONADO
   }
 
 
