@@ -9,6 +9,8 @@
 
 </div>
 
+> **📌 Nota:** A documentação completa foi reorganizada! Acesse [`docs/README.md`](../docs/README.md) para navegar pela estrutura atualizada com 8 categorias organizadas.
+
 ---
 
 ## 📋 Overview
