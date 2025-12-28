@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
         // 1. Calcular horas de vídeo assistidas
         const videoStatsQuery = `
             SELECT COALESCE(SUM((video_data->>'currentTime')::numeric), 0) as total_seconds
-            FROM app_biblia.progressovideos
+            FROM bible_study_app.progressovideos
             WHERE id_usuario = $1;
         `;
         const videoResult = await pool.query(videoStatsQuery, [id_usuario]);
@@ -25,15 +25,15 @@ router.get('/', async (req, res) => {
 
         // 2. Contar itens salvos
         const savesQueries = [
-            pool.query('SELECT COUNT(*) FROM app_biblia.paginasalva WHERE id_usuario = $1', [id_usuario]),
-            pool.query('SELECT COUNT(*) FROM app_biblia.grifado WHERE id_usuario = $1', [id_usuario]),
-            pool.query('SELECT COUNT(*) FROM app_biblia.anotacoes WHERE id_usuario = $1', [id_usuario])
+            pool.query('SELECT COUNT(*) FROM bible_study_app.paginasalva WHERE id_usuario = $1', [id_usuario]),
+            pool.query('SELECT COUNT(*) FROM bible_study_app.grifado WHERE id_usuario = $1', [id_usuario]),
+            pool.query('SELECT COUNT(*) FROM bible_study_app.anotacoes WHERE id_usuario = $1', [id_usuario])
         ];
         const [capitulos, versiculos, notas] = await Promise.all(savesQueries);
         const totalSaves = parseInt(capitulos.rows[0].count) + parseInt(versiculos.rows[0].count) + parseInt(notas.rows[0].count);
 
         // 3. Buscar livros lidos
-        const readBooksQuery = 'SELECT livro_abreviacao FROM app_biblia.livros_lidos WHERE id_usuario = $1';
+        const readBooksQuery = 'SELECT livro_abreviacao FROM bible_study_app.livros_lidos WHERE id_usuario = $1';
         const readBooksResult = await pool.query(readBooksQuery, [id_usuario]);
         const readBooks = readBooksResult.rows.map(row => row.livro_abreviacao);
 
@@ -65,7 +65,7 @@ router.post('/read-book/:bookAbbr', async (req, res) => {
 
     try {
         const query = `
-            INSERT INTO app_biblia.livros_lidos (id_usuario, livro_abreviacao)
+            INSERT INTO bible_study_app.livros_lidos (id_usuario, livro_abreviacao)
             VALUES ($1, $2)
             ON CONFLICT (id_usuario, livro_abreviacao) DO NOTHING;
         `;

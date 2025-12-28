@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
                 versao_biblia,
                 texto_grifado,
                 data_grifado
-             FROM app_biblia.grifado
+             FROM bible_study_app.grifado
              WHERE id_usuario = $1
              ORDER BY data_grifado DESC`,
             [userId]
@@ -78,7 +78,7 @@ router.post('/', async (req, res) => {
         const livro = String(livroRaw).toLowerCase();
 
         const result = await pool.query(
-            `INSERT INTO app_biblia.grifado 
+            `INSERT INTO bible_study_app.grifado 
                 (id_usuario, livro_abreviacao, capitulo, versiculo_numero, cor_grifo, versao_biblia, texto_grifado)
              VALUES ($1, $2, $3, $4, $5, $6, $7)
              ON CONFLICT (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia, cor_grifo)
@@ -126,7 +126,7 @@ router.delete('/:reference', async (req, res) => {
         const livro = String(livroRaw).toLowerCase();
 
         await pool.query(
-            `DELETE FROM app_biblia.grifado
+            `DELETE FROM bible_study_app.grifado
              WHERE id_usuario = $1 
              AND livro_abreviacao = $2 
              AND capitulo = $3 
@@ -151,7 +151,7 @@ router.delete('/', async (req, res) => {
         if (!userId) return res.status(401).json({ error: 'Usuário não autenticado' });
 
         await pool.query(
-            'DELETE FROM app_biblia.grifado WHERE id_usuario = $1',
+            'DELETE FROM bible_study_app.grifado WHERE id_usuario = $1',
             [userId]
         );
 

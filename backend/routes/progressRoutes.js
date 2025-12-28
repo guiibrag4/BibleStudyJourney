@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
 
     try {
         const { rows } = await pool.query(
-            'SELECT video_data FROM app_biblia.ProgressoVideos WHERE id_usuario = $1',
+            'SELECT video_data FROM bible_study_app.ProgressoVideos WHERE id_usuario = $1',
             [userId]
         );
 
@@ -47,7 +47,7 @@ router.post('/:videoId', async (req, res) => {
         // Lógica de UPSERT (inserir ou atualizar)
         // Requer uma constraint UNIQUE em (id_usuario, video_id) na sua tabela.
         const query = `
-            INSERT INTO app_biblia.ProgressoVideos (id_usuario, video_id, video_data)
+            INSERT INTO bible_study_app.ProgressoVideos (id_usuario, video_id, video_data)
             VALUES ($1, $2, $3)
             ON CONFLICT (id_usuario, video_id) 
             DO UPDATE SET video_data = EXCLUDED.video_data, ultima_atualizacao = NOW()
@@ -72,7 +72,7 @@ router.delete('/:videoId', async (req, res) => {
 
     try {
         await pool.query(
-            'DELETE FROM app_biblia.ProgressoVideos WHERE id_usuario = $1 AND video_id = $2',
+            'DELETE FROM bible_study_app.ProgressoVideos WHERE id_usuario = $1 AND video_id = $2',
             [userId, videoId]
         );
         res.sendStatus(204); // No Content

@@ -17,7 +17,7 @@ let devotionalTableReady = false;
 async function ensureDevotionalTable() {
     if (devotionalTableReady) return;
     const sql = `
-    CREATE TABLE IF NOT EXISTS app_biblia.devocional_diario_global (
+    CREATE TABLE IF NOT EXISTS bible_study_app.devocional_diario_global (
         id_devocional SERIAL PRIMARY KEY,
         day_key DATE NOT NULL UNIQUE,
         verse_text TEXT NOT NULL,
@@ -307,7 +307,7 @@ router.get('/devotional/daily', async (req, res) => {
 
         // 🎯 CACHE GLOBAL: Verifica se já existe devocional para HOJE (todos os usuários compartilham)
         const { rows } = await pool.query(
-            'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM app_biblia.devocional_diario_global WHERE day_key=$1',
+            'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM bible_study_app.devocional_diario_global WHERE day_key=$1',
             [dayKey]
         );
         
@@ -342,7 +342,7 @@ router.get('/devotional/daily', async (req, res) => {
         // 💾 Salva no cache global para TODOS os usuários
         try {
             await pool.query(
-                `INSERT INTO app_biblia.devocional_diario_global (day_key, verse_text, verse_reference, estudo, reflexao, aplicacao)
+                `INSERT INTO bible_study_app.devocional_diario_global (day_key, verse_text, verse_reference, estudo, reflexao, aplicacao)
                  VALUES ($1, $2, $3, $4, $5, $6)
                  ON CONFLICT (day_key) DO UPDATE SET verse_text=EXCLUDED.verse_text, verse_reference=EXCLUDED.verse_reference, estudo=EXCLUDED.estudo, reflexao=EXCLUDED.reflexao, aplicacao=EXCLUDED.aplicacao`,
                 [dayKey, verseText, reference, estudo, reflexao, aplicacao]
@@ -366,7 +366,7 @@ router.post('/devotional/daily', async (req, res) => {
 
         // 🎯 CACHE GLOBAL: Ignora versículo enviado pelo frontend, usa o do dia
         const { rows } = await pool.query(
-            'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM app_biblia.devocional_diario_global WHERE day_key=$1',
+            'SELECT verse_text, verse_reference, estudo, reflexao, aplicacao FROM bible_study_app.devocional_diario_global WHERE day_key=$1',
             [dayKey]
         );
         
@@ -417,7 +417,7 @@ router.post('/devotional/mark-read', async (req, res) => {
         
         // Insere ou ignora se já marcado hoje
         await pool.query(
-            'INSERT INTO app_biblia.devocional_leitura (id_usuario, day_key) VALUES ($1, $2) ON CONFLICT (id_usuario, day_key) DO NOTHING',
+            'INSERT INTO bible_study_app.devocional_leitura (id_usuario, day_key) VALUES ($1, $2) ON CONFLICT (id_usuario, day_key) DO NOTHING',
             [userId, dayKey]
         );
 
@@ -426,7 +426,7 @@ router.post('/devotional/mark-read', async (req, res) => {
             WITH leituras_ordenadas AS (
                 SELECT day_key,
                        LAG(day_key) OVER (ORDER BY day_key DESC) as dia_anterior
-                FROM app_biblia.devocional_leitura
+                FROM bible_study_app.devocional_leitura
                 WHERE id_usuario = $1
                 ORDER BY day_key DESC
             )
@@ -444,7 +444,7 @@ router.post('/devotional/mark-read', async (req, res) => {
             WITH daily_reads AS (
                 SELECT day_key,
                        day_key - ROW_NUMBER() OVER (ORDER BY day_key)::integer as streak_group
-                FROM app_biblia.devocional_leitura
+                FROM bible_study_app.devocional_leitura
                 WHERE id_usuario = $1
             )
             SELECT COALESCE(MAX(streak_size), 0) as max_streak
@@ -471,7 +471,7 @@ router.post('/devotional/mark-read', async (req, res) => {
         for (const milestone of milestones) {
             if (currentStreak >= milestone.streak) {
                 const inserted = await pool.query(
-                    'INSERT INTO app_biblia.devocional_conquistas (id_usuario, tipo_conquista) VALUES ($1, $2) ON CONFLICT DO NOTHING RETURNING *',
+                    'INSERT INTO bible_study_app.devocional_conquistas (id_usuario, tipo_conquista) VALUES ($1, $2) ON CONFLICT DO NOTHING RETURNING *',
                     [userId, milestone.type]
                 );
                 if (inserted.rows.length > 0) {
@@ -514,7 +514,7 @@ router.get('/devotional/stats', async (req, res) => {
             WITH leituras_ordenadas AS (
                 SELECT day_key,
                        LAG(day_key) OVER (ORDER BY day_key DESC) as dia_anterior
-                FROM app_biblia.devocional_leitura
+                FROM bible_study_app.devocional_leitura
                 WHERE id_usuario = $1
                 ORDER BY day_key DESC
             )
@@ -532,7 +532,7 @@ router.get('/devotional/stats', async (req, res) => {
             WITH daily_reads AS (
                 SELECT day_key,
                        day_key - ROW_NUMBER() OVER (ORDER BY day_key)::integer as streak_group
-                FROM app_biblia.devocional_leitura
+                FROM bible_study_app.devocional_leitura
                 WHERE id_usuario = $1
             )
             SELECT COALESCE(MAX(streak_size), 0) as max_streak
@@ -547,14 +547,14 @@ router.get('/devotional/stats', async (req, res) => {
 
         // Total de leituras
         const totalResult = await pool.query(
-            'SELECT COUNT(*) as total FROM app_biblia.devocional_leitura WHERE id_usuario = $1',
+            'SELECT COUNT(*) as total FROM bible_study_app.devocional_leitura WHERE id_usuario = $1',
             [userId]
         );
         const totalRead = parseInt(totalResult.rows[0]?.total || 0);
 
         // Leituras no mês atual
         const monthlyResult = await pool.query(
-            `SELECT COUNT(*) as monthly FROM app_biblia.devocional_leitura 
+            `SELECT COUNT(*) as monthly FROM bible_study_app.devocional_leitura 
              WHERE id_usuario = $1 AND EXTRACT(MONTH FROM day_key) = EXTRACT(MONTH FROM CURRENT_DATE)
              AND EXTRACT(YEAR FROM day_key) = EXTRACT(YEAR FROM CURRENT_DATE)`,
             [userId]
@@ -563,14 +563,14 @@ router.get('/devotional/stats', async (req, res) => {
 
         // Conquistas desbloqueadas
         const badgesResult = await pool.query(
-            'SELECT tipo_conquista, desbloqueado_em FROM app_biblia.devocional_conquistas WHERE id_usuario = $1 ORDER BY desbloqueado_em DESC',
+            'SELECT tipo_conquista, desbloqueado_em FROM bible_study_app.devocional_conquistas WHERE id_usuario = $1 ORDER BY desbloqueado_em DESC',
             [userId]
         );
 
         // Verifica se leu hoje
         const dayKey = getDevotionalDayKey(DEVOTIONAL_TZ, DEVOTIONAL_RESET_HOUR);
         const readTodayResult = await pool.query(
-            'SELECT 1 FROM app_biblia.devocional_leitura WHERE id_usuario = $1 AND day_key = $2',
+            'SELECT 1 FROM bible_study_app.devocional_leitura WHERE id_usuario = $1 AND day_key = $2',
             [userId, dayKey]
         );
         const readToday = readTodayResult.rows.length > 0;

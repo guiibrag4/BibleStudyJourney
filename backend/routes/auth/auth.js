@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
 
     try {
         // Verificação se o email já está cadastrado
-        const userExists = await pool.query('SELECT * FROM app_biblia.Usuario WHERE email = $1', [email]);
+        const userExists = await pool.query('SELECT * FROM bible_study_app.Usuario WHERE email = $1', [email]);
         if (userExists.rows.length > 0) {
             return res.status(400).json({ error: 'Email já cadastrado' });
         }
@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
 
         // Inserção do novo usuário no banco de dados
         const result = await pool.query(
-            'INSERT INTO app_biblia.Usuario (nome, sobrenome, email, senha_hash) VALUES ($1, $2, $3, $4) RETURNING id_usuario',
+            'INSERT INTO bible_study_app.Usuario (nome, sobrenome, email, senha_hash) VALUES ($1, $2, $3, $4) RETURNING id_usuario',
             [nome, sobrenome, email, senhaHash]
         );
 
@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
     const { email, senha } = req.body;
 
     try {
-        const user = await pool.query('SELECT * FROM app_biblia.usuario WHERE email = $1', [email]);
+        const user = await pool.query('SELECT * FROM bible_study_app.usuario WHERE email = $1', [email]);
         if (user.rows.length === 0) {
             return res.status(400).json({ error: 'Credenciais inválidas' });
         }
@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
             { expiresIn: '15d' }
         );
 
-        await pool.query('UPDATE app_biblia.Usuario SET ultimo_login = NOW () WHERE id_usuario = $1', [usuario.id_usuario]);
+        await pool.query('UPDATE bible_study_app.Usuario SET ultimo_login = NOW () WHERE id_usuario = $1', [usuario.id_usuario]);
         res.json({ message: 'Login bem-sucedido', token, expiresIn: 15 * 24 * 60 * 60 }); // Retorna a expiração em segundos
     } catch (err) {
         console.error(err);

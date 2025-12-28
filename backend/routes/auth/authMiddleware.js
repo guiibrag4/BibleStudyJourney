@@ -19,7 +19,7 @@ const verifyToken = async (req, res, next) => {
         req.usuario = decoded; // Adiciona os dados do usuário decodificados à requisição
 
         // Opcional: Verificar se o usuário ainda existe no banco de dados
-        const user = await pool.query('SELECT id_usuario, email FROM app_biblia.Usuario WHERE id_usuario = $1', [decoded.id_usuario]);
+        const user = await pool.query('SELECT id_usuario, email FROM bible_study_app.Usuario WHERE id_usuario = $1', [decoded.id_usuario]);
         if (user.rows.length === 0) {
             return res.status(401).json({ message: 'Usuário não encontrado.' });
         }

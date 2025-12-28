@@ -1,8 +1,8 @@
 -- Cria o esquema se ele ainda não existir, evitando erros.
-CREATE SCHEMA IF NOT EXISTS app_biblia;
+CREATE SCHEMA IF NOT EXISTS bible_study_app;
 
--- Adicionado: Prefixo do esquema "app_biblia" para consistência.
-CREATE TABLE app_biblia.usuario (
+-- Adicionado: Prefixo do esquema "bible_study_app" para consistência.
+CREATE TABLE bible_study_app.usuario (
     id_usuario SERIAL PRIMARY KEY,
     nome VARCHAR(75) NOT NULL,
     sobrenome VARCHAR (75) NOT NULL,
@@ -13,9 +13,9 @@ CREATE TABLE app_biblia.usuario (
     ultimo_login TIMESTAMP WITH TIME ZONE
 );
 
-CREATE TABLE app_biblia.ProgressoVideos (
+CREATE TABLE bible_study_app.ProgressoVideos (
     id_progresso SERIAL PRIMARY KEY,
-    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER NOT NULL REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE,
     video_id VARCHAR(255) NOT NULL, -- ID do vídeo do YouTube, ex: "dQw4w9WgXcQ"
     video_data JSONB NOT NULL, -- Usamos JSONB por ser mais eficiente para buscas
     ultima_atualizacao TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -26,13 +26,13 @@ CREATE TABLE app_biblia.ProgressoVideos (
 );
 
 -- Opcional: Melhora a performance de buscas filtrando apenas pelo usuário.
-CREATE INDEX idx_progressovideos_id_usuario ON app_biblia.ProgressoVideos(id_usuario);
+CREATE INDEX idx_progressovideos_id_usuario ON bible_study_app.ProgressoVideos(id_usuario);
 
 
 
-CREATE TABLE app_biblia.paginasalva (
+CREATE TABLE bible_study_app.paginasalva (
     id_pagina_salva SERIAL PRIMARY KEY,
-    id_usuario INTEGER REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
+    id_usuario INTEGER REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
     livro_abreviacao VARCHAR(5) NOT NULL,
     capitulo INTEGER NOT NULL,
     versao_biblia VARCHAR(10) NOT NULL,
@@ -41,9 +41,9 @@ CREATE TABLE app_biblia.paginasalva (
 );
 
 
-CREATE TABLE app_biblia.grifado (
+CREATE TABLE bible_study_app.grifado (
     id_grifo SERIAL PRIMARY KEY,
-    id_usuario INTEGER REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
+    id_usuario INTEGER REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
     livro_abreviacao VARCHAR(5) NOT NULL,
     capitulo INTEGER NOT NULL,
     versiculo_numero INTEGER NOT NULL,
@@ -55,9 +55,9 @@ CREATE TABLE app_biblia.grifado (
     UNIQUE (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia, cor_grifo)
 );
 
-CREATE TABLE app_biblia.anotacoes (
+CREATE TABLE bible_study_app.anotacoes (
     id_anotacao SERIAL PRIMARY KEY,
-    id_usuario INTEGER REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
+    id_usuario INTEGER REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE NOT NULL,
     livro_abreviacao VARCHAR(5) NOT NULL,
     capitulo INTEGER NOT NULL,
     versiculo_numero INTEGER NOT NULL,
@@ -70,9 +70,9 @@ CREATE TABLE app_biblia.anotacoes (
 );
 
 -- Tabela para rastrear os livros que o usuário marcou como lidos
-CREATE TABLE app_biblia.livros_lidos (
+CREATE TABLE bible_study_app.livros_lidos (
     id_livro_lido SERIAL PRIMARY KEY,
-    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER NOT NULL REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE,
     livro_abreviacao VARCHAR(5) NOT NULL,
     data_conclusao TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
@@ -81,16 +81,16 @@ CREATE TABLE app_biblia.livros_lidos (
 );
 
 -- Índice para acelerar a busca de livros lidos por usuário
-CREATE INDEX idx_livros_lidos_id_usuario ON app_biblia.livros_lidos(id_usuario);
+CREATE INDEX idx_livros_lidos_id_usuario ON bible_study_app.livros_lidos(id_usuario);
 
 -- ============================================================================
 -- TABELAS PARA GAMIFICAÇÃO DO DEVOCIONAL DIÁRIO
 -- ============================================================================
 
 -- Tabela para rastrear leituras diárias do devocional por usuário
-CREATE TABLE app_biblia.devocional_leitura (
+CREATE TABLE bible_study_app.devocional_leitura (
     id_leitura SERIAL PRIMARY KEY,
-    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER NOT NULL REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE,
     day_key DATE NOT NULL,
     lido_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     tempo_leitura_segundos INTEGER DEFAULT 0,
@@ -98,16 +98,16 @@ CREATE TABLE app_biblia.devocional_leitura (
 );
 
 -- Índice para acelerar consultas de streak
-CREATE INDEX idx_devocional_leitura_usuario_data ON app_biblia.devocional_leitura(id_usuario, day_key DESC);
+CREATE INDEX idx_devocional_leitura_usuario_data ON bible_study_app.devocional_leitura(id_usuario, day_key DESC);
 
 -- Tabela para conquistas/badges desbloqueadas
-CREATE TABLE app_biblia.devocional_conquistas (
+CREATE TABLE bible_study_app.devocional_conquistas (
     id_conquista SERIAL PRIMARY KEY,
-    id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(id_usuario) ON DELETE CASCADE,
+    id_usuario INTEGER NOT NULL REFERENCES bible_study_app.usuario(id_usuario) ON DELETE CASCADE,
     tipo_conquista VARCHAR(50) NOT NULL, -- 'streak_3', 'streak_7', 'streak_30', etc.
     desbloqueado_em TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(id_usuario, tipo_conquista)
 );
 
 -- Índice para buscar conquistas por usuário
-CREATE INDEX idx_devocional_conquistas_usuario ON app_biblia.devocional_conquistas(id_usuario);
+CREATE INDEX idx_devocional_conquistas_usuario ON bible_study_app.devocional_conquistas(id_usuario);

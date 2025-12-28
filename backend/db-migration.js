@@ -19,13 +19,13 @@ async function runMigration() {
     const checkUsuario = await client.query(`
       SELECT column_name, data_type 
       FROM information_schema.columns 
-      WHERE table_schema = 'app_biblia' 
+      WHERE table_schema = 'bible_study_app' 
       AND table_name = 'usuario'
       ORDER BY ordinal_position;
     `);
     
     if (checkUsuario.rows.length === 0) {
-      console.error('❌ Tabela usuario não existe no schema app_biblia');
+      console.error('❌ Tabela usuario não existe no schema bible_study_app');
       throw new Error('Tabela usuario não encontrada');
     }
     
@@ -51,9 +51,9 @@ async function runMigration() {
     // =========================================================================
     console.log('📋 Criando tabela: devocional_leitura');
     await client.query(`
-      CREATE TABLE IF NOT EXISTS app_biblia.devocional_leitura (
+      CREATE TABLE IF NOT EXISTS bible_study_app.devocional_leitura (
         id SERIAL PRIMARY KEY,
-        id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(${userIdColumn}) ON DELETE CASCADE,
+        id_usuario INTEGER NOT NULL REFERENCES bible_study_app.usuario(${userIdColumn}) ON DELETE CASCADE,
         day_key DATE NOT NULL,
         lido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(id_usuario, day_key)
@@ -65,7 +65,7 @@ async function runMigration() {
     console.log('📊 Criando índice: idx_devocional_leitura_usuario_data');
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_devocional_leitura_usuario_data 
-      ON app_biblia.devocional_leitura(id_usuario, day_key DESC);
+      ON bible_study_app.devocional_leitura(id_usuario, day_key DESC);
     `);
     console.log('✅ Índice criado/verificado\n');
     
@@ -74,9 +74,9 @@ async function runMigration() {
     // =========================================================================
     console.log('📋 Criando tabela: devocional_conquistas');
     await client.query(`
-      CREATE TABLE IF NOT EXISTS app_biblia.devocional_conquistas (
+      CREATE TABLE IF NOT EXISTS bible_study_app.devocional_conquistas (
         id SERIAL PRIMARY KEY,
-        id_usuario INTEGER NOT NULL REFERENCES app_biblia.usuario(${userIdColumn}) ON DELETE CASCADE,
+        id_usuario INTEGER NOT NULL REFERENCES bible_study_app.usuario(${userIdColumn}) ON DELETE CASCADE,
         tipo_conquista VARCHAR(50) NOT NULL,
         desbloqueado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(id_usuario, tipo_conquista)
@@ -88,7 +88,7 @@ async function runMigration() {
     console.log('📊 Criando índice: idx_devocional_conquistas_usuario');
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_devocional_conquistas_usuario 
-      ON app_biblia.devocional_conquistas(id_usuario);
+      ON bible_study_app.devocional_conquistas(id_usuario);
     `);
     console.log('✅ Índice criado/verificado\n');
     
@@ -100,7 +100,7 @@ async function runMigration() {
     const verificaLeitura = await client.query(`
       SELECT column_name, data_type 
       FROM information_schema.columns 
-      WHERE table_schema = 'app_biblia' 
+      WHERE table_schema = 'bible_study_app' 
       AND table_name = 'devocional_leitura'
       ORDER BY ordinal_position;
     `);
@@ -113,7 +113,7 @@ async function runMigration() {
     const verificaConquistas = await client.query(`
       SELECT column_name, data_type 
       FROM information_schema.columns 
-      WHERE table_schema = 'app_biblia' 
+      WHERE table_schema = 'bible_study_app' 
       AND table_name = 'devocional_conquistas'
       ORDER BY ordinal_position;
     `);

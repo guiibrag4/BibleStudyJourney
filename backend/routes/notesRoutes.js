@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
                 versao_biblia,
                 data_criacao,
                 data_modificacao
-             FROM app_biblia.anotacoes
+             FROM bible_study_app.anotacoes
              WHERE id_usuario = $1
              ORDER BY data_modificacao DESC NULLS LAST, data_criacao DESC`,
             [userId]
@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
         const livro = String(livroRaw).toLowerCase();
 
         const result = await pool.query(
-            `INSERT INTO app_biblia.anotacoes 
+            `INSERT INTO bible_study_app.anotacoes 
                 (id_usuario, livro_abreviacao, capitulo, versiculo_numero, texto_anotacao, versao_biblia)
              VALUES ($1, $2, $3, $4, $5, $6)
              ON CONFLICT (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia)
@@ -112,7 +112,7 @@ router.delete('/:reference', async (req, res) => {
         const livro = String(livroRaw).toLowerCase();
 
         await pool.query(
-            `DELETE FROM app_biblia.anotacoes
+            `DELETE FROM bible_study_app.anotacoes
              WHERE id_usuario = $1 
                AND livro_abreviacao = $2 
                AND capitulo = $3 
@@ -132,7 +132,7 @@ router.delete('/', async (req, res) => {
         const userId = req.id_usuario ?? req.usuario?.id_usuario;
         if (!userId) return res.status(401).json({ error: 'Usuário não autenticado' });
 
-        await pool.query('DELETE FROM app_biblia.anotacoes WHERE id_usuario = $1', [userId]);
+        await pool.query('DELETE FROM bible_study_app.anotacoes WHERE id_usuario = $1', [userId]);
         res.json({ success: true });
     } catch (error) {
         console.error('Erro ao limpar notas:', error);
