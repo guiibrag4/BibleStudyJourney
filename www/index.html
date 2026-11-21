@@ -12,7 +12,7 @@
 
 <body>
     <p>Bible Study</p>
-    <script src="js/auth-guard.js"></script>
+    <script src="js/auth-guard.js?v=2"></script>
 
     <script>
         // Função que decide para onde o usuário deve ir
@@ -23,17 +23,16 @@
             if (isUserAuthenticated) {
                 // Se estiver autenticado, vai direto para a Bíblia
                 console.log("Usuário autenticado. Redirecionando para biblia.html...");
-                window.location.href = "html/home2.html";
+                window.location.replace("html/home2.html");
             } else {
                 // Se NÃO estiver autenticado, vai para a tela de login
                 console.log("Nenhum usuário autenticado. Redirecionando para paginaInicial.html...");
-                window.location.href = "html/paginainicial.html";
+                window.location.replace("html/paginainicial.html");
             }
         }
 
-        // Adiciona um pequeno delay para a tela de splash ser visível
-        // e depois executa a nossa função de decisão.
-        setTimeout(decideInitialRoute, 2500); // 2 segundos de tela de carregamento
+        // Decide na hora: a espera fixa de 2,5 s atrasava toda abertura do app.
+        decideInitialRoute();
     </script>
 
 

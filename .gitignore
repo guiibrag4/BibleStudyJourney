@@ -25,6 +25,12 @@ node_modules/
 /plugins/
 /platforms/
 /backend/.env
+# Qualquer .env e seus backups (ex.: .env.bak), menos o modelo .env.example
+.env
+.env.*
+!.env.example
+# Configuração local das prévias do Claude Code
+/.claude/
 
 /notes.md
 /professores.md

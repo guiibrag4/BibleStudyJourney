@@ -48,7 +48,7 @@ window.AuthManager = {
 // A lógica do DOMContentLoaded pode permanecer, pois ainda é uma boa prática.
 document.addEventListener("DOMContentLoaded", function() {
     async function protectPage() {
-        const publicPages = ['login2.html', 'cadastro2.html', 'index.html', 'paginainicial.html'];
+        const publicPages = ['login2.html', 'cadastro2.html', 'index.html', 'paginainicial.html', 'formacadastro.html', 'biblia.html'];
         const currentPage = window.location.pathname.split('/').pop();
 
         // Agora ele usa o window.AuthManager que acabamos de definir.

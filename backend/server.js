@@ -103,33 +103,32 @@ app.use(compression({
 console.log('✅ [Performance] Gzip compression habilitado');
 
 // ============================================================================
-// OTIMIZAÇÃO 2: HTTP CACHE HEADERS (Reduz 30% das requisições)
+// OTIMIZAÇÃO 2: HTTP CACHE HEADERS
 // ============================================================================
+// Regras:
+// - HTML (inclusive "/"): "no-cache" = o navegador sempre pergunta se mudou
+//   (resposta 304 barata via ETag). Sem isso, páginas novas demoravam a aparecer.
+// - JS/CSS com ?v=...: 1 ano. Ao mudar o arquivo, troque o ?v= no HTML.
+// - JS/CSS sem versão e imagens: 1 dia, com revalidação.
+// - API: nunca guardar.
 app.use((req, res, next) => {
   const path = req.path;
-  
-  // Assets estáticos - cache agressivo por 1 ano
-  if (path.match(/\.(jpg|jpeg|png|webp|gif|svg|ico|woff2?|ttf|eot)$/)) {
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-  }
-  
-  // CSS e JS - cache por 1 mês com revalidação
-  else if (path.match(/\.(css|js)$/)) {
-    res.setHeader('Cache-Control', 'public, max-age=2592000, must-revalidate');
-  }
-  
-  // HTML - cache curto com revalidação
-  else if (path.match(/\.html$/)) {
-    res.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate');
-  }
-  
-  // API - sem cache (dados dinâmicos)
-  else if (path.startsWith('/api/') || path.startsWith('/auth/')) {
+  const isVersioned = typeof req.query.v === 'string';
+
+  if (path.startsWith('/api/') || path.startsWith('/auth/')) {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+  } else if (/\.(css|js)$/.test(path)) {
+    res.setHeader('Cache-Control', isVersioned
+      ? 'public, max-age=31536000, immutable'
+      : 'public, max-age=86400, must-revalidate');
+  } else if (/\.(jpg|jpeg|png|webp|gif|svg|ico|woff2?|ttf|eot)$/.test(path)) {
+    res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
+  } else if (/\.html$/.test(path) || !/\.[a-z0-9]+$/i.test(path)) {
+    res.setHeader('Cache-Control', 'no-cache');
   }
-  
+
   next();
 });
 
@@ -206,7 +205,8 @@ app.use("/auth", authRoutes);
 
 // --- ROTAS PROTEGIDAS ---
 app.use("/api/user/progress", verifyToken, progressRoutes);
-app.use("/api/bible", verifyToken, bibleRoutes);
+// Texto bíblico e devocional são públicos (leitura sem login); as rotas de streak exigem usuário
+app.use("/api/bible", verifyToken.optional, bibleRoutes);
 app.use("/api/user/highlights", verifyToken, highlightsRoutes);
 app.use("/api/user/chapters", verifyToken, chaptersRoutes);
 app.use("/api/user/notes", verifyToken, notesRoutes);
@@ -215,10 +215,9 @@ app.use("/api/user/stats", verifyToken, statsRoutes);
 // --- SERVIR ARQUIVOS ESTÁTICOS E PÁGINAS HTML ---
 // Otimizado com cache headers e opções de performance
 app.use(express.static(path.join(__dirname, "../www"), {
-  maxAge: IS_PRODUCTION ? '30d' : 0,  // Cache de 30 dias em produção
-  etag: true,                         // Habilita ETag para validação
-  lastModified: true,                 // Habilita Last-Modified header
-  immutable: IS_PRODUCTION            // Assets imutáveis em produção
+  cacheControl: false, // o Cache-Control vem do middleware de cache acima
+  etag: true,          // ETag para o navegador revalidar barato (304)
+  lastModified: true
 }));
 
 app.get("/cadastro", (req, res) => res.sendFile(path.join(__dirname, "../www/html/cadastro2.html")));

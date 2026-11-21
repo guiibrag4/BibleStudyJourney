@@ -42,5 +42,20 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
+/**
+ * Autenticação opcional: se vier um token válido, preenche req.usuario; se não vier
+ * (ou for inválido), segue como visitante. As rotas que exigem usuário checam req.usuario.
+ */
+verifyToken.optional = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token || token === 'null' || token === 'undefined') return next();
+    try {
+        req.usuario = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (_) {
+        // token expirado ou inválido: trata como visitante
+    }
+    next();
+};
+
 module.exports = verifyToken;
 
