@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function setLoading(isLoading) {
     if (DOM.submitButton) {
       DOM.submitButton.disabled = isLoading;
-      DOM.submitButton.textContent = isLoading ? 'Cadastrando...' : 'Cadastrar';
+      DOM.submitButton.textContent = isLoading ? 'Criando conta...' : 'Criar conta';
     }
   }
 

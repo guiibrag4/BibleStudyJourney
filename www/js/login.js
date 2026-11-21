@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const email = this.elements.emailInput.value.trim();
             const password = this.elements.passwordInput.value;
 
+            document.getElementById("login-error")?.classList.remove("is-visible");
             if (!this.validateInputs(email, password)) return;
 
             this.showLoading(true);
@@ -93,7 +94,11 @@ document.addEventListener("DOMContentLoaded", function () {
         },
 
         showError(message) {
-            alert(message);
+            // Mostra o erro dentro do formulário; usa alert só se a página não tiver o espaço.
+            const box = document.getElementById("login-error");
+            if (!box) return alert(message);
+            box.textContent = message;
+            box.classList.add("is-visible");
         },
 
         showLoading(isLoading) {

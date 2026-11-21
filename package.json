@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "NODE_ENV=development node backend/server.js",
-    "prod": "NODE_ENV=production node backend/server.js"
+    "prod": "NODE_ENV=production node backend/server.js",
+    "build:bible": "node scripts/build-bible-data.js"
   },
   "keywords": [
     "ecosystem:cordova"

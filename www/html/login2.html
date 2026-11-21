@@ -3,45 +3,73 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
-  <title>Bible Study Journey</title>
-  <meta name="format-detection" content="telephone=no">
-  <meta name="msapplication-tap-highlight" content="no">
-  <link rel="stylesheet" href="../css/login2.css">
+  <meta name="theme-color" content="#162536">
+  <title>Entrar — Bible Study Journey</title>
+  <link rel="stylesheet" href="../css/auth.css?v=3">
 </head>
 
-<body>
-  <h1 class="cabecalho-titulo">Bible Study</h1>
-  <h1 class="titulo-login">Login</h1>
-  <p class="descricao-login">Novo no Bible Study? <a class="registrar-se" id="signup-link"> Registra-se aqui</a></p>
+<body class="auth">
+  <main class="auth-layout">
+    <section class="auth-hero auth-hero--login" aria-label="Versículo">
+      <a class="brand" href="../index.html" aria-label="Bible Study Journey">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 6.5C10.4 5.3 8.1 4.6 5 4.6H3v13.2h2c3.1 0 5.4.7 7 1.9 1.6-1.2 3.9-1.9 7-1.9h2V4.6h-2c-3.1 0-5.4.7-7 1.9z" />
+            <path d="M12 6.5v13.2" />
+          </svg>
+        </span>
+        <span>Bible Study <strong>Journey</strong></span>
+      </a>
 
-  <div class="form-container">
-    <form id="login-form">
-      <input type="email" class="campo-email" id="email" placeholder="Endereço de e-mail" required>
-      <input type="password" class="campo-senha" id="password" placeholder="Senha" required>
+      <figure class="hero-quote">
+        <blockquote>“Tua palavra é lâmpada para meus pés e luz para meu caminho.”</blockquote>
+        <cite>Salmos 119:105 · Bíblia Livre</cite>
+      </figure>
+    </section>
 
-      <p class="recuperar-senha">Esqueceu sua senha?</p>
+    <section class="auth-panel">
+      <div class="auth-card">
+        <p class="auth-eyebrow">Sua jornada continua</p>
+        <h1 class="auth-title">Que bom te ver de novo</h1>
+        <p class="auth-subtitle">Entre para retomar sua leitura, suas anotações e o devocional de hoje.</p>
 
-      <button type="submit" class="submit-button btn-login">Login</button>
-      <button type="button" class="submit-button btn-google">
-        <img src="../img/google-icon-pequeno.svg" alt="Logo do Google"
-          style="height:20px;vertical-align:middle;margin-right:8px;">
-        Continuar com o Google
-      </button>
-    </form>
-  </div>
+        <form id="login-form" class="auth-form" novalidate>
+          <div id="login-error" class="form-alert" role="alert"></div>
 
-  <p class="termos-rodape">
-    Ao entrar no Bible Study, você concorda com os nossos
-    <strong>Termos</strong> e <strong>Política de Privacidade</strong>.
-  </p>
-  
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" autocomplete="email" placeholder="voce@exemplo.com" required>
+          </div>
+
+          <div class="field">
+            <label for="password">Senha</label>
+            <div class="input-wrap">
+              <input type="password" id="password" name="password" autocomplete="current-password"
+                placeholder="Sua senha" required>
+              <button type="button" class="toggle-password" data-toggle-password="password"></button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+
+        <p class="auth-switch">Ainda não tem conta?<a id="signup-link" href="cadastro2.html">Criar conta grátis</a></p>
+
+        <p class="auth-terms">
+          Ao entrar, você concorda com os nossos Termos de Uso e a Política de Privacidade.
+        </p>
+      </div>
+    </section>
+  </main>
+
   <script src="../js/config.js"></script>
   <script src="../js/auth-guard.js"></script>
-  <script type="text/javascript" src="../js/login.js"></script>
+  <script src="../js/auth-ui.js?v=2"></script>
+  <script src="../js/login.js?v=2"></script>
 </body>
 
 </html>

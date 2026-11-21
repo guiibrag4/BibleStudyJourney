@@ -10,10 +10,14 @@ if (!connectionString) {
   process.exit(1); // Encerra a aplicação se o banco não pode ser conectado
 }
 
-const sslOption =
-  process.env.DB_SSL === 'true'
-    ? { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'true' }
-    : false;
+// SSL ligado por padrão em bancos do Supabase (a conexão passa pela internet).
+// DB_SSL=true/false força o comportamento; DB_SSL_REJECT_UNAUTHORIZED=true exige certificado válido.
+const useSsl = process.env.DB_SSL
+  ? process.env.DB_SSL === 'true'
+  : connectionString.includes('supabase.com');
+const sslOption = useSsl
+  ? { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true' }
+  : false;
 
 // ============================================================================
 // CONNECTION POOL OTIMIZADO - Performance Enhancement

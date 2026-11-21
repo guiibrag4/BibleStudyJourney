@@ -3,64 +3,112 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
-    <title>Bible Study Journey</title>
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-tap-highlight" content="no">
-    <link rel="stylesheet" href="../css/cadastro2.css">
+    <meta name="theme-color" content="#162536">
+    <title>Criar conta — Bible Study Journey</title>
+    <link rel="stylesheet" href="../css/auth.css?v=3">
 </head>
 
-<body>
-    <h1 class="cabecalho-titulo">Bible</h1>
-    <h1 class="titulo-increver">Inscrever-se</h1>
-    <p class="descricao-cadastro">
-        Crie uma conta para acessar estudos
-        direcionados, ferramentas para estudo,
-        bíblia integrada e muito mais.</p>
-    <p class="entrar-se-ja-tiver-conta">Já tem uma conta? <a class="iniciar-sessao"> Iniciar sessão </a></p>
+<body class="auth">
+    <main class="auth-layout">
+        <section class="auth-hero auth-hero--cadastro" aria-label="Versículo">
+            <a class="brand" href="../index.html" aria-label="Bible Study Journey">
+                <span class="brand-mark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 6.5C10.4 5.3 8.1 4.6 5 4.6H3v13.2h2c3.1 0 5.4.7 7 1.9 1.6-1.2 3.9-1.9 7-1.9h2V4.6h-2c-3.1 0-5.4.7-7 1.9z" />
+                        <path d="M12 6.5v13.2" />
+                    </svg>
+                </span>
+                <span>Bible Study <strong>Journey</strong></span>
+            </a>
 
+            <div class="hero-quote">
+                <figure>
+                    <blockquote>“O caminho do justo é como a luz ao nascer do sol, que brilha cada vez mais até o dia
+                        estar totalmente claro.”</blockquote>
+                    <cite>Provérbios 4:18 · Nova Bíblia Viva</cite>
+                </figure>
+                <ul class="hero-benefits">
+                    <li>A Bíblia em seis versões, com busca por palavra</li>
+                    <li>Devocional diário que explica o contexto da passagem</li>
+                    <li>Trilhas de estudo com professores</li>
+                    <li>Grifos e anotações salvos na sua conta</li>
+                </ul>
+            </div>
+        </section>
 
-    <div id="errorContainer" class="error-container" style="display: none; text-align: center; margin-bottom: -20px; margin-top: 20px;">
-        <div id="errorMessage" class="error-message"></div>
-    </div>
+        <section class="auth-panel">
+            <div class="auth-card">
+                <div id="registrationContainer">
+                    <p class="auth-eyebrow">Comece hoje</p>
+                    <h1 class="auth-title">Crie sua conta</h1>
+                    <p class="auth-subtitle">É grátis. Leve sua leitura, seus grifos e suas anotações para qualquer
+                        lugar.</p>
 
+                    <form method="post" id="registrationForm" class="auth-form" novalidate>
+                        <div id="errorContainer" class="form-alert" role="alert" style="display: none;">
+                            <div id="errorMessage" class="error-message"></div>
+                        </div>
 
-    <div id= "registrationContainer" class="form-container">
-        <form method="post" id="registrationForm" class="registration-form">
+                        <div class="field-row">
+                            <div class="field">
+                                <label for="name">Nome</label>
+                                <input id="name" type="text" autocomplete="given-name" placeholder="Seu nome"
+                                    required />
+                                <p class="error-text" id="nameError"></p>
+                            </div>
+                            <div class="field">
+                                <label for="sobrenome">Sobrenome</label>
+                                <input id="sobrenome" type="text" autocomplete="family-name"
+                                    placeholder="Seu sobrenome" required />
+                                <p class="error-text" id="sobrenomeError"></p>
+                            </div>
+                        </div>
 
-            <input class="campo-nome" id="name" type="text" placeholder="Nome" required />
-            <p class="error-text" id="nameError"></p>
+                        <div class="field">
+                            <label for="email">E-mail</label>
+                            <input id="email" type="email" autocomplete="email" placeholder="voce@exemplo.com"
+                                required />
+                            <p class="error-text" id="emailError"></p>
+                        </div>
 
-            <input class="campo-sobrenome" id="sobrenome" type="text" placeholder="Sobrenome" required />
-            <p class="error-text" id="sobrenomeError"></p>
+                        <div class="field">
+                            <label for="password">Senha</label>
+                            <div class="input-wrap">
+                                <input id="password" type="password" autocomplete="new-password"
+                                    placeholder="Crie uma senha" required />
+                                <button type="button" class="toggle-password" data-toggle-password="password"></button>
+                            </div>
+                            <p class="field-hint">Use pelo menos 8 caracteres.</p>
+                            <p class="error-text" id="passwordError"></p>
+                        </div>
 
-            <input class="campo-email" id="email" type="email" placeholder="Endereço de e-mail" required />
-            <p class="error-text" id="emailError"></p>
+                        <button type="submit" id="submitButton" class="btn-primary">Criar conta</button>
+                    </form>
 
-            <input class="campo-senha" id="password" type="password" placeholder="Senha (pelo menos 8 caracteres)"
-                required />
-            <p class="error-text" id="passwordError"></p>
+                    <p class="auth-switch">Já tem uma conta?<a class="iniciar-sessao" href="login2.html">Entrar</a></p>
+                </div>
 
-            <button type="submit" id="submitButton" class="submit-button">Criar Conta</button>
-        </form>
-    </div>
+                <div id="successContainer" class="success-container" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="success-icon" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <h2 class="success-title">Conta criada!</h2>
+                    <p class="success-message">Bem-vindo à Bible Study Journey. Agora é só entrar com o seu e-mail e a
+                        sua senha para começar.</p>
+                    <button type="button" id="goToLoginButton" class="btn-primary">Ir para o login</button>
+                </div>
 
-    <!-- Success message (hidden by default) -->
-    <div id="successContainer" class="success-container" style="display: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" class="success-icon" fill="none" viewBox="0 0 24 24"
-            stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        <h2 class="success-title">Cadastro Realizado!</h2>
-        <p class="success-message">
-            Seu cadastro foi realizado com sucesso. Bem-vindo à Bible Study Journey! <br> <br>
-            Clique no botão abaixo para ser redirecionado.
-        </p>
-        <button type="button" id="goToLoginButton" class="submit-button">Ir para página de Login</button>
-    </div>
+                <p class="auth-terms">
+                    Ao criar uma conta, você concorda com os nossos Termos de Uso e a Política de Privacidade.
+                </p>
+            </div>
+        </section>
+    </main>
 
     <!-- Cordova script -->
     <script type="text/javascript">
@@ -96,7 +144,8 @@
     <!-- Config centralizado DEVE vir ANTES de todos os outros scripts que usam API -->
     <script src="../js/config.js"></script>
     <script src="../js/auth-guard.js"></script>
-    <script src="../js/cadastro.js"></script>
+    <script src="../js/auth-ui.js?v=2"></script>
+    <script src="../js/cadastro.js?v=2"></script>
 </body>
 
 </html>
