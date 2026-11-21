@@ -6,31 +6,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="format-detection" content="telephone=no">
   <meta name="msapplication-tap-highlight" content="no">
-  <title>Bible Study Journey</title>
-  <link rel="stylesheet" href="../css/paginainicial.css?v=2">
+  <meta name="theme-color" content="#162536">
+  <title>Bible Study Journey — Estudo bíblico com contexto</title>
+  <link rel="stylesheet" href="../css/auth.css?v=4">
 </head>
 
-<body>
-  <h1>Bem-vindo ao <br>Bible Study</h1>
-  <p class="subtitulo">A sua jornada de aprofundamento no <br>estudo bíblico</p>
-  <div class="botoes-container">
-    <button class="btn-criar">Criar uma conta</button>
-    <button class="btn-login">Iniciar Sessão</button>
-    <a class="link-ler" href="biblia.html">Ler a Bíblia sem criar conta</a>
-  </div>
-  <p class="termos-rodape">
-    Ao entrar no Bible Study, você concorda com os nossos
-    <strong>Termos</strong> e <strong>Política de Privacidade</strong>.
-  </p>
-  <script>
-    document.querySelector('.btn-criar').addEventListener('click', function () {
-      window.location.href = 'cadastro2.html';
-    });
+<body class="auth">
+  <main class="auth-layout">
+    <section class="auth-hero auth-hero--login" aria-label="Versículo">
+      <span class="brand" aria-label="Bible Study Journey">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 6.5C10.4 5.3 8.1 4.6 5 4.6H3v13.2h2c3.1 0 5.4.7 7 1.9 1.6-1.2 3.9-1.9 7-1.9h2V4.6h-2c-3.1 0-5.4.7-7 1.9z" />
+            <path d="M12 6.5v13.2" />
+          </svg>
+        </span>
+        <span>Bible Study <strong>Journey</strong></span>
+      </span>
 
-    document.querySelector('.btn-login').addEventListener('click', function () {
-      window.location.href = 'login2.html';
-    });
-  </script>
+      <div class="hero-quote">
+        <figure>
+          <blockquote>“Tua palavra é lâmpada para meus pés e luz para meu caminho.”</blockquote>
+          <cite>Salmos 119:105 · Bíblia Livre</cite>
+        </figure>
+        <ul class="hero-benefits">
+          <li>A Bíblia em seis versões, com busca por palavra</li>
+          <li>Devocional diário que explica o contexto da passagem</li>
+          <li>Trilhas de estudo com professores</li>
+          <li>Grifos e anotações salvos na sua conta</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <p class="auth-eyebrow">Boas-vindas</p>
+        <h1 class="auth-title">Estude a Bíblia com contexto, um dia de cada vez</h1>
+        <p class="auth-subtitle">Leitura, devocional e trilhas de estudo num só lugar, para você entender o texto, e
+          não só ler.</p>
+
+        <div class="welcome-actions">
+          <a class="btn-primary" href="cadastro2.html">Criar conta grátis</a>
+          <a class="btn-secondary" href="login2.html">Já tenho conta, entrar</a>
+        </div>
+
+        <p class="divider">ou</p>
+
+        <a class="guest-link" href="biblia.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 6.5C10.4 5.3 8.1 4.6 5 4.6H3v13.2h2c3.1 0 5.4.7 7 1.9 1.6-1.2 3.9-1.9 7-1.9h2V4.6h-2c-3.1 0-5.4.7-7 1.9z" />
+            <path d="M12 6.5v13.2" />
+          </svg>
+          <span>Ler a Bíblia sem criar conta <small>Você pode criar a conta depois, para salvar seus grifos.</small></span>
+        </a>
+
+        <p class="auth-terms">
+          Ao usar o Bible Study Journey, você concorda com os nossos Termos de Uso e a Política de Privacidade.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/auth-guard.js?v=2"></script>
 </body>
 
 </html>
