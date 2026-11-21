@@ -364,6 +364,102 @@ body.auth {
   filter: saturate(0.6) brightness(1.1);
 }
 
+/* Botão secundário (tela de boas-vindas) */
+.btn-secondary {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy-700);
+  text-decoration: none;
+  background: #fff;
+  border: 1.5px solid var(--paper-line);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--navy-500);
+  background: #fdfcf9;
+}
+
+.btn-secondary:focus-visible {
+  outline: 3px solid var(--gold-400);
+  outline-offset: 2px;
+}
+
+/* Tela de boas-vindas */
+.welcome-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.welcome-actions .btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  text-decoration: none;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 18px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9aa3ad;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--paper-line);
+}
+
+.guest-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--navy-700);
+  text-decoration: none;
+  background: var(--gold-100);
+  transition: filter 0.2s;
+}
+
+.guest-link:hover {
+  filter: brightness(0.97);
+}
+
+.guest-link svg {
+  width: 20px;
+  height: 20px;
+  color: var(--gold-500);
+}
+
+.guest-link small {
+  display: block;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
 /* Links e rodapé */
 .auth-switch {
   margin-top: 22px;
