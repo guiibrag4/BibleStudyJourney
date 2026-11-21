@@ -52,8 +52,9 @@ async function fetchWithAuth(url, options = {}) {
     // Assumindo que você tem um AuthManager global para pegar o token, como no seu saves.js
     const token = await window.AuthManager.getToken();
 
+    // Visitantes (sem login) também leem a Bíblia: só envia o token se existir
     const headers = {
-        'Authorization': `Bearer ${token}`,
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...(options.headers || {})
     };
 

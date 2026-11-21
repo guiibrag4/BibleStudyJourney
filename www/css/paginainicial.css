@@ -135,3 +135,20 @@ button {
 button:active {
     filter: brightness(0.92);
 }
+/* Acesso de visitante: ler a Bíblia sem conta */
+.link-ler {
+    display: block;
+    margin-top: 22px;
+    text-align: center;
+    font-size: 15px;
+    color: #fff;
+    opacity: 0.85;
+    text-decoration: underline;
+    text-decoration-color: #D3CC00;
+    text-underline-offset: 5px;
+}
+
+.link-ler:hover,
+.link-ler:focus-visible {
+    opacity: 1;
+}
