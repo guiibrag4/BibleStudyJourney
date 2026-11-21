@@ -7,7 +7,17 @@
 const API_URL = CONFIG.BIBLE_API_URL;
 
 // ===== ESTADO GLOBAL =====
-let versaoAtual = "nvi";
+let versaoAtual = "blivre";
+
+// Versões servidas pelo backend; as antigas (da A Bíblia Digital) viram a equivalente atual.
+const VERSION_LABELS = { blivre: "BLIVRE", nbv: "NBV", bpm: "BPM", kjv: "KJV", bsb: "BSB", rvr: "RVR" };
+const LEGACY_VERSIONS = { nvi: "blivre", acf: "blivre", ra: "blivre", bbe: "bsb", apee: "rvr" };
+
+function normalizeVersion(version) {
+    const id = String(version || "").toLowerCase();
+    if (VERSION_LABELS[id]) return id;
+    return LEGACY_VERSIONS[id] || "blivre";
+}
 let livroAtual = "gn";
 let capituloAtual = 1;
 let versoAtual = 1;
@@ -52,7 +62,7 @@ async function fetchWithAuth(url, options = {}) {
 
 // ===== UTILITÁRIOS =====
 function capitalizeBookName(book) {
-    const bookNames = { gn: "Gênesis", ex: "Êxodo", lv: "Levítico", nm: "Números", dt: "Deuteronômio", js: "Josué", jz: "Juízes", rt: "Rute", "1sm": "1° Samuel", "2sm": "2° Samuel", "1rs": "1° Reis", "2rs": "2° Reis", "1cr": "1° Crônicas", "2cr": "2° Crônicas", ed: "Esdras", ne: "Neemias", et: "Ester", job: "Jó", sl: "Salmos", pv: "Provérbios", ec: "Eclesiastes", ct: "Cantares", is: "Isaías", jr: "Jeremias", lm: "Lamentações", ez: "Ezequiel", dn: "Daniel", os: "Oséias", jl: "Joel", am: "Amós", ob: "Obadias", jn: "Jonas", mq: "Miquéias", na: "Naum", hb: "Habacuque", sf: "Sofonias", ag: "Ageu", zc: "Zacarias", ml: "Malaquias", mt: "Mateus", mc: "Marcos", lc: "Lucas", jo: "João", at: "Atos", rm: "Romanos", "1co": "1° Coríntios", "2co": "2° Coríntios", gl: "Gálatas", ef: "Efésios", fp: "Filipenses", cl: "Colossenses", "1ts": "1° Tessalonicenses", "2ts": "2° Tessalonicenses", "1tm": "1° Timóteo", "2tm": "2° Timóteo", tt: "Tito", yfl: "Filemom", tg: "Tiago", "1pe": "1° Pedro", "2pe": "2° Pedro", "1jo": "1° João", "2jo": "2° João", "3jo": "3° João", jd: "Judas", ap: "Apocalipse"};
+    const bookNames = { gn: "Gênesis", ex: "Êxodo", lv: "Levítico", nm: "Números", dt: "Deuteronômio", js: "Josué", jz: "Juízes", rt: "Rute", "1sm": "1° Samuel", "2sm": "2° Samuel", "1rs": "1° Reis", "2rs": "2° Reis", "1cr": "1° Crônicas", "2cr": "2° Crônicas", ed: "Esdras", ne: "Neemias", et: "Ester", job: "Jó", sl: "Salmos", pv: "Provérbios", ec: "Eclesiastes", ct: "Cantares", is: "Isaías", jr: "Jeremias", lm: "Lamentações", ez: "Ezequiel", dn: "Daniel", os: "Oséias", jl: "Joel", am: "Amós", ob: "Obadias", jn: "Jonas", mq: "Miquéias", na: "Naum", hc: "Habacuque", sf: "Sofonias", ag: "Ageu", zc: "Zacarias", ml: "Malaquias", mt: "Mateus", mc: "Marcos", lc: "Lucas", jo: "João", at: "Atos", rm: "Romanos", "1co": "1° Coríntios", "2co": "2° Coríntios", gl: "Gálatas", ef: "Efésios", fp: "Filipenses", cl: "Colossenses", "1ts": "1° Tessalonicenses", "2ts": "2° Tessalonicenses", "1tm": "1° Timóteo", "2tm": "2° Timóteo", tt: "Tito", fl: "Filemom", hb: "Hebreus", tg: "Tiago", "1pe": "1° Pedro", "2pe": "2° Pedro", "1jo": "1° João", "2jo": "2° João", "3jo": "3° João", jd: "Judas", ap: "Apocalipse"};
     return bookNames[book] || book;
 }
 
@@ -66,7 +76,7 @@ function updateChapterSelectorStyle() {
 
 function updateUI() {
     chapterSelector.textContent = `${capitalizeBookName(livroAtual)} ${capituloAtual}`;
-    versionSelector.textContent = versaoAtual.charAt(0).toUpperCase() + versaoAtual.slice(1);
+    versionSelector.textContent = VERSION_LABELS[versaoAtual] || versaoAtual.toUpperCase();
     updateChapterSelectorStyle();
 
     if (contentBookTitleEl && contentChapterTitleEl) {
@@ -128,7 +138,7 @@ async function loadInitialState() {
             const savedState = navigationState || await localforage.getItem('bibleAppState');
 
         if (savedState) {
-            versaoAtual = savedState.version || "nvi";
+            versaoAtual = normalizeVersion(savedState.version);
             livroAtual = savedState.book || "gn";
             capituloAtual = savedState.chapter || 1;
             versoAtual = savedState.verse || 1;
@@ -155,7 +165,7 @@ async function loadInitialState() {
 // Arquivo: biblia.js
 
 async function changeVersion(novaVersao) {
-    versaoAtual = novaVersao;
+    versaoAtual = normalizeVersion(novaVersao);
     closeAllModals();
     updateUI();
     bibleContentEl.innerHTML = '<p class="loading-feedback">Carregando...</p>';
@@ -183,7 +193,7 @@ async function fetchBibleContent(version, book, chapter) {
 
         const data = await response.json();
         console.log("Conteúdo da Bíblia recebido:", data);
-        renderBibleContent(data.verses);
+        renderBibleContent(data.verses, data.copyright);
     } catch (error) {
         console.error("Erro ao buscar conteúdo da Bíblia:", error);
     }
@@ -232,7 +242,7 @@ async function fetchVerses(version, book, chapter) {
     }
 }
 
-function renderBibleContent(verses) {
+function renderBibleContent(verses, copyright) {
     // ⚡ OTIMIZAÇÃO: Usa DocumentFragment para batch DOM updates
     // Em vez de inserir cada versículo individualmente (causa N reflows),
     // agrupa tudo em um Fragment e insere de uma vez (1 reflow apenas)
@@ -248,6 +258,15 @@ function renderBibleContent(verses) {
         fragment.appendChild(verseElement);
     });
     
+    // Crédito da versão (exigido pelas licenças CC BY / CC BY-SA)
+    if (copyright) {
+        const credit = document.createElement('p');
+        credit.className = 'version-credit';
+        credit.style.cssText = 'margin-top: 2rem; font-size: 0.75rem; opacity: 0.6; text-align: center;';
+        credit.textContent = copyright;
+        fragment.appendChild(credit);
+    }
+
     // ⚡ Limpa e insere tudo de uma vez (causa apenas 1 reflow)
     bibleContentEl.innerHTML = '';
     bibleContentEl.appendChild(fragment);

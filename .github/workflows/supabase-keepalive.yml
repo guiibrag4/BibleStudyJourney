@@ -1,0 +1,49 @@
+# Mantém o projeto do Supabase ativo.
+#
+# No plano gratuito, o Supabase pausa o projeto após 7 dias com pouca atividade
+# no banco (só conexão aberta não conta). Este workflow faz uma consulta real a
+# cada 2 dias, independentemente de o servidor do app estar no ar.
+#
+# Requisitos:
+# - Secret do repositório SUPABASE_DATABASE_URL (Settings → Secrets and variables → Actions)
+#   com a mesma URL do backend/.env.
+# - Este arquivo precisa estar na branch padrão (main): agendamentos só rodam a partir dela.
+#
+# O repositório é público, então os logs também são: a consulta não imprime nenhum dado.
+
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '17 12 */2 * *' # a cada 2 dias, 12:17 UTC (09:17 em Brasília)
+  workflow_dispatch: # permite rodar manualmente pela aba Actions
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Consultar o banco
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+          PGSSLMODE: require
+          PGCONNECT_TIMEOUT: '30'
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::Secret SUPABASE_DATABASE_URL não configurado."
+            exit 1
+          fi
+          for attempt in 1 2 3; do
+            if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -q -t \
+                 -c "SELECT 1 FROM bible_study_app.usuario LIMIT 1" > /dev/null; then
+              echo "Banco respondeu (tentativa $attempt)."
+              exit 0
+            fi
+            echo "Tentativa $attempt falhou; aguardando 30 s..."
+            sleep 30
+          done
+          echo "::error::O banco não respondeu. O projeto pode ter sido pausado: reative no painel do Supabase."
+          exit 1

@@ -93,6 +93,22 @@ async function runMigration() {
     console.log('✅ Índice criado/verificado\n');
     
     // =========================================================================
+    // ÍNDICES ÚNICOS USADOS PELOS "ON CONFLICT" DE GRIFOS E NOTAS
+    // Estavam no model.sql, mas se perderam na migração de banco de dez/2025;
+    // sem eles, salvar grifo ou nota falha com erro 42P10.
+    // =========================================================================
+    console.log('📊 Criando índices únicos de grifado e anotacoes');
+    await client.query(`
+      CREATE UNIQUE INDEX IF NOT EXISTS uq_grifado_usuario_versiculo_cor
+      ON bible_study_app.grifado (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia, cor_grifo);
+    `);
+    await client.query(`
+      CREATE UNIQUE INDEX IF NOT EXISTS uq_anotacoes_usuario_versiculo
+      ON bible_study_app.anotacoes (id_usuario, livro_abreviacao, capitulo, versiculo_numero, versao_biblia);
+    `);
+    console.log('✅ Índices únicos criados/verificados');
+
+    // =========================================================================
     // VERIFICAÇÃO DAS TABELAS CRIADAS
     // =========================================================================
     console.log('🔍 Verificando estrutura das tabelas...\n');

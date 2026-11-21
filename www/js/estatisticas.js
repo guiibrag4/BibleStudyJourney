@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         "Provérbios": "pv", "Eclesiastes": "ec", "Cantares": "ct", "Isaías": "is",
         "Jeremias": "jr", "Lamentações": "lm", "Ezequiel": "ez", "Daniel": "dn",
         "Oséias": "os", "Joel": "jl", "Amós": "am", "Obadias": "ob", "Jonas": "jn",
-        "Miquéias": "mq", "Naum": "na", "Habacuque": "hb", "Sofonias": "sf",
+        "Miquéias": "mq", "Naum": "na", "Habacuque": "hc", "Sofonias": "sf",
         "Ageu": "ag", "Zacarias": "zc", "Malaquias": "ml", "Mateus": "mt",
         "Marcos": "mc", "Lucas": "lc", "João": "jo", "Atos": "at", "Romanos": "rm",
         "1 Coríntios": "1co", "2 Coríntios": "2co", "Gálatas": "gl",

@@ -7,6 +7,7 @@ const fetch = require('node-fetch');
 const path = require("path");
 const compression = require('compression');
 const { runMigration } = require('./db-migration');
+const devotional = require('./services/devotional/devotional');
 
 // --- ARQUIVOS DE ROTAS ---
 const authRoutes = require("./routes/auth/auth.js");
@@ -35,7 +36,6 @@ const allowedOrigins = [
     "ionic://localhost",
     "http://localhost:3000",
     "https://localhost",
-    "https://biblestudyjourney-v2.onrender.com",
     "https://biblestudyjourney.duckdns.org",
 ];
 
@@ -54,7 +54,7 @@ app.use(
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       "frame-src": ["'self'", "https://www.youtube.com"],
       "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
-      "connect-src": ["'self'", "https://www.google-analytics.com", "https://biblestudyjourney-v2.onrender.com", "https://biblestudyjourney.duckdns.org", "https://www.abibliadigital.com.br", "https://www.googleapis.com"],
+      "connect-src": ["'self'", "https://www.google-analytics.com", "https://biblestudyjourney.duckdns.org", "https://www.googleapis.com"],
       "img-src": ["'self'", "data:", "https://img.youtube.com", "https://i.ytimg.com"],
     },
   } )
@@ -251,6 +251,9 @@ async function startServer() {
       console.log(`   - Migração automática do banco executada`);
       console.log(`   - Performance monitoring ${!IS_PRODUCTION ? 'ativo' : 'desabilitado'}`);
       console.log(`${'='.repeat(60)}\n`);
+
+      // Gera o devocional de hoje e de amanhã em segundo plano (e a cada 6 horas)
+      devotional.startScheduler();
     });
   } catch (error) {
     console.error('❌ Erro ao iniciar servidor:', error);
