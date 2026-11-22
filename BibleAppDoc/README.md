@@ -247,16 +247,13 @@ const API_CONFIG = {
 |----------|------|-------------|-----------|---------|
 | `PORT` | Number | ✅ | Porta do servidor backend | `3000` |
 | `NODE_ENV` | String | ✅ | Ambiente de execução | `development`, `production` |
-| `SUPABASE_URL` | String | ✅ | URL do projeto Supabase | `https://abc123.supabase.co` |
-| `SUPABASE_KEY` | String | ✅ | Chave anon pública | `eyJhbGciOiJIUzI1...` |
 | `SUPABASE_DATABASE_URL` | String | ✅ | Connection string do PostgreSQL | `postgresql://user:pass@...` |
+| `DB_SSL` | Boolean | ❌ | Força ligar ou desligar o SSL do banco (ligado por padrão no Supabase) | `true` |
 | `JWT_SECRET` | String | ✅ | Chave de assinatura JWT (min. 32 chars) | `MinhaChaveSuperSecreta123456` |
-| `JWT_EXPIRES_IN` | String | ✅ | Tempo de expiração do token | `7d`, `24h` |
-| `JWT_REFRESH_EXPIRES_IN` | String | ✅ | Tempo do refresh token | `30d` |
 | `CLOUDFLARE_ACCOUNT_ID` | String | ✅ | ID da conta CloudFlare | `abc123def456` |
-| `CLOUDFLARE_API_TOKEN` | String | ✅ | Token de acesso à Workers AI | `xyz789...` |
+| `CLOUDFLARE_AI_TOKEN` | String | ✅ | Token de acesso à Workers AI | `xyz789...` |
 | `YOUTUBE_API_KEY` | String | ✅ | Chave da YouTube Data API v3 | `AIzaSyC...` |
-| `BIBLE_API_KEY` | String | ❌ | Chave da API bíblica (se requer auth) | `abc123...` |
+| `CLOUDFLARE_AI_MODEL` | String | ❌ | Modelo do devocional | `@cf/openai/gpt-oss-120b` |
 
 ---
 
@@ -453,19 +450,19 @@ jobs:
 ## 🔒 Segurança
 
 ### Práticas Implementadas
-- ✅ **JWT com Refresh Tokens** (rotação automática)
+- ✅ **JWT** com validade de 15 dias (sem refresh token; quando vence, o app leva ao login)
 - ✅ **HTTPS obrigatório** (Let's Encrypt)
-- ✅ **Environment Variables** (secrets fora do código)
-- ✅ **Row-Level Security** (Supabase RLS policies)
-- ✅ **Rate Limiting** (proteção contra brute-force)
-- ✅ **CORS configurado** (whitelist de domínios)
+- ✅ **Variáveis de ambiente** (segredos fora do código)
+- ✅ **Limite de tentativas** no login, no cadastro e na exclusão de conta (`express-rate-limit`)
+- ✅ **CORS** com lista de origens permitidas
+- ✅ **Helmet** com Content Security Policy
+- ✅ **Exclusão de conta** pelo app e **política de privacidade** pública
 
-### Checklist de Segurança
-- [ ] Implementar Content Security Policy (CSP)
-- [ ] Adicionar helmet.js no Express
-- [ ] Configurar logging centralizado
-- [ ] Implementar rotação automática de tokens
-- [ ] Adicionar 2FA para usuários premium
+### Ainda não implementado
+- [ ] Row-Level Security: o backend acessa o banco com um único usuário; o isolamento entre usuários é feito nas rotas (`id_usuario` do token)
+- [ ] Recuperação de senha por e-mail
+- [ ] Refresh token
+- [ ] Logging centralizado
 
 ---
 
