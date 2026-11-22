@@ -42,7 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
             this.overlay = document.getElementById('overlay');
             this.setupModal('theme-changer-button', 'theme-modal');
             this.setupModal('reading-settings-button', 'reading-settings-modal');
+            this.setupModal('delete-account-button', 'delete-account-modal');
             this.setupLogout();
+            this.setupDeleteAccount();
             this.setupThemeOptions();
         },
 
@@ -86,6 +88,59 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             }
+        },
+
+        setupDeleteAccount() {
+            const form = document.getElementById('delete-account-form');
+            const input = document.getElementById('delete-account-password');
+            const errorEl = document.getElementById('delete-account-error');
+            const submit = document.getElementById('delete-account-confirm');
+            if (!form || !input || !submit) return;
+
+            const showError = (message) => {
+                errorEl.textContent = message;
+                errorEl.hidden = !message;
+            };
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                showError('');
+                if (!input.value) {
+                    showError('Digite sua senha para confirmar.');
+                    input.focus();
+                    return;
+                }
+
+                submit.disabled = true;
+                submit.textContent = 'Excluindo...';
+                try {
+                    const token = await window.AuthManager.getToken();
+                    const response = await fetch(`${window.CONFIG.AUTH_URL}/account`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                        body: JSON.stringify({ senha: input.value }),
+                    });
+                    const data = await response.json().catch(() => ({}));
+
+                    if (response.ok) {
+                        await window.AuthManager.clearAuthData();
+                        // progresso das trilhas guardado no aparelho
+                        try { await window.localforage?.removeItem('videoProgress'); } catch (_) { /* sem armazenamento */ }
+                        alert('Sua conta foi excluída.');
+                        window.location.replace('/index.html');
+                        return;
+                    }
+                    if (response.status === 401) {
+                        showError('Sua sessão expirou. Entre de novo para excluir a conta.');
+                    } else {
+                        showError(data.error || 'Não foi possível excluir a conta. Tente de novo.');
+                    }
+                } catch (error) {
+                    showError('Sem conexão com o servidor. Tente de novo.');
+                }
+                submit.disabled = false;
+                submit.textContent = 'Excluir minha conta';
+            });
         },
 
         setupThemeOptions() {

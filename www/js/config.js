@@ -7,7 +7,7 @@
  * 
  * BENEFÍCIOS:
  * - ✅ Função getApiBaseUrl() em 1 único lugar (antes estava em 7+ arquivos)
- * - ✅ Troca de ambiente (localhost/Render/DuckDNS) em 1 linha
+ * - ✅ Troca de ambiente (localhost/DuckDNS) em 1 linha
  * - ✅ Suporte automático para Capacitor (Android/iOS)
  * - ✅ Configuração consistente em todo o projeto
  * 
@@ -22,7 +22,6 @@
  * Para mudar entre ambientes, edite apenas a constante FORCE_ENVIRONMENT:
  * - 'auto': Detecta automaticamente (recomendado)
  * - 'production': Força DuckDNS (produção)
- * - 'staging': Força Render (testes)
  * - 'development': Força localhost
  * 
  * ============================================================================
@@ -41,7 +40,6 @@
    * OPÇÕES:
    * - 'auto': Detecta automaticamente baseado no hostname/Capacitor (RECOMENDADO)
    * - 'production': Força uso do DuckDNS (https://biblestudyjourney.duckdns.org)
-   * - 'staging': Força uso do Render (https://biblestudyjourney-v2.onrender.com)
    * - 'development': Força uso do localhost (http://localhost:3000)
    */
   const FORCE_ENVIRONMENT = 'auto';
@@ -52,7 +50,6 @@
   
   const SERVERS = {
     production: 'https://biblestudyjourney.duckdns.org',
-    staging: 'https://biblestudyjourney-v2.onrender.com',
     development: 'http://localhost:3000'
   };
 
@@ -67,7 +64,6 @@
    * 1. Se for app nativo (Capacitor), sempre usa produção (DuckDNS)
    * 2. Se for navegador web:
    *    - localhost/127.0.0.1 → development
-   *    - onrender.com → staging
    *    - duckdns.org → production
    *    - Fallback: usa window.location.origin
    * 
@@ -102,19 +98,13 @@
       return SERVERS.development;
     }
 
-    // 2.2 Staging (Render)
-    if (hostname.includes('onrender.com')) {
-      console.log('[CONFIG] 🧪 Ambiente: STAGING (Render)');
-      return SERVERS.staging;
-    }
-
-    // 2.3 Produção (DuckDNS)
+    // 2.2 Produção (DuckDNS)
     if (hostname.includes('duckdns.org')) {
       console.log('[CONFIG] 🚀 Ambiente: PRODUCTION (DuckDNS)');
       return SERVERS.production;
     }
 
-    // 2.4 Fallback - usa origem da página
+    // 2.3 Fallback - usa origem da página
     console.warn('[CONFIG] ⚠️ Hostname não reconhecido, usando window.location.origin:', window.location.origin);
     return window.location.origin;
   }
@@ -159,7 +149,6 @@
     ENVIRONMENT: FORCE_ENVIRONMENT === 'auto' ? 'auto-detected' : FORCE_ENVIRONMENT,
     IS_NATIVE: window.Capacitor && window.Capacitor.isNativePlatform(),
     IS_DEVELOPMENT: apiBaseUrl === SERVERS.development,
-    IS_STAGING: apiBaseUrl === SERVERS.staging,
     IS_PRODUCTION: apiBaseUrl === SERVERS.production,
     
     // Versão do app
@@ -172,7 +161,6 @@
       console.log('ENVIRONMENT:', this.ENVIRONMENT);
       console.log('IS_NATIVE:', this.IS_NATIVE);
       console.log('IS_DEVELOPMENT:', this.IS_DEVELOPMENT);
-      console.log('IS_STAGING:', this.IS_STAGING);
       console.log('IS_PRODUCTION:', this.IS_PRODUCTION);
       console.log('============================================');
     }

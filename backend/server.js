@@ -21,6 +21,9 @@ const bibleRoutes = require("./routes/bibleRoutes.js");
 
 const app = express();
 
+// O nginx (no mesmo servidor) repassa o IP real em X-Forwarded-For; o limite de tentativas depende disso
+app.set('trust proxy', 'loopback');
+
 // ============================================================================
 // ENVIRONMENT & CONFIGURATION
 // ============================================================================
@@ -53,7 +56,7 @@ app.use(
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
       "frame-src": ["'self'", "https://www.youtube.com"],
-      "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'"],
+      "script-src": ["'self'", "https://www.youtube.com", "https://s.ytimg.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/", "'unsafe-inline'"],
       "connect-src": ["'self'", "https://www.google-analytics.com", "https://biblestudyjourney.duckdns.org", "https://www.googleapis.com"],
       "img-src": ["'self'", "data:", "https://img.youtube.com", "https://i.ytimg.com"],
     },

@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Opções - Bible Study</title>
     <link rel="stylesheet" href="../css/themes.css" />
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/modals.css">
-    <link rel="stylesheet" href="../css/opcoes.css">
+    <link rel="stylesheet" href="../css/opcoes.css?v=2">
 </head>
 
 <body>
@@ -77,6 +77,11 @@
                     <span class="option-label">Sobre o App</span>
                     <div class="option-chevron">›</div>
                 </a>
+                <a href="privacidade.html" class="option-item">
+                    <div class="option-icon"><img src="../img/info-icon.svg" alt=""></div>
+                    <span class="option-label">Política de Privacidade</span>
+                    <div class="option-chevron">›</div>
+                </a>
             </div>
 
             <!-- Ação de Logout -->
@@ -85,6 +90,7 @@
                     <div class="option-icon"><img src="../img/logout-icon.svg" alt=""></div>
                     <span class="option-label">Sair</span>
                 </button>
+                <button id="delete-account-button" class="delete-account-link" type="button">Excluir minha conta</button>
             </div>
         </div>
     </main>
@@ -104,6 +110,24 @@
                 <button class="theme-option-btn" data-theme="dark-mode">Escuro</button>
                 <button class="theme-option-btn" data-theme="sepia-mode">Sépia</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal de exclusão de conta -->
+    <div id="delete-account-modal" class="dialog" role="dialog" aria-modal="true" aria-labelledby="delete-account-title">
+        <div class="dialog-content">
+            <div class="dialog-header">
+                <h2 id="delete-account-title">Excluir conta</h2>
+                <button class="close-button" data-modal-id="delete-account-modal" aria-label="Fechar">×</button>
+            </div>
+            <form id="delete-account-form" class="dialog-body delete-account-form" novalidate>
+                <p>Isso apaga para sempre a sua conta e tudo o que está ligado a ela: grifos, anotações, capítulos
+                    salvos, progresso nas trilhas e a sequência do devocional. Não dá para desfazer.</p>
+                <label for="delete-account-password">Digite sua senha para confirmar</label>
+                <input type="password" id="delete-account-password" autocomplete="current-password" required>
+                <p id="delete-account-error" class="delete-account-error" role="alert" hidden></p>
+                <button type="submit" id="delete-account-confirm" class="delete-account-confirm">Excluir minha conta</button>
+            </form>
         </div>
     </div>
 
@@ -163,10 +187,11 @@
     </nav>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script src="../js/auth-guard.js?v=2"></script>
+    <script src="../js/auth-guard.js?v=3"></script>
     <script src="../js/theme-manager.js" defer></script>
     <script src="../js/reading-settings-manager.js"></script>
-    <script src="../js/opcoes.js"></script>
+    <script src="../js/config.js?v=2"></script>
+    <script src="../js/opcoes.js?v=2"></script>
 </body>
 
 </html>

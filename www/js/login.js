@@ -16,6 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // CONFIGURAÇÃO DE API (Usa config.js centralizado)
     // ========================================================================
     const API_BASE_URL = CONFIG.BASE_URL;
+
+    // Veio de uma sessão vencida (auth-guard.js)
+    if (new URLSearchParams(window.location.search).get('sessao') === 'expirada') {
+        const box = document.getElementById('login-error');
+        if (box) {
+            box.textContent = 'Sua sessão expirou. Entre de novo para continuar.';
+            box.classList.add('is-visible');
+        }
+    }
     console.log('[login.js] API Base URL detectada:', API_BASE_URL);
 
     const LOGIN_CONFIG = {

@@ -492,6 +492,16 @@ body.auth {
   color: #8a929c;
 }
 
+.auth-terms a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.auth-terms a:hover {
+  color: var(--navy-700);
+}
+
 /* Tela de sucesso do cadastro */
 .success-container {
   text-align: center;

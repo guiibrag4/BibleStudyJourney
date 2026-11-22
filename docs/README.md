@@ -94,7 +94,7 @@ Configuração de ambiente, build e deploy.
 
 **Ambientes:**
 - **Development:** `http://localhost:3000`
-- **Staging:** `https://biblestudyjourney-v2.onrender.com`
+- **Staging:** desativado (o Render foi desligado em 2026)
 - **Production:** `https://biblestudyjourney.duckdns.org`
 
 ---

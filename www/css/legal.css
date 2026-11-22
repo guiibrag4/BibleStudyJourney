@@ -1,0 +1,107 @@
+/* Páginas legais (política de privacidade). Mesma identidade das telas de acesso. */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Merriweather+Sans:wght@400;600&display=swap');
+
+:root {
+  --bg: #faf7f1;
+  --surface: #ffffff;
+  --ink: #1d2733;
+  --ink-soft: #5b6573;
+  --line: #e6dfd2;
+  --header: #162536;
+  --header-ink: #f6ead0;
+  --accent: #9a7420;
+  --font-serif: 'Merriweather', Georgia, serif;
+  --font-sans: 'Merriweather Sans', 'Segoe UI', Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1a26;
+    --surface: #162536;
+    --ink: #ece6da;
+    --ink-soft: #a9b3c0;
+    --line: #283a50;
+    --header: #0b141e;
+    --accent: #e2bd62;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.legal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: max(14px, env(safe-area-inset-top)) 16px 14px;
+  background: var(--header);
+  color: var(--header-ink);
+}
+
+.legal-back {
+  color: var(--header-ink);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 0;
+}
+
+.legal-brand {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+}
+
+.legal {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.legal h1 {
+  margin: 0 0 4px;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 5vw, 34px);
+  line-height: 1.25;
+}
+
+.legal-updated {
+  margin: 0 0 28px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.legal h2 {
+  margin: 36px 0 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.35;
+}
+
+.legal p,
+.legal li {
+  max-width: 68ch;
+}
+
+.legal ul,
+.legal ol {
+  padding-left: 22px;
+}
+
+.legal li + li {
+  margin-top: 6px;
+}
+
+.legal a {
+  color: var(--accent);
+}
