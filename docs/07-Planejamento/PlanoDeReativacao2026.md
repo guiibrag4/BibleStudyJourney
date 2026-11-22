@@ -253,22 +253,22 @@ A sua validação de negócio já encontrou o espaço vazio. De um lado ficam os
 
 | Prioridade | Problema | Onde | Correção |
 |---|---|---|---|
-| 🔴 | Leitura, busca, versículo aleatório e devocional quebrados | `backend/routes/bibleRoutes.js` | Bíblia local (seção 4) |
-| 🔴 | Modelo de IA descontinuado | `backend/.env` (`CLOUDFLARE_AI_MODEL`) | Trocar o modelo (seção 3) |
+| ✅ | Leitura, busca, versículo aleatório e devocional quebrados | `backend/routes/bibleRoutes.js` | Bíblia local (seção 4) |
+| ✅ | Modelo de IA descontinuado | `backend/.env` (`CLOUDFLARE_AI_MODEL`) | Trocar o modelo (seção 3) |
 | 🔴 | Parte da troca de segredos ainda pendente | `notes.md` (fora do git) | Ver o arquivo |
-| 🟠 | O streak atual nunca passa de 1: com o `LAG` ordenado de forma decrescente, `day_key = dia_anterior + 1 dia` nunca é verdade. Num teste com 7 dias seguidos, o resultado foi 1 | `bibleRoutes.js`, rotas `mark-read` e `stats` | Usar a mesma técnica de "ilhas" da consulta de maior streak e comparar com o `day_key` de hoje, não com `CURRENT_DATE` (que está em UTC) |
-| 🟠 | Sem `DB_SSL` definido, a conexão com o Postgres não usa SSL | `backend/db.js:14` | `DB_SSL=true` |
-| 🟠 | Nenhum limite de tentativas no login | `backend/routes/auth/auth.js` | `express-rate-limit`, ou o Supabase Auth |
-| 🟠 | Não existe "esqueci minha senha", e o botão "Continuar com o Google" não faz nada (já removido do login e do cadastro; ainda aparece em `formacadastro.html`) | `formacadastro.html` | Supabase Auth, ou remover o botão |
-| 🟠 | Não há exclusão de conta nem política de privacidade | App | Exigidas pelas lojas e pela LGPD |
-| 🟡 | É preciso fazer login para ler a Bíblia | `www/js/auth-guard.js`; `/api/bible` usa `verifyToken` em `server.js` | Liberar a leitura sem login |
-| 🟡 | Splash fixo de 2,5 s a cada abertura do app | `www/index.html` | Remover o `setTimeout` |
-| 🟡 | Zoom bloqueado (`user-scalable=no`) | `www/index.html` | Remover, por acessibilidade |
-| 🟡 | O Render, fora do ar, continua listado no CORS, na CSP e no `config.js` | `backend/server.js`, `www/js/config.js` | Remover, ou recriar o staging |
-| 🟡 | `npm run dev` não funciona no Windows | `package.json` | `cross-env` |
-| 🟡 | `targetSdk` 35 | `android/variables.gradle` | Subir para 36 |
-| 🟡 | A documentação cita rate limit, refresh token e RLS, que o código não tem | `docs/`, `BibleAppDoc/README.md` | Atualizar a documentação |
-| 🟡 | O `package.json` ainda tem o nome e a descrição do template do Cordova | `package.json` | Renomear |
+| ✅ | O streak atual nunca passa de 1: com o `LAG` ordenado de forma decrescente, `day_key = dia_anterior + 1 dia` nunca é verdade. Num teste com 7 dias seguidos, o resultado foi 1 | `bibleRoutes.js`, rotas `mark-read` e `stats` | Usar a mesma técnica de "ilhas" da consulta de maior streak e comparar com o `day_key` de hoje, não com `CURRENT_DATE` (que está em UTC) |
+| ✅ | Sem `DB_SSL` definido, a conexão com o Postgres não usa SSL | `backend/db.js:14` | `DB_SSL=true` |
+| ✅ | Nenhum limite de tentativas no login | `backend/routes/auth/auth.js` | Feito com `express-rate-limit` |
+| 🟠 | Não existe "esqueci minha senha", e o botão "Continuar com o Google" não faz nada (o botão foi removido) | — | Supabase Auth na v2 |
+| ✅ | Não há exclusão de conta nem política de privacidade | App | Feitas (PR #30) |
+| ✅ | É preciso fazer login para ler a Bíblia | `www/js/auth-guard.js`; `/api/bible` usa `verifyToken` em `server.js` | Liberar a leitura sem login |
+| ✅ | Splash fixo de 2,5 s a cada abertura do app | `www/index.html` | Remover o `setTimeout` |
+| ✅ | Zoom bloqueado (`user-scalable=no`) | `www/index.html` | Remover, por acessibilidade |
+| ✅ | O Render, fora do ar, continua listado no CORS, na CSP e no `config.js` | `backend/server.js`, `www/js/config.js` | Remover, ou recriar o staging |
+| ✅ | `npm run dev` não funciona no Windows | `package.json` | `cross-env` |
+| ✅ | `targetSdk` 35 | `android/variables.gradle` | Subir para 36 |
+| ✅ | A documentação cita rate limit, refresh token e RLS, que o código não tem | `docs/`, `BibleAppDoc/README.md` | Atualizar a documentação |
+| ✅ | O `package.json` ainda tem o nome e a descrição do template do Cordova | `package.json` | Renomear |
 
 ---
 
@@ -287,11 +287,14 @@ A sua validação de negócio já encontrou o espaço vazio. De um lado ficam os
 - Grifos e notas voltaram a salvar: faltavam dois índices únicos no banco desde a migração de dezembro de 2025. Agora a migração de inicialização do servidor os cria.
 - Telas de login e de cadastro redesenhadas: foto e versículo no desktop, erros dentro do formulário, mostrar/ocultar senha.
 - Correções: o cálculo do streak (testado em Postgres), as abreviações de Habacuque, Hebreus e Filemom, o SSL ligado por padrão no Supabase e a remoção do Render e da A Bíblia Digital do CORS e da CSP.
+- Leitura da Bíblia sem login, cache das páginas corrigido e nova tela de boas-vindas (PRs #28 e #29).
+- Segurança e lojas (PR #30): limite de tentativas no login, exclusão de conta em Opções, política de privacidade pública, aviso de sessão vencida, zoom liberado e remoção da `formacadastro.html`.
+- Android: `compileSdk` e `targetSdk` 36, Android Gradle Plugin 8.13, edge-to-edge com margens automáticas e versão 1.1.0 (versionCode 2).
 
 **Falta fazer (depende de você):**
 1. Terminar a troca de segredos (ver `notes.md`). O `JWT_SECRET` já foi trocado.
 2. Fazer backup do Supabase (já reativado) e criar o Secret do workflow de keep-alive.
-3. Publicar no servidor e rodar `npx cap sync android`. O `CLOUDFLARE_AI_MODEL` já foi atualizado no local e no servidor.
+3. Gerar o AAB assinado no Android Studio e montar o teste fechado no Google Play (12 testadores por 14 dias).
 4. Descobrir por que o "salvar capítulo" não grava (a rota do servidor não registra erro).
 5. Criar um passo de revisão humana do devocional. A IA ainda erra detalhes; num teste, situou Lucas 15 "na Galileia".
 6. Ouvir de 10 a 20 usuários reais (igreja, EBD) antes de construir a v2.

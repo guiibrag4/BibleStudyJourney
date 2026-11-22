@@ -1,12 +1,12 @@
 {
   "appId": "com.biblestudyjourney.app",
-  "appName": "BibleStudyJourney",
+  "appName": "Bible Study Journey",
   "webDir": "www",
-  "server":  {
+  "server": {
     "androidScheme": "https",
     "hostname": "localhost"
   },
-   "plugins": {
+  "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0,
       "launchAutoHide": true,
@@ -15,5 +15,8 @@
       "splashFullScreen": true,
       "splashImmersive": true
     }
+  },
+  "android": {
+    "adjustMarginsForEdgeToEdge": "auto"
   }
 }

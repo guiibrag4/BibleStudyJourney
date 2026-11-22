@@ -11,7 +11,7 @@ Documentação sobre sistema de autenticação e autorização.
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `JWT-Token.md` | Implementação de JWT, refresh tokens e segurança |
+| `JWT-Token.md` | Implementação do JWT (o código atual não usa refresh token) |
 
 **Responsável:** Sistema de login/registro  
 **Tecnologias:** JWT, Capacitor Preferences, PostgreSQL
@@ -39,7 +39,7 @@ Integração com Cloudflare Workers AI para recursos de IA.
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `IMPLEMENTACAO_DEVOCIONAL_IA_CLOUDFLARE.md` | Devocionais gerados por IA (Llama 3.1) |
+| `IMPLEMENTACAO_DEVOCIONAL_IA_CLOUDFLARE.md` | Primeira versão do devocional com IA (Llama 3.1, já descontinuado) |
 | `AJUSTES_FINAIS_DEVOCIONAL.md` | Refinamentos no gerador de devocionais |
 | `GAMIFICACAO_DEVOCIONAL_IMPLEMENTADO.md` | Sistema de recompensas por leitura devocional |
 | `cloudflare_workers_ai_models.md` | Catálogo de modelos disponíveis |
@@ -49,8 +49,8 @@ Integração com Cloudflare Workers AI para recursos de IA.
 | `Limites de Taxa (Rate Limits) por Tipo de Tarefa no Cloudflare Workers AI.md` | Rate limits |
 | `Economia e custo-benefício workersIA.md` | Análise de ROI da IA |
 
-**Modelos usados:** Llama 3.1-8b (atual), GPT-4o-mini (futuro)  
-**Limite gratuito:** 1000 requests/dia
+**Modelo usado:** `@cf/openai/gpt-oss-120b`, com saída estruturada (`backend/services/ai/workersAi.js`). Os Llama 3.1 8B foram descontinuados em 30/05/2026.  
+**Limite gratuito:** 10.000 neurons por dia (um devocional gasta de 40 a 70)
 
 ---
 
@@ -157,15 +157,16 @@ Arquitetura do sistema, diagramas e documentação técnica.
 | **Arquivos de código** | 30+ |
 | **Endpoints de API** | 20+ |
 | **Tabelas no banco** | 10 |
-| **Modelos de IA** | 2 (Llama 3.1, futuro GPT-4o-mini) |
-| **Ambientes** | 3 (dev, staging, prod) |
+| **Modelo de IA** | gpt-oss-120b (Cloudflare Workers AI) |
+| **Ambientes** | 2 (dev e produção) |
 
 ---
 
 ## 🔗 Links Úteis
 
 - **Repositório GitHub:** [guiibrag4/BibleStudyJourney](https://github.com/guiibrag4/BibleStudyJourney)
-- **API de Bíblia:** [A Bíblia Digital](https://www.abibliadigital.com.br/api)
+- **Texto bíblico:** versões abertas guardadas no próprio backend (`backend/data/bible`), geradas a partir da [Free Use Bible API](https://bible.helloao.org). A Bíblia Digital foi desativada em 01/08/2026.
+- **Plano de reativação 2026:** [`07-Planejamento/PlanoDeReativacao2026.md`](07-Planejamento/PlanoDeReativacao2026.md)
 - **Cloudflare Workers AI:** [Documentação](https://developers.cloudflare.com/workers-ai/)
 - **Supabase (DB):** [Dashboard](https://supabase.com/dashboard)
 
