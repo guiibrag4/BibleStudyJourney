@@ -1,20 +1,23 @@
 {
-  "name": "io.cordova.hellocordova",
-  "displayName": "HelloCordova",
+  "name": "bible-study-journey",
+  "displayName": "Bible Study Journey",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
-  "main": "index.js",
+  "description": "App de estudo bíblico com contexto: leitura, devocional diário e trilhas de estudo.",
+  "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",
-    "dev": "NODE_ENV=development node backend/server.js",
-    "prod": "NODE_ENV=production node backend/server.js",
+    "dev": "cross-env NODE_ENV=development node backend/server.js",
+    "prod": "cross-env NODE_ENV=production node backend/server.js",
     "build:bible": "node scripts/build-bible-data.js"
   },
   "keywords": [
-    "ecosystem:cordova"
+    "biblia",
+    "estudo-biblico",
+    "devocional",
+    "capacitor"
   ],
-  "author": "Apache Cordova Team",
-  "license": "Apache-2.0",
+  "author": "Guilherme Braga",
+  "license": "UNLICENSED",
   "devDependencies": {
     "cordova-android": "^14.0.1",
     "cordova-browser": "^7.0.0"
@@ -38,13 +41,16 @@
     "bcryptjs": "^3.0.2",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "localforage": "^1.10.0",
     "node-fetch": "^2.7.0",
     "pg": "^8.14.1",
     "serve": "^14.2.4"
-  }
+  },
+  "private": true
 }

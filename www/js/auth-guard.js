@@ -45,10 +45,42 @@ window.AuthManager = {
     }
 };
 
+// Páginas que funcionam sem login
+const PUBLIC_PAGES = ['login2.html', 'cadastro2.html', 'index.html', 'paginainicial.html', 'biblia.html', 'privacidade.html'];
+
+/**
+ * Sessão vencida ou inválida (token expirado, ou JWT_SECRET trocado no servidor):
+ * se a API responder 401 a uma requisição que levou token, apaga o token.
+ * Nas páginas públicas a pessoa segue como visitante; nas outras, vai para o login.
+ */
+(function watchExpiredSession() {
+    const originalFetch = window.fetch.bind(window);
+    let handled = false;
+
+    window.fetch = async function (input, init) {
+        const response = await originalFetch(input, init);
+        if (response.status !== 401 || handled) return response;
+
+        const url = typeof input === 'string' ? input : input?.url || '';
+        const headers = new Headers(init?.headers || (input instanceof Request ? input.headers : undefined));
+        const token = (headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+        // /auth/ trata os próprios erros (ex.: exclusão de conta)
+        if (!token || token === 'null' || token === 'undefined' || url.includes('/auth/')) return response;
+
+        handled = true;
+        await window.AuthManager.clearAuthData();
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        if (!PUBLIC_PAGES.includes(currentPage)) {
+            window.location.replace('/html/login2.html?sessao=expirada');
+        }
+        return response;
+    };
+})();
+
 // A lógica do DOMContentLoaded pode permanecer, pois ainda é uma boa prática.
 document.addEventListener("DOMContentLoaded", function() {
     async function protectPage() {
-        const publicPages = ['login2.html', 'cadastro2.html', 'index.html', 'paginainicial.html', 'formacadastro.html', 'biblia.html'];
+        const publicPages = PUBLIC_PAGES;
         const currentPage = window.location.pathname.split('/').pop();
 
         // Agora ele usa o window.AuthManager que acabamos de definir.
